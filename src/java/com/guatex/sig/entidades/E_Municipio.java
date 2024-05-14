@@ -2,14 +2,14 @@ package com.guatex.sig.entidades;
 
 public class E_Municipio {
 
-    private int _CODIGO = 0;
+    private String _CODIGO = "00";
     private String _NOMBRE = "";
 
-    public int getCODIGO() {
+    public String getCODIGO() {
         return _CODIGO;
     }
 
-    public void setCODIGO(int _CODIGO) {
+    public void setCODIGO(String _CODIGO) {
         this._CODIGO = _CODIGO;
     }
 

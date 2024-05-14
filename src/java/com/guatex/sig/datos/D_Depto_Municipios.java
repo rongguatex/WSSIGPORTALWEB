@@ -33,25 +33,26 @@ public class D_Depto_Municipios {
                         }
                     }
                     if (!encontrado) {
-                        CodigosExistentes.add(rs.getString(1));
+                        CodigosExistentes.add(quitaNulo(rs.getString("COD_DEPTO")));
                         E_Departamento NuevoDepartamento = new E_Departamento();
-                        NuevoDepartamento.setCODIGO(Integer.valueOf(quitaNulo(String.valueOf(rs.getInt("COD_DEPTO")))));
+                        NuevoDepartamento.setCODIGO(quitaNulo(rs.getString("COD_DEPTO")));
                         NuevoDepartamento.setNOMBRE(quitaNulo(rs.getString("NOM_DEPTO")));
                         NuevoDepartamento.setPAIS(quitaNulo(rs.getString("COD_PAIS")));
                         Departamentos.add(NuevoDepartamento);
                         for (E_Departamento departamento : Departamentos) {
-                            if (departamento.getCODIGO() == rs.getInt("COD_DEPTO")) {
+                            if (departamento.getCODIGO().equals(quitaNulo(rs.getString("COD_DEPTO")))) {
                                 E_Municipio NuevoMunicipio = new E_Municipio();
-                                NuevoMunicipio.setCODIGO(Integer.valueOf(quitaNulo(String.valueOf(rs.getInt("COD_MUN")))));
+                                NuevoMunicipio.setCODIGO(quitaNulo(rs.getString("COD_MUN")));
                                 NuevoMunicipio.setNOMBRE(quitaNulo(rs.getString("NOM_MUN")));
                                 departamento.getMUNICIPIOS().add(NuevoMunicipio);
+                               
                             }
                         }
                     } else {
                         for (E_Departamento departamento : Departamentos) {
-                            if (departamento.getCODIGO() == rs.getInt(1)) {
+                            if (departamento.getCODIGO() == rs.getString("COD_DEPTO")) {
                                 E_Municipio NuevoMunicipio = new E_Municipio();
-                                NuevoMunicipio.setCODIGO(Integer.valueOf(quitaNulo(String.valueOf(rs.getInt("COD_MUN")))));
+                                NuevoMunicipio.setCODIGO(quitaNulo(rs.getString("COD_MUN")));
                                 NuevoMunicipio.setNOMBRE(quitaNulo(rs.getString("NOM_MUN")));
                                 departamento.getMUNICIPIOS().add(NuevoMunicipio);
                             }
@@ -65,8 +66,8 @@ public class D_Depto_Municipios {
             return null;
         }
     }
-    
-    private String quitaNulo(String var){
+
+    private String quitaNulo(String var) {
         return var == null ? "" : var.trim();
-    } 
+    }
 }

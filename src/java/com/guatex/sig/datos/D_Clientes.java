@@ -20,8 +20,6 @@ public class D_Clientes {
      * @return Listado con información de los clientes
      */
     public E_respuestaClientes ObtenerListadoClientes(E_Cliente cliente) {
-        System.out.println("----> Obtener  Listado Clientes");
-
         List<E_Cliente> clientes = new LinkedList<>();
         String Query = "";
 
@@ -64,8 +62,8 @@ public class D_Clientes {
             } else {
                 ps.setString(5, quitaNulo(cliente.getCODCOB()));
             }
-            System.out.println("sql query [" + Query + "]");
-
+            
+            
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     E_Cliente NuevoCliente = new E_Cliente();
@@ -149,8 +147,6 @@ public class D_Clientes {
      * @return Información del cliente
      */
     public E_respuestaClientes ObtenerCliente(E_Cliente cliente) {
-        System.out.println("----> Obtener Cliente");
-
         List<E_Cliente> datosCliente = new LinkedList<>();
         String Query = "";
 

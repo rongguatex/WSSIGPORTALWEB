@@ -1,11 +1,13 @@
 package com.guatex.sig.entidades;
 
 public class E_PuntoCobertura {
+
     private String FRECUENCIA = "";
     private String DEPARTAMENTO = "";
     private String MUNICIPIO = "";
     private String UBICACION = "";
     private String PUNTO = "";
+    private String CODIGOPUNTO = "";
     private boolean RECOGEOFICINA = false;
     private char LUNES = ' ';
     private char MARTES = ' ';
@@ -14,9 +16,12 @@ public class E_PuntoCobertura {
     private char VIERNES = ' ';
     private char SABADO = ' ';
 
-    @Override
-    public String toString() {
-        return "EPuntoCobertura{" + "FRECUENCIA=" + FRECUENCIA + ", DEPARTAMENTO=" + DEPARTAMENTO + ", MUNICIPIO=" + MUNICIPIO + ", UBICACION=" + UBICACION + ", PUNTO=" + PUNTO + ", RECOGEOFICINA=" + RECOGEOFICINA + ", LUNES=" + LUNES + ", MARTES=" + MARTES + ", MIERCOLES=" + MIERCOLES + ", JUEVES=" + JUEVES + ", VIERNES=" + VIERNES + ", SABADO=" + SABADO + '}';
+    public String getCODIGOPUNTO() {
+        return CODIGOPUNTO;
+    }
+
+    public void setCODIGOPUNTO(String CODIGOPUNTO) {
+        this.CODIGOPUNTO = CODIGOPUNTO;
     }
 
     public String getFRECUENCIA() {
