@@ -2,7 +2,7 @@ package com.guatex.sig.entidades;
 
 public class E_Municipio {
 
-    private String _CODIGO = "00";
+    private String _CODIGO = "";
     private String _NOMBRE = "";
 
     public String getCODIGO() {
