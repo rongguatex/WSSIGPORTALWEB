@@ -35,6 +35,7 @@ public class D_PuntoCobertura {
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
+                    PuntoCobertura.setCODIGOPUNTO(quitaNulo(rs.getString("CODIGO")));
                     PuntoCobertura.setPUNTO(quitaNulo(rs.getString("PUNTO")));
                     PuntoCobertura.setUBICACION(quitaNulo(rs.getString("UBIC")));
                     PuntoCobertura.setDEPARTAMENTO(quitaNulo(rs.getString("DEPTO")));

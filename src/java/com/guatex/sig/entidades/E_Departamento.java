@@ -4,16 +4,16 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class E_Departamento {
-     private int _CODIGO = 0;
+     private String _CODIGO = "";
     private String _NOMBRE = "";
     private String _PAIS = "";
     private List<E_Municipio> _MUNICIPIOS = new LinkedList<E_Municipio>();
 
-    public int getCODIGO() {
+    public String getCODIGO() {
         return _CODIGO;
     }
 
-    public void setCODIGO(int _CODIGO) {
+    public void setCODIGO(String _CODIGO) {
         this._CODIGO = _CODIGO;
     }
 

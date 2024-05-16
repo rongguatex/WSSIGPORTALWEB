@@ -4,7 +4,6 @@ import com.guatex.sig.entidades.E_Cliente;
 import com.guatex.sig.entidades.E_Municipio;
 import com.guatex.sig.entidades.E_respuestaClientes;
 import java.util.LinkedList;
-import java.util.List;
 
 public class ConvertidorXML {
 
@@ -50,6 +49,7 @@ public class ConvertidorXML {
                         + addTag("DEPARTAMENTO", cliente.getCOBERTURA().getDEPARTAMENTO())
                         + addTag("MUNICIPIO", cliente.getCOBERTURA().getMUNICIPIO())
                         + addTag("UBICACION", cliente.getCOBERTURA().getUBICACION())
+                        + addTag("CODIGO_PUNTO", cliente.getCOBERTURA().getCODIGOPUNTO())
                         + addTag("PUNTO", cliente.getCOBERTURA().getPUNTO())
                         + addTag("RECOGEOFICINA", String.valueOf(cliente.getCOBERTURA().isRECOGEOFICINA()))
                         + addTag("LUNES", String.valueOf(cliente.getCOBERTURA().getLUNES()))
