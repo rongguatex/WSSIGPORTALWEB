@@ -115,6 +115,7 @@ public class ConvertidorXML {
         datos.setFECHA_INICIAL(getTag("FECHAINICIO", xml));
         datos.setFECHA_FINAL(getTag("FECHAFINAL", xml));
         datos.setCODCOB(getTag("CODCOB", xml));
+        datos.setIMPRESO(getTag("TIPOIMPRESION", xml));
         return datos;
     }
 
@@ -132,29 +133,20 @@ public class ConvertidorXML {
         if (data.getLISTADO_GUIAS().size() > 0) {
             for (E_Guia guia : data.getLISTADO_GUIAS()) {
                 XML += "<DATOS_GUIA>"
-                        + addTag("IDGUIA", guia.getIDGUIA())
                         + addTag("NOGUIA", guia.getNOGUIA())
                         + addTag("CONTACTO", guia.getCONTACTO())
                         + addTag("NOMDES", guia.getNOMDES())
-                        + addTag("NOMREM", guia.getNOMREM())
-                        + addTag("TELREM", guia.getTELREM())
                         + addTag("TELDES", guia.getTELDES())
-                        + addTag("DIRREM", guia.getDIRREM())
                         + addTag("DIRDES", guia.getDIRDES())
-                        + addTag("PTOORI", guia.getPTOORI())
-                        + addTag("PTODES", guia.getPTODES())
-                        + addTag("COBEX", guia.getCOBEX())
                         + addTag("CODCOB", guia.getCODCOB())
                         + addTag("SEGURO", guia.getSEGURO())
                         + addTag("DECLARADO", guia.getDECLARADO())
-                        + addTag("MNCPORI", guia.getMNCPORI())
                         + addTag("MNCPDES", guia.getMNCPDES())
                         + addTag("FECHA", guia.getFECHA())
-                        + addTag("LLAVECLI", guia.getLLAVECLIENTE())
                         + addTag("DESCRENV", guia.getDESCRENV())
-                        + addTag("PIEZAS", guia.getPIEZAS() + "")
-                        + addTag("PESO", guia.getPESO())
                         + addTag("SEABREPAQUETE", guia.getSEABREPAQUETE())
+                        + addTag("CONTSEG", guia.getCONTSEG())
+                        + addTag("COD_VALORACOBRAR", guia.getCOD_VALORACOBRAR())
                         + "</DATOS_GUIA>";
             }
         }

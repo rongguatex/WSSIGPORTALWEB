@@ -34,10 +34,13 @@ public class WSSIGCLIENTES {
         return new ConvertidorXML().respuestaXMLDatosCliente(respuesta);
     }
 
-    @WebMethod(operationName = "buscaGuiasSinImprimir")
-    public String buscaGuiasSinImprimir(@WebParam(name = "datos") String datos) {
+    @WebMethod(operationName = "busquedaGuiasxTipoImpresion")
+    public String busquedaGuiasxTipoImpresion(@WebParam(name = "datos") String datos) {
         E_Guia datosSolicitud = new ConvertidorXML().solicitudGuiasSinImprimir(datos);
-        if (!datosSolicitud.getFECHA_INICIAL().isEmpty() && !datosSolicitud.getFECHA_FINAL().isEmpty() && !datosSolicitud.getCODCOB().isEmpty()) {
+        if (!datosSolicitud.getFECHA_INICIAL().isEmpty() 
+                && !datosSolicitud.getFECHA_FINAL().isEmpty() 
+                && !datosSolicitud.getCODCOB().isEmpty() 
+                && !datosSolicitud.getIMPRESO().isEmpty()) {
             E_RespuestaGuia respuesta = new D_Guia().BuscarRangoFechaJGuiasNoImpresas(datosSolicitud);
             return new ConvertidorXML().respuestaXMLDatosGuia(respuesta);
         } else {
@@ -60,6 +63,16 @@ public class WSSIGCLIENTES {
     public String insertarImpresionData(@WebParam(name = "datos") String XML) {
         List<E_ImpresionSIG> impresiones = new ConvertidorXML().getObjectImpresion(XML);
         if (new D_ImpresionSIG().insertaImpresionSIG(impresiones)) {
+            return new ConvertidorXML().OK();
+        } else {
+            return new ConvertidorXML().BadRequest();
+        }
+    }
+    
+    @WebMethod(operationName = "insertaReimpresion")
+    public String insertaReimpresion(@WebParam(name = "datos") String XML) {
+        List<E_ImpresionSIG> impresiones = new ConvertidorXML().getObjectImpresion(XML);
+        if (new D_ImpresionSIG().insertaReimpresion(impresiones)) {
             return new ConvertidorXML().OK();
         } else {
             return new ConvertidorXML().BadRequest();

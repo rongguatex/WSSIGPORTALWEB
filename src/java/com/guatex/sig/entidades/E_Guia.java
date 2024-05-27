@@ -59,14 +59,23 @@ public class E_Guia {
     private int _PIEZAS;
     private int _NUMERO_PIEZA;
     private String _PESO;
-    private List<E_DetalleLinea> DETALLE = new LinkedList<>();
+    private List<E_DetalleLinea> _DETALLE = new LinkedList<>();
     private boolean _SELECCIONADO;
-    private String I_MPRIMECOD;
+    private String _IMPRIMECOD;
     private String _PRECIOCOD;
     private String _SEABREPAQUETE = "";
     private String _FECHA_INICIAL = "";
     private String _FECHA_FINAL = "";
     private String _TABLA = "";
+    private String _COD_VALORACOBRAR = "";
+
+    public String getCOD_VALORACOBRAR() {
+        return _COD_VALORACOBRAR;
+    }
+
+    public void setCOD_VALORACOBRAR(String _COD_VALORACOBRAR) {
+        this._COD_VALORACOBRAR = _COD_VALORACOBRAR;
+    }
 
     public void setNOGUIA(String _NOGUIA) {
         this._NOGUIA = _NOGUIA;
@@ -461,14 +470,6 @@ public class E_Guia {
         this._PIEZAS = _PIEZAS;
     }
 
-    public List<E_DetalleLinea> getDETALLE() {
-        return DETALLE;
-    }
-
-    public void setDETALLE(List<E_DetalleLinea> DETALLE) {
-        this.DETALLE = DETALLE;
-    }
-    
     public String getEMAILENVIADO() {
         return _EMAILENVIADO;
     }
@@ -575,19 +576,28 @@ public class E_Guia {
         this._SELECCIONADO = _SELECCIONADO;
     }
 
-    public String getI_MPRIMECOD() {
-        return I_MPRIMECOD;
-    }
-
-    public void setI_MPRIMECOD(String I_MPRIMECOD) {
-        this.I_MPRIMECOD = I_MPRIMECOD;
-    }
-
     public String getSEABREPAQUETE() {
         return _SEABREPAQUETE;
     }
 
     public void setSEABREPAQUETE(String _SEABREPAQUETE) {
         this._SEABREPAQUETE = _SEABREPAQUETE;
+    }    
+
+    public List<E_DetalleLinea> getDETALLE() {
+        return _DETALLE;
     }
+
+    public void setDETALLE(List<E_DetalleLinea> _DETALLE) {
+        this._DETALLE = _DETALLE;
+    }
+
+    public String getIMPRIMECOD() {
+        return _IMPRIMECOD;
+    }
+
+    public void setIMPRIMECOD(String _IMPRIMECOD) {
+        this._IMPRIMECOD = _IMPRIMECOD;
+    }
+    
 }

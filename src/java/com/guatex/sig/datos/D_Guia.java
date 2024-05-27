@@ -21,51 +21,44 @@ import java.util.Optional;
 public class D_Guia {
 
     /**
-     * Busca las guías no impresas (campo IMPRESO = P) en un rango de fechas,
-     * que esten en la tabla JGUIAS pero que NO que hayan sido recolectadas
-     * (noguia NO existan en tabla GUIAS)
+     * Busca las guías (campo IMPRESO = P | G) en un rango de fechas, que esten
+     * en la tabla JGUIAS pero que NO que hayan sido recolectadas (noguia NO
+     * existan en tabla GUIAS)
      *
-     * @param datos - filtros: codcob, fechaInicial y fechaFinal
+     * tipo P = guías impresas | G = guías guardadas.
+     *
+     * @param datos - filtros: codcob, fechaInicial, fechaFinal
      * @return
      */
     public E_RespuestaGuia BuscarRangoFechaJGuiasNoImpresas(E_Guia datos) {
         List<E_Guia> listadoGuias = new LinkedList<>();
 
-        String query = " SELECT  "
-                + "	J.IDGUIA,  "
-                + "	J.NOGUIA AS NOGUIA,  "
-                + "	J.CONTACTO,  "
-                + "	J.NOMDES,  "
-                + "	J.NOMREM,  "
-                + "	J.TELREM,  "
-                + "	J.TELDES,  "
-                + "	J.DIRREM,  "
-                + "	J.DIRDES,  "
-                + "	J.PTOORI,  "
-                + "	J.PTODES,  "
-                + "	J.COBEX,  "
-                + "	J.CODCOB,  "
-                + "	J.SEGURO,  "
-                + "	J.DECLARADO,  "
-                + "	J.MNCPORI,  "
-                + "	J.MNCPDES,  "
-                + "	J.FECHA,  "
-                + "	J.LLAVECLIENTE AS LLAVECLI,  "
-                + "	J.DESCRENV,  "
-                + "	J.PIEZAS,  "
-                + "	J.PESO,  "
-                + "	J.SEABREPAQUETE  "
+        String query = " SELECT "
+                + " J.NOGUIA AS NOGUIA,  "
+                + " J.CONTACTO,  "
+                + " J.NOMDES,  "
+                + " J.TELDES, "
+                + " J.DIRDES, "
+                + " J.CODCOB,  "
+                + " J.SEGURO,  "
+                + " J.DECLARADO, "
+                + " J.MNCPDES,  "
+                + " J.FECHA, "
+                + " J.DESCRENV, "
+                + " J.SEABREPAQUETE, "
+                + " J.CONTSEG, "
+                + " J.COD_VALORACOBRAR "
                 + " FROM JGUIAS J "
                 + " LEFT JOIN GUIAS G ON J.NOGUIA = G.NOGUIA "
                 + " WHERE J.CODCOB = ? "
-                + "	AND CAST(J.FECHA AS DATE) BETWEEN CAST(? AS DATE) AND CAST(?  AS DATE) "
-                + "	AND ISNULL(J.IMPRESO, 'N') = 'G' "
-                + "	AND NOT EXISTS ( "
-                + "                 SELECT  "
-                + "                     NOGUIA  "
-                + "         	FROM GUIAS GS  "
-                + "         	WHERE GS.NOGUIA = J.NOGUIA "
-                + "	) "
+                + " AND CAST(J.FECHA AS DATE) BETWEEN CAST(? AS DATE) AND CAST(?  AS DATE) "
+                + " AND ISNULL(J.IMPRESO, 'N') = ? "
+                + " AND NOT EXISTS ( "
+                + "    SELECT  "
+                + "         NOGUIA  "
+                + "    FROM GUIAS GS  "
+                + "    WHERE GS.NOGUIA = J.NOGUIA "
+                + " ) "
                 + " ORDER BY J.FECHA DESC ";
 
         try (Connection con = new Conexion().AbrirConexion();
@@ -73,35 +66,28 @@ public class D_Guia {
             ps.setString(1, quitaNulo(datos.getCODCOB()));
             ps.setString(2, quitaNulo(datos.getFECHA_INICIAL()));
             ps.setString(3, quitaNulo(datos.getFECHA_FINAL()));
+            ps.setString(4, quitaNulo(datos.getIMPRESO()));
+
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     E_Guia guia = new E_Guia();
-                    guia.setIDGUIA(quitaNulo(rs.getString("IDGUIA")));
                     guia.setNOGUIA(quitaNulo(rs.getString("NOGUIA")));
                     guia.setCONTACTO(quitaNulo(rs.getString("CONTACTO")));
                     guia.setNOMDES(quitaNulo(rs.getString("NOMDES")));
-                    guia.setNOMREM(quitaNulo(rs.getString("NOMREM")));
-                    guia.setTELREM(quitaNulo(rs.getString("TELREM")));
                     guia.setTELDES(quitaNulo(rs.getString("TELDES")));
-                    guia.setDIRREM(quitaNulo(rs.getString("DIRREM")));
                     guia.setDIRDES(quitaNulo(rs.getString("DIRDES")));
-                    guia.setPTOORI(quitaNulo(rs.getString("PTOORI")));
-                    guia.setPTODES(quitaNulo(rs.getString("PTODES")));
-                    guia.setCOBEX(quitaNulo(rs.getString("COBEX")));
                     guia.setCODCOB(quitaNulo(rs.getString("CODCOB")));
                     guia.setSEGURO(quitaNulo(rs.getString("SEGURO")));
                     guia.setDECLARADO(quitaNulo(rs.getString("DECLARADO")));
-                    guia.setMNCPORI(quitaNulo(rs.getString("MNCPORI")));
                     guia.setMNCPDES(quitaNulo(rs.getString("MNCPDES")));
                     guia.setFECHA(quitaNulo(rs.getString("FECHA")));
-                    guia.setLLAVECLIENTE(quitaNulo(rs.getString("LLAVECLI")));
                     guia.setDESCRENV(quitaNulo(rs.getString("DESCRENV")));
-                    guia.setPIEZAS(convertirAEntero(quitaNulo("PIEZAS")).orElse(0));//si Optional es vacío se envía el valor cero.
-                    guia.setPESO(quitaNulo(rs.getString("PESO")));
                     guia.setSEABREPAQUETE(quitaNulo(rs.getString("SEABREPAQUETE")));
+                    guia.setCONTSEG(quitaNulo(rs.getString("CONTSEG")));
+                    guia.setCOD_VALORACOBRAR(quitaNulo(rs.getString("COD_VALORACOBRAR")));
                     listadoGuias.add(guia);
                 }
-                if(!listadoGuias.isEmpty()){
+                if (!listadoGuias.isEmpty()) {
                     return new E_RespuestaGuia("200", listadoGuias);
                 } else {
                     return new E_RespuestaGuia("204", listadoGuias);
