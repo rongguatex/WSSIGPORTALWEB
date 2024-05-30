@@ -23,6 +23,8 @@ public class E_RespuestaGuia {
             this._MENSAJE = "No se obtuvo información de la base de datos.";
         } else if (_CODIGO.equals("500")) {
             this._MENSAJE = "Ocurrió un error con la base de datos.";
+        } else if (_CODIGO.equals("400")) {
+            this._MENSAJE = "Ocurrió un error, no encuentra parametros";
         }
     }
 

@@ -100,6 +100,119 @@ public class D_Guia {
     }
 
     /**
+     * Busca los datos de una guía que no haya sido impresa y tampoco entregada.
+     *
+     * @param noguia - número de guía a buscar
+     * @return - objeto con código de respuesta y datos de la guía.
+     */
+    public E_RespuestaGuia obtenerDatosxGuiaNoImpresa(String noguia) {
+        noguia = quitaNulo(noguia);
+        if (!noguia.isEmpty()) {
+            List<E_Guia> datosGuia = new LinkedList<>();
+            String query = " SELECT  "
+                    + "         J.IDGUIA, J.NOGUIA, J.CODCOB, J.IDSERVICIO, "
+                    + "         CONVERT(VARCHAR(10), J.FECHA, 103) AS FECHA, "
+                    + "         J.CODREM, J.NOMREM, J.TELREM, J.DIRREM, "
+                    + "         J.CODDES, J.NOMDES, J.TELDES, J.DIRDES, "
+                    + "         J.PTOORI, J.PTODES, J.MNCPORI, J.MNCPDES, "
+                    + "         J.LLAVECLIENTE, J.DESCRENV, J.CONTACTO, J.EMAIL, "
+                    + "         J.PIEZAS, J.PESO, J.TIPTAR,  "
+                    + "         J.COBEX, J.SEGURO, J.DECLARADO, J.COD_VALORACOBRAR, "
+                    + "         ISNULL(SEABREPAQUETE, 'N') SEABREPAQUETE, "
+                    + "         CONTSEG, FECOPE, HORAOPE,  RECOGEOFICINA, "
+                    + "         CAMPO1, CAMPO2, CAMPO3, CAMPO4, "
+                    + "         CODORIGEN, CODDESTINO,  "
+                    + "         OBSERVACIONES, OBSERVACIONESENTRE "
+                    + " FROM JGUIAS J  "
+                    + " WHERE J.NOGUIA = ?  "
+                    + " AND ISNULL(J.IMPRESO, 'N') != 'P' "
+                    + " AND NOT EXISTS (  "
+                    + "    SELECT   "
+                    + "         NOGUIA   "
+                    + "    FROM GUIAS G   "
+                    + "    WHERE G.NOGUIA = J.NOGUIA  "
+                    + " ) ";
+
+            try (Connection con = new Conexion().AbrirConexion();
+                    PreparedStatement ps = con.prepareStatement(query)) {
+                ps.setString(1, noguia);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        E_Guia guia = new E_Guia();
+                        //datos generales de guía
+                        guia.setIDGUIA(quitaNulo(rs.getString("IDGUIA")));
+                        guia.setNOGUIA(quitaNulo(rs.getString("NOGUIA")));
+                        guia.setCODCOB(quitaNulo(rs.getString("CODCOB")));
+                        guia.setIDSERVICIO(quitaNulo(rs.getString("IDSERVICIO")));
+                        guia.setFECHA(quitaNulo(rs.getString("FECHA")));
+                        //datos de remitente
+                        guia.setCODREM(quitaNulo(rs.getString("CODREM")));
+                        guia.setNOMREM(quitaNulo(rs.getString("NOMREM")));
+                        guia.setTELREM(quitaNulo(rs.getString("TELREM")));
+                        guia.setDIRREM(quitaNulo(rs.getString("DIRREM")));
+                        guia.setCONTACTO(quitaNulo(rs.getString("CONTACTO")));
+                        guia.setOBSERVACIONES(quitaNulo(rs.getString("OBSERVACIONES")));
+                        //datos de destinatario
+                        guia.setCODDES(quitaNulo(rs.getString("CODDES")));
+                        guia.setNOMDES(quitaNulo(rs.getString("NOMDES")));
+                        guia.setTELDES(quitaNulo(rs.getString("TELDES")));
+                        guia.setDIRDES(quitaNulo(rs.getString("DIRDES")));
+                        guia.setOBSERVACIONESENTRE(quitaNulo(rs.getString("OBSERVACIONESENTRE")));
+                        //otros datos
+                        guia.setPTOORI(quitaNulo(rs.getString("PTOORI")));
+                        guia.setPTODES(quitaNulo(rs.getString("PTODES")));
+                        guia.setMNCPORI(quitaNulo(rs.getString("MNCPORI")));
+                        guia.setMNCPDES(quitaNulo(rs.getString("MNCPDES")));
+                        guia.setLLAVECLIENTE(quitaNulo(rs.getString("LLAVECLIENTE")));
+                        guia.setDESCRENV(quitaNulo(rs.getString("DESCRENV")));
+                        guia.setEMAIL(quitaNulo(rs.getString("EMAIL")));
+                        guia.setPIEZAS(convertirAEntero(quitaNulo(rs.getString("PIEZAS"))).orElse(0));
+                        guia.setPESO(quitaNulo(rs.getString("PESO")));
+                        guia.setTIPTAR(quitaNulo(rs.getString("TIPTAR")));
+                        guia.setCOBEX(quitaNulo(rs.getString("COBEX")));
+                        guia.setSEGURO(quitaNulo(rs.getString("SEGURO")));
+                        guia.setDECLARADO(quitaNulo(rs.getString("DECLARADO")));
+                        guia.setCOD_VALORACOBRAR(quitaNulo(rs.getString("COD_VALORACOBRAR")));
+                        guia.setSEABREPAQUETE(quitaNulo(rs.getString("SEABREPAQUETE")));
+                        guia.setCONTSEG(quitaNulo(rs.getString("CONTSEG")));
+                        guia.setFECOPE(quitaNulo(rs.getString("FECOPE")));
+                        guia.setHORAOPE(quitaNulo(rs.getString("HORAOPE")));
+                        guia.setRECOGEOFICINA(quitaNulo(rs.getString("RECOGEOFICINA")));
+                        guia.setCAMPO1(obtenerCodigo(quitaNulo(rs.getString("CAMPO1"))));
+                        guia.setCAMPO2(obtenerCodigo(quitaNulo(rs.getString("CAMPO2"))));
+                        guia.setCAMPO3(obtenerCodigo(quitaNulo(rs.getString("CAMPO3"))));
+                        guia.setCAMPO4(obtenerCodigo(quitaNulo(rs.getString("CAMPO4"))));
+                        guia.setCODORIGEN(quitaNulo(rs.getString("CODORIGEN")));
+                        guia.setCODDESTINO(quitaNulo(rs.getString("CODDESTINO")));
+                        datosGuia.add(guia);
+                    }
+                }
+                if (!datosGuia.isEmpty()) {
+                    return new E_RespuestaGuia("200", datosGuia);
+                } else {
+                    return new E_RespuestaGuia("204", null);
+                }
+            } catch (Exception e) {
+                e.printStackTrace(System.err);
+                return new E_RespuestaGuia("500", null);
+            }
+        }
+        return new E_RespuestaGuia("400", null);
+    }
+
+    /**
+     * Este método sirve para obtener solamente el valor del campo1,2, 3 y 4. El
+     * fin es quitar todo lo que venga antes del caracter "/" y obtener
+     * solamente el código.
+     *
+     * @param campo
+     * @return - código seteado en el campo 1, 2, 3, y 4.
+     */
+    public String obtenerCodigo(String campo) {
+        return campo.substring(campo.indexOf("/") + 1, campo.length());
+    }
+
+    /**
      * Convierte cualquier valor tipo string a entero, al ingresar un valor nulo
      * o un valor no válido devuelve un Opcional vacío.
      *

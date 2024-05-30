@@ -1,10 +1,12 @@
 package com.guatex.sig.utils;
 
 import com.guatex.sig.entidades.E_Cliente;
+import com.guatex.sig.entidades.E_Departamento;
 import com.guatex.sig.entidades.E_DetalleLinea;
 import com.guatex.sig.entidades.E_Guia;
 import com.guatex.sig.entidades.E_ImpresionSIG;
 import com.guatex.sig.entidades.E_Municipio;
+import com.guatex.sig.entidades.E_PuntoCobertura;
 import com.guatex.sig.entidades.E_Solicitud;
 import com.guatex.sig.entidades.E_respuestaClientes;
 import com.guatex.sig.entidadesRespuesta.E_RespuestaDetalle;
@@ -89,6 +91,7 @@ public class ConvertidorXML {
         }
         XML += "</LISTADO_CLIENTES>"
                 + "</RESPUESTA>";
+        System.out.println("[" + XML + "]");
         return XML;
     }
 
@@ -125,7 +128,7 @@ public class ConvertidorXML {
      * @param data
      * @return
      */
-    public String respuestaXMLDatosGuia(E_RespuestaGuia data) {
+    public String respuestaXMLDatosGuia(E_RespuestaGuia data, E_Departamento departamento, E_Municipio municipio, E_PuntoCobertura cobertura) {
         String XML = "<RESPUESTA>"
                 + addTag("CODIGO", data.getCODIGO())
                 + addTag("MENSAJE", data.getMENSAJE())
@@ -133,25 +136,80 @@ public class ConvertidorXML {
         if (data.getLISTADO_GUIAS().size() > 0) {
             for (E_Guia guia : data.getLISTADO_GUIAS()) {
                 XML += "<DATOS_GUIA>"
+                        //datos generales de guía
+                        + addTag("IDGUIA", guia.getIDGUIA())
                         + addTag("NOGUIA", guia.getNOGUIA())
-                        + addTag("CONTACTO", guia.getCONTACTO())
+                        + addTag("CODCOB", guia.getCODCOB())
+                        + addTag("IDSERVICIO", guia.getIDSERVICIO())
+                        + addTag("FECHA", guia.getFECHA())
+                        //datos de remitente
+                        + addTag("CODREM", guia.getCODREM())
+                        + addTag("NOMREM", guia.getNOMREM())
+                        + addTag("TELREM", guia.getTELREM())
+                        + addTag("DIRREM", guia.getDIRREM())
+                        //datos de destinatario
+                        + addTag("CODDES", guia.getCODDES())
                         + addTag("NOMDES", guia.getNOMDES())
                         + addTag("TELDES", guia.getTELDES())
                         + addTag("DIRDES", guia.getDIRDES())
-                        + addTag("CODCOB", guia.getCODCOB())
+                        + addTag("CONTACTO", guia.getCONTACTO())
+                        //otros datos
+                        + addTag("PTOORI", guia.getPTOORI())
+                        + addTag("PTODES", guia.getPTODES())
+                        + addTag("MNCPORI", guia.getMNCPORI())
+                        + addTag("MNCPDES", guia.getMNCPDES())
+                        + addTag("LLAVECLI", guia.getLLAVECLIENTE())
+                        + addTag("DESCRENV", guia.getDESCRENV())
+                        + addTag("EMAIL", guia.getEMAIL())
+                        + addTag("PIEZAS", guia.getPIEZAS() + "")
+                        + addTag("PESO", guia.getPESO())
+                        + addTag("TIPTAR", guia.getTIPTAR())
+                        + addTag("COBEX", guia.getCOBEX())
                         + addTag("SEGURO", guia.getSEGURO())
                         + addTag("DECLARADO", guia.getDECLARADO())
-                        + addTag("MNCPDES", guia.getMNCPDES())
-                        + addTag("FECHA", guia.getFECHA())
-                        + addTag("DESCRENV", guia.getDESCRENV())
+                        + addTag("COD_VALORACOBRAR", guia.getCOD_VALORACOBRAR())
                         + addTag("SEABREPAQUETE", guia.getSEABREPAQUETE())
                         + addTag("CONTSEG", guia.getCONTSEG())
-                        + addTag("COD_VALORACOBRAR", guia.getCOD_VALORACOBRAR())
+                        + addTag("FECOPE", guia.getFECOPE())
+                        + addTag("HORAOPE", guia.getHORAOPE())
+                        + addTag("RECOGEOFICINA", guia.getRECOGEOFICINA())
+                        + addTag("CAMPO1", guia.getCAMPO1())
+                        + addTag("CAMPO2", guia.getCAMPO2())
+                        + addTag("CAMPO3", guia.getCAMPO3())
+                        + addTag("CAMPO4", guia.getCAMPO4())
+                        + addTag("CODORIGEN", guia.getCODORIGEN())
+                        + addTag("CODDESTINO", guia.getCODDESTINO())
+                        + addTag("OBSERVACIONES", guia.getOBSERVACIONES())
+                        + addTag("OBSERVACIONESENTRE", guia.getOBSERVACIONESENTRE())
+                        + "<DEPARTAMENTO>"
+                        + addTag("CODIGO", departamento.getCODIGO())
+                        + addTag("NOMBRE", departamento.getNOMBRE())
+                        + "</DEPARTAMENTO>"
+                        + "<MUNICIPIO>"
+                        + addTag("CODIGO", municipio.getCODIGO())
+                        + addTag("NOMBRE", municipio.getNOMBRE())
+                        + "</MUNICIPIO>"
+                        + "<COBERTURA>"
+                        + addTag("CODIGO_PUNTO", cobertura.getCODIGOPUNTO())
+                        + addTag("PUNTO", cobertura.getPUNTO())
+                        + addTag("UBICACION", cobertura.getUBICACION())
+                        + addTag("DEPTO_COBERTURA", cobertura.getDEPARTAMENTO())
+                        + addTag("MUNI_COBERTURA", cobertura.getMUNICIPIO())
+                        + addTag("LUNES", String.valueOf(cobertura.getLUNES()))
+                        + addTag("MARTES", String.valueOf(cobertura.getMARTES()))
+                        + addTag("MIERCOLES", String.valueOf(cobertura.getMIERCOLES()))
+                        + addTag("JUEVES", String.valueOf(cobertura.getJUEVES()))
+                        + addTag("VIERNES", String.valueOf(cobertura.getVIERNES()))
+                        + addTag("SABADO", String.valueOf(cobertura.getSABADO()))
+                        + addTag("FRECUENCIA", cobertura.getFRECUENCIA())
+                        + addTag("RECOGEOFICINA", cobertura.isRECOGEOFICINA() ? "1" : "0")
+                        + "</COBERTURA>"
                         + "</DATOS_GUIA>";
             }
         }
         XML += "</LISTADO_GUIAS>"
                 + "</RESPUESTA>";
+        System.out.println("[" + XML + "]");
         return XML;
     }
 
@@ -224,6 +282,7 @@ public class ConvertidorXML {
      * @return
      */
     public String BadRequest() {
+        System.out.println("bad request");
         return "<RESPUESTA>"
                 + addTag("CODIGO", "400")
                 + addTag("MENSAJE", "BAD REQUEST")

@@ -68,6 +68,10 @@ public class E_Guia {
     private String _FECHA_FINAL = "";
     private String _TABLA = "";
     private String _COD_VALORACOBRAR = "";
+    private String _OBSERVACIONES = "";
+    private String _OBSERVACIONESENTRE = "";
+    private String _CODORIGEN = "";
+    private String _CODDESTINO = "";
 
     public String getCOD_VALORACOBRAR() {
         return _COD_VALORACOBRAR;
@@ -598,6 +602,38 @@ public class E_Guia {
 
     public void setIMPRIMECOD(String _IMPRIMECOD) {
         this._IMPRIMECOD = _IMPRIMECOD;
+    }
+
+    public String getOBSERVACIONES() {
+        return _OBSERVACIONES;
+    }
+
+    public void setOBSERVACIONES(String _OBSERVACIONES) {
+        this._OBSERVACIONES = _OBSERVACIONES;
+    }
+
+    public String getOBSERVACIONESENTRE() {
+        return _OBSERVACIONESENTRE;
+    }
+
+    public void setOBSERVACIONESENTRE(String _OBSERVACIONESENTRE) {
+        this._OBSERVACIONESENTRE = _OBSERVACIONESENTRE;
+    }
+
+    public String getCODORIGEN() {
+        return _CODORIGEN;
+    }
+
+    public void setCODORIGEN(String _CODORIGEN) {
+        this._CODORIGEN = _CODORIGEN;
+    }
+
+    public String getCODDESTINO() {
+        return _CODDESTINO;
+    }
+
+    public void setCODDESTINO(String _CODDESTINO) {
+        this._CODDESTINO = _CODDESTINO;
     }
     
 }

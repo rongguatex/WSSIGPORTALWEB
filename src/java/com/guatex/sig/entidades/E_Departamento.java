@@ -8,6 +8,7 @@ public class E_Departamento {
     private String _NOMBRE = "";
     private String _PAIS = "";
     private List<E_Municipio> _MUNICIPIOS = new LinkedList<E_Municipio>();
+    private String _TIPO = "";
 
     public String getCODIGO() {
         return _CODIGO;
@@ -48,5 +49,13 @@ public class E_Departamento {
 
     public void setPAIS(String _PAIS) {
         this._PAIS = _PAIS;
+    }
+
+    public String getTIPO() {
+        return _TIPO;
+    }
+
+    public void setTIPO(String _TIPO) {
+        this._TIPO = _TIPO;
     }
 }
