@@ -1,5 +1,6 @@
 package com.guatex.sig.services;
 
+import com.guatex.sig.datos.DReporteClientes;
 import com.guatex.sig.datos.D_Clientes;
 import com.guatex.sig.entidades.E_Cliente;
 import com.guatex.sig.entidades.E_respuestaClientes;
@@ -34,4 +35,9 @@ public class WSSIGCLIENTES {
         E_respuestaClientes respuesta = new D_Clientes().ObtenerListadoClientes(cliente);
         return new ConvertidorXML().respuestaXML(respuesta);
     }
+    
+
+    
+    
+     
 }

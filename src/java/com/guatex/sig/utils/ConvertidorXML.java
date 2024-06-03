@@ -1,9 +1,11 @@
 package com.guatex.sig.utils;
 
+import com.guatex.sig.entidades.EReporteClientes;
 import com.guatex.sig.entidades.E_Cliente;
 import com.guatex.sig.entidades.E_Municipio;
 import com.guatex.sig.entidades.E_respuestaClientes;
 import java.util.LinkedList;
+import java.util.List;
 
 public class ConvertidorXML {
 
@@ -63,9 +65,9 @@ public class ConvertidorXML {
                         + addTag("CODDEPTO", String.valueOf(cliente.getDEPARTAMENTO().getCODIGO()))
                         + addTag("NOMBREDEPTO", cliente.getDEPARTAMENTO().getNOMBRE())
                         + addTag("PAIS", cliente.getDEPARTAMENTO().getPAIS())
-//                        + "<MUNICIPIOS_DEPTO>"    //Se verificará su utilidad próximamente :)
-//                        + municipios(cliente)
-//                        + "</MUNICIPIOS_DEPTO>"
+                        //                        + "<MUNICIPIOS_DEPTO>"    //Se verificará su utilidad próximamente :)
+                        //                        + municipios(cliente)
+                        //                        + "</MUNICIPIOS_DEPTO>"
                         + "</DEPARTAMENTO>"
                         + "<MUNICIPIO>"
                         + addTag("CODMUNICIPIO", String.valueOf(cliente.getMUNICIPIO().getCODIGO()))
@@ -82,15 +84,44 @@ public class ConvertidorXML {
         return XML;
     }
 
+    public String respuestaXMLListadoClientes(List<EReporteClientes> listadoClientes) {
+
+        String XML = "<RESPUESTA>"
+                + "<CLIENTES>";
+        for (EReporteClientes cliente : listadoClientes) {
+            XML += "<CLIENTE>"
+                    + addTag("CODIGO", cliente.getCODIGO())
+                    + addTag("CODCOB", cliente.getCODCOB())
+                    + addTag("PADRE", cliente.getPADRE())
+                    + addTag("NOMBRE", cliente.getNOMBRE())
+                    + addTag("CONTACTO", cliente.getCONTACTO())
+                    + addTag("DIRECION", cliente.getDIRECCION())
+                    + addTag("PUNTO", cliente.getPUNTO())
+                    + addTag("CORREO", cliente.getEMAIL())
+                    + addTag("TELEFONO", cliente.getTELEFONO())
+                    + addTag("NIT", cliente.getNIT())
+                    + addTag("RECOGEOFICINA", cliente.getRECOGEOFICINA())
+                    + addTag("CAMPO1", cliente.getCAMPO1())
+                    + addTag("CAMPO2", cliente.getCAMPO2())
+                    + addTag("CAMPO3", cliente.getCAMPO3())
+                    + addTag("CAMPO4", cliente.getCAMPO4())
+                    + "</CLIENTE>";
+        }
+        XML += "</CLIENTES>"
+                + "</RESPUESTA>";
+        System.out.println(XML);
+        return XML;
+    }
+
     private String municipios(E_Cliente cliente) {
         String xml = "";
         for (E_Municipio m : cliente.getDEPARTAMENTO().getMUNICIPIOS()) {
-              xml += "<MUNICIPIODEPTO>"
-                            + addTag("CODDEPTO", String.valueOf(m.getCODIGO()))
-                            + addTag("NOMBREDEPTO", m.getNOMBRE())
-                      + "</MUNICIPIODEPTO>";
+            xml += "<MUNICIPIODEPTO>"
+                    + addTag("CODDEPTO", String.valueOf(m.getCODIGO()))
+                    + addTag("NOMBREDEPTO", m.getNOMBRE())
+                    + "</MUNICIPIODEPTO>";
         }
-           return xml;   
+        return xml;
     }
 
     public String getTag(String tag, String dato) {
