@@ -8,7 +8,6 @@ package com.guatex.sig.entidades;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Pattern;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -157,7 +156,7 @@ public class E_DatosGuiaMasiva {
         });
         return new ArrayList<>(mensajes);
     }
-    
+
     public void setESTADO(List<String> _ESTADO) {
         this._ESTADO = _ESTADO;
     }

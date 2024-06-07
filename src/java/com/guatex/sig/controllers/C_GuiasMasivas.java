@@ -29,8 +29,10 @@ import com.guatex.sig.utils.ValidacionCredenciales;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -162,9 +164,7 @@ public class C_GuiasMasivas {
                     }
 
                     if (dato.getESTADO().size() > 0) {
-//                        List<E_DatosGuiaMasiva> listaDatosGuia = datos.getListaDatosGuia();
-//                        String estadosConcatenados = obtenerEstadosConcatenados(listaDatosGuia);
-//                        asignarEstadosConcatenados(listaDatosGuia, estadosConcatenados);
+                        dato.setESTADO(Arrays.asList(concatenarEstados(dato.getESTADO())));
                         existenErrores = true;
                     }
                     System.out.println("VALIDACION COMPLETA  Errores: [" + dato.getESTADO().size() + "] " + dato.getESTADO().toString());
@@ -506,5 +506,9 @@ public class C_GuiasMasivas {
             e.printStackTrace();
         }
         return null;
+    }
+    
+    public static String concatenarEstados(List<String> estados) {
+        return estados.stream().collect(Collectors.joining(", "));
     }
 }
