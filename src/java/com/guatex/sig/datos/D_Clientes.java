@@ -3,10 +3,12 @@ package com.guatex.sig.datos;
 import com.guatex.sig.entidades.E_Cliente;
 import com.guatex.sig.entidades.E_Departamento;
 import com.guatex.sig.entidades.E_Municipio;
+import com.guatex.sig.entidades.E_PuntoCobertura;
 import com.guatex.sig.entidades.E_respuestaClientes;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -62,8 +64,7 @@ public class D_Clientes {
             } else {
                 ps.setString(5, quitaNulo(cliente.getCODCOB()));
             }
-            
-            
+
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     E_Cliente NuevoCliente = new E_Cliente();
@@ -259,6 +260,29 @@ public class D_Clientes {
         } catch (Exception e) {
             e.printStackTrace(System.err);
             return new E_respuestaClientes("500", datosCliente);
+        }
+    }
+
+    public E_PuntoCobertura validarUbicacionCliCliente(String codcob, String codigoCliente) {
+
+        String query = "Select  C_MNCP,C_PTO FROM FACCLICLIENTES WHERE CODCOB = ? and CODIGO = ?";
+
+        try (Connection con = new Conexion().AbrirConexion();
+                PreparedStatement ps = con.prepareStatement(query)) {
+            ps.setString(1, codcob);
+            ps.setString(2, codigoCliente);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                E_PuntoCobertura ubicacion = new E_PuntoCobertura();
+                while (rs.next()) {
+                    ubicacion.setUBICACION(quitaNulo(rs.getString("C_MNCP")));
+                    ubicacion.setPUNTO(quitaNulo(rs.getString("C_PTO")));
+                }
+                return ubicacion;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 

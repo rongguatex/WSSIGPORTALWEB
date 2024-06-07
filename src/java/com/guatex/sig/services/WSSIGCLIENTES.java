@@ -1,5 +1,6 @@
 package com.guatex.sig.services;
 
+import com.guatex.sig.controllers.C_GuiasMasivas;
 import com.guatex.sig.datos.D_Clientes;
 import com.guatex.sig.datos.D_Depto_Municipios;
 import com.guatex.sig.datos.D_Detalle;
@@ -16,7 +17,6 @@ import com.guatex.sig.entidades.E_respuestaClientes;
 import com.guatex.sig.entidadesRespuesta.E_RespuestaDetalle;
 import com.guatex.sig.entidadesRespuesta.E_RespuestaGuia;
 import com.guatex.sig.utils.ConvertidorXML;
-import java.util.LinkedList;
 import java.util.List;
 import javax.jws.WebService;
 import javax.jws.WebMethod;
@@ -125,6 +125,14 @@ public class WSSIGCLIENTES {
                 }
             }
             return new ConvertidorXML().respuestaXMLDatosGuia(respuesta, departamento, municipio, puntoCobertura);
+        }
+        return new ConvertidorXML().BadRequest();
+    }
+
+    @WebMethod(operationName = "creacionGuiasMasivas")
+    public String creacionGuiasMasivas(@WebParam(name = "datos") String XML) {
+        if (!(XML == null ? "" : XML.trim()).isEmpty()) {
+            return new C_GuiasMasivas().creacionGuiasMasivas(XML.trim());
         }
         return new ConvertidorXML().BadRequest();
     }
