@@ -7,6 +7,7 @@ package com.guatex.sig.entidadesRespuesta;
 
 import com.guatex.sig.entidades.E_DatosGuiaMasiva;
 import com.guatex.sig.entidades.RespuestaGeneral;
+import com.guatex.sig.entidades.RespuestaTomaServicio;
 import java.util.LinkedList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -30,9 +31,19 @@ public class E_RespuestaGuiasMasivas {
     @XmlElement(name = "DATOSGUIA")
     private List<E_DatosGuiaMasiva> listaDatosGuia = new LinkedList<>();
 
+    @XmlElementWrapper(name = "LISTADOSERVICIOS")
+    @XmlElement(name = "SERVICIO")
+    private List<RespuestaTomaServicio> resupuestaTomaServicio;
+
     public E_RespuestaGuiasMasivas(RespuestaGeneral respuesta, List<E_DatosGuiaMasiva> listaDatosGuia) {
         this.listaDatosGuia = listaDatosGuia;
         this.respuesta = respuesta;
+    }
+
+    public E_RespuestaGuiasMasivas(RespuestaGeneral respuesta, List<E_DatosGuiaMasiva> listaDatosGuia, List<RespuestaTomaServicio> resupuestaTomaServicio) {
+        this.respuesta = respuesta;
+        this.listaDatosGuia = listaDatosGuia;
+        this.resupuestaTomaServicio = resupuestaTomaServicio;
     }
 
     public E_RespuestaGuiasMasivas() {
@@ -54,8 +65,16 @@ public class E_RespuestaGuiasMasivas {
         this.listaDatosGuia = listaDatosGuia;
     }
 
+    public List<RespuestaTomaServicio> getResupuestaTomaServicio() {
+        return resupuestaTomaServicio;
+    }
+
+    public void setResupuestaTomaServicio(List<RespuestaTomaServicio> resupuestaTomaServicio) {
+        this.resupuestaTomaServicio = resupuestaTomaServicio;
+    }
+
     @Override
     public String toString() {
-        return "E_RespuestaGuiasMasivas{" + "respuesta=" + respuesta + ", listaDatosGuia=" + listaDatosGuia + '}';
+        return "E_RespuestaGuiasMasivas{" + "respuesta=" + respuesta + ", listaDatosGuia=" + listaDatosGuia + ", resupuestaTomaServicio=" + resupuestaTomaServicio + '}';
     }
 }

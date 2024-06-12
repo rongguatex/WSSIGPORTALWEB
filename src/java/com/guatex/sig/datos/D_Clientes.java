@@ -263,7 +263,7 @@ public class D_Clientes {
         }
     }
 
-    public E_PuntoCobertura validarUbicacionCliCliente(String codcob, String codigoCliente) {
+    public E_PuntoCobertura obtenerUbicacionCliCliente(String codcob, String codigoCliente) {
 
         String query = "Select  C_MNCP,C_PTO FROM FACCLICLIENTES WHERE CODCOB = ? and CODIGO = ?";
 
@@ -285,7 +285,7 @@ public class D_Clientes {
             return null;
         }
     }
-
+    
     public String quitaNulo(String var) {
         return var == null ? "" : var.trim();
     }

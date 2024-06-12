@@ -16,6 +16,7 @@ public class E_TarifaMuni {
     private String _TIPODETARIFA;
     private String _TOTALZONASEXTRA;
     private String _COBERTURAEXTRA;
+    private String _CODIGOCOBERTURA;
 
     public String getNOMBRE() {
         return _NOMBRE;
@@ -67,8 +68,18 @@ public class E_TarifaMuni {
         }
     }
 
+    public String getCODIGOCOBERTURA() {
+        return _CODIGOCOBERTURA;
+    }
+
+    public void setCODIGOCOBERTURA(String _CODIGOCOBERTURA) {
+        this._CODIGOCOBERTURA = _CODIGOCOBERTURA;
+    }
+
     @Override
     public String toString() {
-        return "E_TarifaMuni{" + "_NOMBRE=" + _NOMBRE + ", _PUNTODECOBERTURA=" + _PUNTODECOBERTURA + ", _TIPODETARIFA=" + _TIPODETARIFA + ", _TOTALZONASEXTRA=" + _TOTALZONASEXTRA + ", _COBERTURAEXTRA=" + _COBERTURAEXTRA + '}';
+        return "E_TarifaMuni{" + "_NOMBRE=" + _NOMBRE + ", _PUNTODECOBERTURA=" + _PUNTODECOBERTURA + ", _TIPODETARIFA=" + _TIPODETARIFA + ", _TOTALZONASEXTRA=" + _TOTALZONASEXTRA + ", _COBERTURAEXTRA=" + _COBERTURAEXTRA + ", _CODIGOCOBERTURA=" + _CODIGOCOBERTURA + '}';
     }
+
+    
 }

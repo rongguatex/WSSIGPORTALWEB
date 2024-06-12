@@ -8,7 +8,9 @@ import com.guatex.sig.entidades.E_ImpresionSIG;
 import com.guatex.sig.entidades.E_Municipio;
 import com.guatex.sig.entidades.E_PuntoCobertura;
 import com.guatex.sig.entidades.E_Solicitud;
+import com.guatex.sig.entidades.E_Tarificador;
 import com.guatex.sig.entidades.E_respuestaClientes;
+import com.guatex.sig.entidades.RespuestaGeneral;
 import com.guatex.sig.entidadesRespuesta.E_RespuestaDetalle;
 import com.guatex.sig.entidadesRespuesta.E_RespuestaGuia;
 import java.io.StringReader;
@@ -260,6 +262,27 @@ public class ConvertidorXML {
         } else {
             throw new IllegalArgumentException("El parámetro xml no puede ser nulo o vacío.");
         }
+    }
+
+    public E_Tarificador parseoTarificador(String xml) {
+        E_Tarificador tarificador = new E_Tarificador();
+        tarificador.setCODIGO(getTag("CODIGO", xml));
+        tarificador.setDESCIPCION(getTag("DESCRIPCION", xml));
+
+        if (tarificador.getCODIGO().equalsIgnoreCase("S")) {
+            tarificador.setCODIGOENVIO(getTag("CODIGOENVIO", xml));
+            tarificador.setCANTPIEZAS(getTag("CANTPIEZAS", xml));
+            tarificador.setPESOENVIO(getTag("PESOENVIO", xml));
+            tarificador.setTARIFAENVIO(getTag("TARIFAENVIO", xml));
+        }
+        return tarificador;
+    }
+
+    public RespuestaGeneral parseoRespuestaTomaServicio(String xml) {
+        if (getTag("CODIGO", xml).equals("9999")) {
+            return new RespuestaGeneral("9999", getTag("DESCRIPCION", xml));
+        }
+        return new RespuestaGeneral("0000", "Guía insertada correctamente.");
     }
 
     /**

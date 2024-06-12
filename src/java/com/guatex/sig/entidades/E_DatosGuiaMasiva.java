@@ -58,6 +58,31 @@ public class E_DatosGuiaMasiva {
     @XmlElement(name = "ESTADO")
     private List<String> _ESTADO;
 
+    private String _PTODES;
+
+    /**
+     * Datos de remitente
+     */
+    private String _CODREM;
+    private String _NOMREM;
+    private String _TELREM;
+    private String _DIRREM;
+    private String _PTOREM;
+    private String _MUNIREM;
+    private String _CODCOB;
+
+    private String _CODTARIFA;
+    private String _COBEX;
+    private String _RUTAZONA;
+    private String _CODIGOCLIENTE;
+
+    private E_Cliente _CLIENTE;
+
+    private E_TarifaMuni _TARIFA_ORIGEN;
+    private E_TarifaMuni _TARIFA_DESTINO;
+    private List<E_DetalleLinea> _DETALLE;
+    private List<E_Tarificador> _TARIFICADOR;
+
     public String getCODIGO() {
         return _CODIGO;
     }
@@ -173,8 +198,140 @@ public class E_DatosGuiaMasiva {
         _ESTADO.addAll(states);
     }
 
-    @Override
-    public String toString() {
-        return "_CODIGO=" + _CODIGO + ", _NOMBRE=" + _NOMBRE + ", _TELEFONO=" + _TELEFONO + ", _DIRECCION=" + _DIRECCION + ", _CODIGO_DESTINATARIO=" + _CODIGO_DESTINATARIO + ", _MUNICIPIO_DESTINATARIO=" + _MUNICIPIO_DESTINATARIO + ", _TIPO_PIEZA_PESO=" + _TIPO_PIEZA_PESO + ", _DESCRIPCION=" + _DESCRIPCION + ", _LLAVE=" + _LLAVE + ", _COD=" + _COD + ", _PRECIO=" + _PRECIO + ", _ESTADO=" + _ESTADO;
+    public String getCODREM() {
+        return _CODREM;
     }
+
+    public void setCODREM(String _CODREM) {
+        this._CODREM = _CODREM;
+    }
+
+    public String getNOMREM() {
+        return _NOMREM;
+    }
+
+    public void setNOMREM(String _NOMREM) {
+        this._NOMREM = _NOMREM;
+    }
+
+    public String getTELREM() {
+        return _TELREM;
+    }
+
+    public void setTELREM(String _TELREM) {
+        this._TELREM = _TELREM;
+    }
+
+    public String getDIRREM() {
+        return _DIRREM;
+    }
+
+    public void setDIRREM(String _DIRREM) {
+        this._DIRREM = _DIRREM;
+    }
+
+    public String getPTOREM() {
+        return _PTOREM;
+    }
+
+    public void setPTOREM(String _PTOREM) {
+        this._PTOREM = _PTOREM;
+    }
+
+    public String getPTODES() {
+        return _PTODES;
+    }
+
+    public void setPTODES(String _PTODES) {
+        this._PTODES = _PTODES;
+    }
+
+    public String getMUNIREM() {
+        return _MUNIREM;
+    }
+
+    public void setMUNIREM(String _MUNIREM) {
+        this._MUNIREM = _MUNIREM;
+    }
+
+    public String getCODCOB() {
+        return _CODCOB;
+    }
+
+    public void setCODCOB(String _CODCOB) {
+        this._CODCOB = _CODCOB;
+    }
+
+    public String getCODTARIFA() {
+        return _CODTARIFA;
+    }
+
+    public void setCODTARIFA(String _CODTARIFA) {
+        this._CODTARIFA = _CODTARIFA;
+    }
+
+    public String getCOBEX() {
+        return _COBEX;
+    }
+
+    public void setCOBEX(String _COBEX) {
+        this._COBEX = _COBEX;
+    }
+
+    public String getRUTAZONA() {
+        return _RUTAZONA;
+    }
+
+    public void setRUTAZONA(String _RUTAZONA) {
+        this._RUTAZONA = _RUTAZONA;
+    }
+
+    public String getCODIGOCLIENTE() {
+        return _CODIGOCLIENTE;
+    }
+
+    public void setCODIGOCLIENTE(String _CODIGOCLIENTE) {
+        this._CODIGOCLIENTE = _CODIGOCLIENTE;
+    }
+
+    public E_TarifaMuni getTARIFA_ORIGEN() {
+        return _TARIFA_ORIGEN;
+    }
+
+    public void setTARIFA_ORIGEN(E_TarifaMuni _TARIFA_ORIGEN) {
+        this._TARIFA_ORIGEN = _TARIFA_ORIGEN;
+    }
+
+    public E_TarifaMuni getTARIFA_DESTINO() {
+        return _TARIFA_DESTINO;
+    }
+
+    public void setTARIFA_DESTINO(E_TarifaMuni _TARIFA_DESTINO) {
+        this._TARIFA_DESTINO = _TARIFA_DESTINO;
+    }
+
+    public List<E_DetalleLinea> getDETALLE() {
+        return _DETALLE;
+    }
+
+    public void setDETALLE(List<E_DetalleLinea> _DETALLE) {
+        this._DETALLE = _DETALLE;
+    }
+
+    public E_Cliente getCLIENTE() {
+        return _CLIENTE;
+    }
+
+    public void setCLIENTE(E_Cliente _CLIENTE) {
+        this._CLIENTE = _CLIENTE;
+    }
+
+    public List<E_Tarificador> getTARIFICADOR() {
+        return _TARIFICADOR;
+    }
+
+    public void setTARIFICADOR(List<E_Tarificador> _TARIFICADOR) {
+        this._TARIFICADOR = _TARIFICADOR;
+    }
+
 }

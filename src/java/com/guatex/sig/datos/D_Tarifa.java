@@ -49,7 +49,7 @@ public class D_Tarifa {
     }
 
     public E_TarifaMuni buscarTarifaMunicipio(E_Cliente cliente) {
-        String query = "SELECT m.NOMBRE, m.PUNTODECOBERTURA, m.TIPODETARIFA, m.TOTALZONASEXTRA, t.COBERTURAEXTRA  "
+        String query = "SELECT m.NOMBRE, m.PUNTODECOBERTURA, m.TIPODETARIFA, m.TOTALZONASEXTRA, t.COBERTURAEXTRA, m.CODIGO  "
                 + "FROM TRFMUNICIPIOS as m  "
                 + "left outer join TRFTARIFAS as t on isnull (m.TIPODETARIFA,'N')= t.CODIGO  "
                 + "WHERE m.PUNTODECOBERTURA = ? AND m.NOMBRE = ?";
@@ -68,6 +68,7 @@ public class D_Tarifa {
                     tarifa.setTIPODETARIFA(quitaNulo(rs.getString("TIPODETARIFA")));
                     tarifa.setTOTALZONASEXTRA(quitaNulo(rs.getString("TOTALZONASEXTRA")));
                     tarifa.setCOBERTURAEXTRA(quitaNulo(rs.getString("COBERTURAEXTRA")));
+                    tarifa.setCODIGOCOBERTURA(quitaNulo(rs.getString("CODIGO")));
                 }
                 return tarifa;
             }

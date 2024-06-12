@@ -19,9 +19,11 @@ import com.guatex.sig.entidades.E_PuntoCobertura;
 import com.guatex.sig.entidades.E_TarifaCliente;
 import com.guatex.sig.entidades.E_TarifaEnvio;
 import com.guatex.sig.entidades.E_TarifaMuni;
+import com.guatex.sig.entidades.E_Tarificador;
 import com.guatex.sig.entidades.E_ValoresCOD;
 import com.guatex.sig.entidades.E_respuestaClientes;
 import com.guatex.sig.entidades.RespuestaGeneral;
+import com.guatex.sig.entidades.RespuestaTomaServicio;
 import com.guatex.sig.entidadesRespuesta.E_RespuestaGuiasMasivas;
 import com.guatex.sig.utils.ConvertidorXML;
 import com.guatex.sig.utils.QuitaApostrofo;
@@ -67,6 +69,7 @@ public class C_GuiasMasivas {
                 cliente.setPADRE(datos.getCredenciales().getPadre());
                 cliente.setCODCOB(datos.getCredenciales().getCodcob());
                 cliente.setUNIFICACLI(parametrosRemitente.getUNIFICACLI());
+
                 cliente = new D_Clientes().ObtenerCliente(cliente).getDATOS_CLIENTES().get(0);
 
                 //obtener tarifa origen del remitente y valores parametrizados para COD
@@ -88,6 +91,13 @@ public class C_GuiasMasivas {
                  * For principal que realiza todas las validaciones.
                  */
                 for (E_DatosGuiaMasiva dato : datos.getListaDatosGuia()) {
+                    /**
+                     * se agrega datos del remitente
+                     */
+                    dato.setCLIENTE(cliente);
+                    dato.setCODCOB(datos.getCredenciales().getCodcob());
+                    dato.setTARIFA_ORIGEN(tarifaOrigen);
+
                     System.out.println("\n------------------------------------------ Nuevo objeto -------------------------------------------------");
                     boolean errUbicacion = false;
                     dato.getESTADO().clear();
@@ -105,23 +115,33 @@ public class C_GuiasMasivas {
                     }
 
                     if (!errUbicacion) {
-                        System.out.println("Si el código no es correcto se valida el coddes y mncpdes.");
-                        //valida el punto y codigo de ubicación que ha sido seteada por el usuario en el archivo
-                        E_PuntoCobertura ubicacion = new D_Clientes().validarUbicacionCliCliente(datos.getCredenciales().getCodcob(), dato.getCODIGO());
-                        if (!ubicacion.getPUNTO().isEmpty() && !ubicacion.getUBICACION().isEmpty()) {
-                            dato.setCODIGO_DESTINATARIO(ubicacion.getPUNTO());
-                            dato.setMUNICIPIO_DESTINATARIO(ubicacion.getUBICACION());
-                            System.out.println("validando ando: coddes [" + dato.getCODIGO_DESTINATARIO() + "] mncpdest [" + dato.getMUNICIPIO_DESTINATARIO() + "]");
-                        } else {
-                            dato.AddStateLastPosition("Campo código y municipio destinatario inválido.");
+                        if (dato.getCODIGO().isEmpty()) {
+                            E_PuntoCobertura ubicacion = new D_Clientes().obtenerUbicacionCliCliente(datos.getCredenciales().getCodcob(), dato.getCODIGO());
+                            if (!ubicacion.getPUNTO().isEmpty() && !ubicacion.getUBICACION().isEmpty()) {
+                                dato.setCODIGO_DESTINATARIO(ubicacion.getPUNTO());
+                                dato.setMUNICIPIO_DESTINATARIO(ubicacion.getUBICACION());
+                                System.out.println("validando ando: coddes [" + dato.getCODIGO_DESTINATARIO() + "] mncpdest [" + dato.getMUNICIPIO_DESTINATARIO() + "]");
+                            } else {
+                                dato.AddStateLastPosition("Campo código y municipio destinatario inválido.");
+                            }
                         }
 
-                        /**
-                         * Validación de TIPO PIEZA y PESO. parsea el valor tipo
-                         * pieza y peso que viene en formato 1-1-1, 1-1-1... n
-                         */
-                        lineasdetalle = parsearTPP(QuitaApostrofo.QuitaApostrofoNumerosExcel(quitaNulo(dato.getTIPO_PIEZA_PESO())));
+                        E_TarifaMuni destino = new D_Tarifa().buscarTarifaMunicipio(new E_Cliente(dato.getCODIGO_DESTINATARIO(), dato.getMUNICIPIO_DESTINATARIO()));
+                        if (destino == null) {
+                            dato.AddStateLastPosition("Código y municipio destinatario inválido.");
+                        } else {
+                            dato.setPTODES(destino.getCODIGOCOBERTURA());
+                        }
+
                     }
+
+                    System.out.println("Antes de ingresar viene - dato.gettipopiezapeso " + dato.getTIPO_PIEZA_PESO());
+                    /**
+                     * Validación de TIPO PIEZA y PESO. parsea el valor tipo
+                     * pieza y peso que viene en formato 1-1-1, 1-1-1... n
+                     */
+                    lineasdetalle = parsearTPP(QuitaApostrofo.QuitaApostrofoNumerosExcel(quitaNulo(dato.getTIPO_PIEZA_PESO())));
+                    dato.setDETALLE(lineasdetalle);
 
                     /**
                      * Validación de campos descripción y llave.
@@ -134,15 +154,18 @@ public class C_GuiasMasivas {
                      * Validacion de lineas detalle.
                      */
                     if (lineasdetalle != null) {
+                        System.out.println("antes de entrar a la función validarLineasDetalle " + lineasdetalle);
                         if (!lineasdetalle.isEmpty()) {
                             RespuestaGeneral respuesta = validarLineasDetalle(dato, lineasdetalle, datos.getCredenciales().getCodcob(), tarifaOrigen);
                             if (respuesta.getCodigo().equals("9999")) {
                                 dato.AddStatesErrorList(respuesta.getErrores());
                             }
                         } else {
-                            dato.AddStateLastPosition("Campo TIPO-PIEZA-PESO vacío.");
+                            System.out.println("Campo TIPO-PIEZA-PESO vacío o inválido");
+                            dato.AddStateLastPosition("Campo TIPO-PIEZA-PESO vacío o inválido..");
                         }
                     } else {
+                        System.out.println("Campo TIPO-PIEZA-PESO inválido");
                         dato.AddStateLastPosition("Campo TIPO-PIEZA-PESO inválido.");
                     }
 
@@ -169,26 +192,149 @@ public class C_GuiasMasivas {
                     }
                     System.out.println("VALIDACION COMPLETA  Errores: [" + dato.getESTADO().size() + "] " + dato.getESTADO().toString());
                 }
-                
-                System.out.println(datos.getListaDatosGuia());
 
                 /**
-                 * Final de las validaciones para devolver la respuesta.
+                 * Toma el servicio.
+                 *
+                 * Final de las validaciones para devolver la respuesta y llamar
+                 * al web service de toma de servicio.
                  */
                 String respuesta = "";
                 if (!existenErrores) {
-                    respuesta = parseoRespuestaXML(new RespuestaGeneral("0000", "Ok"), datos.getListaDatosGuia());
+                    List<RespuestaTomaServicio> respuestaTomaServicio = tomadeServicio(datos);
+                    respuesta = parseoRespuestaXML(new RespuestaGeneral("200", "Ok"), datos.getListaDatosGuia(), respuestaTomaServicio);
                 } else {
                     respuesta = parseoRespuestaXML(new RespuestaGeneral("9999", "Existen errores en el archivo excel."), datos.getListaDatosGuia());
                 }
 
-                System.out.println("[" + respuesta + "]");
+                return respuesta;
             }
         } else {
             System.out.println("Credenciales inválidas.");
             return new ConvertidorXML().BadRequest();
         }
-        return datos.getListaDatosGuia().toString();
+        return xml;
+    }
+
+    public List<RespuestaTomaServicio> tomadeServicio(E_GuiasMasivas objeto) {
+        List<RespuestaTomaServicio> respuesta = new ArrayList<>();
+        int nofila = 1;
+        for (E_DatosGuiaMasiva datos : objeto.getListaDatosGuia()) {
+            String XML
+                    = "<TOMA_SERVICIO>"
+                    + "	<USUARIO>" + objeto.getCredenciales().getUsuario() + "</USUARIO>"
+                    + "	<PASSWORD>" + objeto.getCredenciales().getPassword() + "</PASSWORD>"
+                    + "	<CODIGO_COBRO>" + objeto.getCredenciales().getCodcob() + "</CODIGO_COBRO>";
+            String llevaCOD = "<COD_VALORACOBRAR />";
+            String seabrepaquete = "<SEABREPAQUETE />";
+
+            if (datos.getCOD().equalsIgnoreCase("S")) {
+                llevaCOD = "<COD_VALORACOBRAR>S<COD_VALORACOBRAR>";
+                seabrepaquete = "<SEABREPAQUETE>S</SEABREPAQUETE >";
+            }
+
+            XML
+                    += "       	<SERVICIO>"
+                    + "		<CONTACTO></CONTACTO>"
+                    + "		<TIPO_USUARIO>C</TIPO_USUARIO>"
+                    + "		<NOMBRE_REMITENTE>" + datos.getNOMBRE() + "</NOMBRE_REMITENTE>"
+                    + "		<TELEFONO_REMITENTE>" + datos.getTELREM() + "</TELEFONO_REMITENTE>"
+                    + "		<DIRECCION_REMITENTE>" + datos.getDIRREM() + "</DIRECCION_REMITENTE>"
+                    + "		<MUNICIPIO_ORIGEN>A</MUNICIPIO_ORIGEN>"
+                    + "		<PUNTO_ORIGEN>A</PUNTO_ORIGEN>"
+                    + "		<ESTA_LISTO>S</ESTA_LISTO>"
+                    + "		<CODORIGEN>" + datos.getCLIENTE().getCOBERTURA().getCODIGOPUNTO() + "</CODORIGEN>"
+                    + "		<GUIA>"
+                    + "			<LLAVE_CLIENTE>" + datos.getLLAVE() + "</LLAVE_CLIENTE>"
+                    + "			" + llevaCOD + " "
+                    + "			" + seabrepaquete + ""
+                    + "			<CODIGO_COBRO_GUIA>" + objeto.getCredenciales().getCodcob() + "</CODIGO_COBRO_GUIA>"
+                    + "			<NOMBRE_DESTINATARIO>" + datos.getNOMBRE() + "</NOMBRE_DESTINATARIO>"
+                    + "			<TELEFONO_DESTINATARIO>" + datos.getTELEFONO() + "</TELEFONO_DESTINATARIO>"
+                    + "			<DIRECCION_DESTINATARIO>" + datos.getDIRECCION() + "</DIRECCION_DESTINATARIO>"
+                    + "			<MUNICIPIO_DESTINO>A</MUNICIPIO_DESTINO>"
+                    + "			<PUNTO_DESTINO>A</PUNTO_DESTINO>"
+                    + "			<DESCRIPCION_ENVIO>" + datos.getDESCRIPCION() + "</DESCRIPCION_ENVIO>"
+                    + "			<OBSERVACIONES></OBSERVACIONES>"
+                    + "			<RECOGE_OFICINA>N</RECOGE_OFICINA>"
+                    + "			<CODDESTINO>" + datos.getPTODES() + "</CODDESTINO>";
+
+            int linea = 1;
+            for (E_DetalleLinea lineaDetalle : datos.getDETALLE()) {
+                XML += "                                              <DETALLE_GUIA>"
+                        + "				<LINEA_DETALLE_GUIA>"
+                        + "					<PIEZAS_DETALLE>" + lineaDetalle.getPIEZAS() + "</PIEZAS_DETALLE>"
+                        + "					<TIPO_ENVIO_DETALLE>" + lineaDetalle.getTIPOENVIO() + "</TIPO_ENVIO_DETALLE>"
+                        + "					<PESO_DETALLE>" + lineaDetalle.getPESO() + "</PESO_DETALLE>"
+                        + "				</LINEA_DETALLE_GUIA>"
+                        + "			</DETALLE_GUIA>";
+                linea++;
+            }
+
+            XML += "			<OBSERVACIONES_ENTREGA></OBSERVACIONES_ENTREGA>"
+                    + "			<IMPRIME_GUIA>G</IMPRIME_GUIA>"
+                    + "			<CAMPO1 />"
+                    + "			<CAMPO2 />"
+                    + "			<CAMPO3 />"
+                    + "			<CAMPO4 />"
+                    + "		</GUIA>"
+                    + "	</SERVICIO>";
+
+            XML += "</TOMA_SERVICIO>";
+
+            respuesta.add(new RespuestaTomaServicio(nofila, linea - 1, new ConvertidorXML().parseoRespuestaTomaServicio(tomaServicio(XML))));
+            nofila++;
+        }
+
+        return respuesta;
+    }
+
+    public List<E_DatosGuiaMasiva> tarificacion(E_GuiasMasivas objeto, E_Cliente remitente) {
+        List<E_DatosGuiaMasiva> datos = objeto.getListaDatosGuia();
+
+        int fila = 1;
+        for (E_DatosGuiaMasiva dato : objeto.getListaDatosGuia()) {
+            int linea = 1;
+            for (E_DetalleLinea lineaDetalle : dato.getDETALLE()) {
+                System.out.println("Fila: " + fila + " linea detalle: " + linea + " ----- INICIO LINEA DETALLE------");
+
+                String XML
+                        = "<TARIFAWS>"
+                        + "  <VALIDACREDENCIALES>"
+                        + "    <CODIGO>" + objeto.getCredenciales().getPadre() + "</CODIGO>"
+                        + "    <USUARIO>" + objeto.getCredenciales().getCodigo() + "</USUARIO>"
+                        + "    <PASSWORD>" + objeto.getCredenciales().getPassword() + "</PASSWORD>"
+                        + "  </VALIDACREDENCIALES>"
+                        + "  <DATOSENTRADA>"
+                        + "     <CODCOB>" + objeto.getCredenciales().getCodcob() + "</CODCOB>"
+                        + "    <CODIGOENVIO>" + lineaDetalle.getTIPOENVIO() + "</CODIGOENVIO>"
+                        + "    <CANTPIEZAS>" + lineaDetalle.getPIEZAS() + "</CANTPIEZAS>"
+                        + "    <PESOENVIO>" + lineaDetalle.getPESO() + "</PESOENVIO>"
+                        + "    <CODORIGEN>" + dato.getCLIENTE().getCOBERTURA().getCODIGOPUNTO() + "</CODORIGEN>"
+                        + "    <CODDESTINO>" + dato.getPTODES() + "</CODDESTINO>"
+                        + "  </DATOSENTRADA>"
+                        + "</TARIFAWS>";
+
+                System.out.println("remitente " + remitente.getCOBERTURA().getCODIGOPUNTO());
+                System.out.println("el destinatario " + dato.getPTODES());
+
+                /**
+                 * Realiza el llamado a web service.
+                 */
+                E_Tarificador tarificador = new ConvertidorXML().parseoTarificador(tarificar(XML));
+
+                if (tarificador.getCODIGO().equalsIgnoreCase("S")) {
+                    dato.getTARIFICADOR().add(tarificador);
+                } else {
+                    dato.AddStateLastPosition(tarificador.getDESCIPCION());
+                }
+
+                linea++;
+            }
+            fila++;
+        }
+
+        return datos;
     }
 
     /**
@@ -201,12 +347,24 @@ public class C_GuiasMasivas {
      * encntrados en las validaciones.
      */
     public RespuestaGeneral validaCOD(E_FacCliente parametrosRemitente, E_DatosGuiaMasiva dato, E_ValoresCOD valorCod) {
-//        System.out.println("---> " + parametrosRemitente.toString());
-//        System.out.println("dato.getCOD()   " + dato.getCOD());
+        System.out.println("dato.getCOD()   " + dato.getCOD());
 
         List<String> Errores = new ArrayList<>();
 
-        dato.setPRECIO(QuitaApostrofo.QuitaApostrofoPrecio(dato.getPRECIO().trim()));
+        String precioCOD = "";
+
+        try {
+            precioCOD = QuitaApostrofo.QuitaApostrofoPrecio(dato.getPRECIO().trim());
+        } catch (Exception e) {
+            precioCOD = "0";
+            e.printStackTrace();
+            System.err.println("Ocurrio un error " + e.getMessage());
+        }
+
+        if (!precioCOD.isEmpty()) {
+            dato.setPRECIO(precioCOD);
+        }
+
         if (dato.getCOD().equalsIgnoreCase("S")) {
             if (parametrosRemitente.getLCOD().equalsIgnoreCase("S")) {
                 try {
@@ -223,18 +381,19 @@ public class C_GuiasMasivas {
                 }
             } else {
 
-                Errores.add("Campo COD: CODCOB no tiene habilitado usar COD.marcar con N");//[solo se pueden crear GUIAS CON COD para este CODCOB, marcar con S.]
+                Errores.add("Campo COD: CODCOB no tiene habilitado usar COD.marcar con N y dejar precio vacio.");//[solo se pueden crear GUIAS CON COD para este CODCOB, marcar con S.]
             }
         } else {
             if (quitaNulo(parametrosRemitente.getLCOD()).equalsIgnoreCase("N")) {
-                try {
-                    double precio = dato.getPRECIO().equals("") ? 0 : Double.parseDouble(dato.getPRECIO());
-                    if (precio > 0) {
-                        Errores.add("PRECIO debe de estar vacio.");
+                if (precioCOD.matches("[^.0-9]")) {
+                    try {
+                        double precio = dato.getPRECIO().equals("") ? 0 : Double.parseDouble(dato.getPRECIO());
+                        if (precio > 0) {
+                            Errores.add("PRECIO debe de estar vacio.");
+                        }
+                    } catch (NumberFormatException e) {
+                        Errores.add("Campo PRECIO inválido.");
                     }
-                } catch (NumberFormatException e) {
-                    e.printStackTrace();
-                    Errores.add("Campo PRECIO inválido.");
                 }
             }
         }
@@ -275,7 +434,7 @@ public class C_GuiasMasivas {
                     }
                 } else {
                     datoFila.AddStateFirstPosition("Código de cliente no existe o es inválido");
-                    System.out.println("Código de cliente inválido " + datoFila.getESTADO());
+//                    System.out.println("Código de cliente inválido " + datoFila.getESTADO());
                 }
             } else {
                 if (datoFila.getNOMBRE().isEmpty()) {
@@ -493,6 +652,21 @@ public class C_GuiasMasivas {
      * @param datos
      * @return - Cadena XML en formato de la clase E_RespuestaGuiasMasivas.
      */
+    public String parseoRespuestaXML(RespuestaGeneral respuesta, List<E_DatosGuiaMasiva> datos, List<RespuestaTomaServicio> respuestaTomaServicio) {
+        try {
+            JAXBContext contexto = JAXBContext.newInstance(E_RespuestaGuiasMasivas.class);
+            Marshaller marshaller = contexto.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
+            StringWriter stringWriter = new StringWriter();
+            marshaller.marshal(new E_RespuestaGuiasMasivas(respuesta, datos, respuestaTomaServicio), stringWriter);
+            return stringWriter.toString();
+        } catch (JAXBException e) {
+            System.err.println("Ocurrio un error " + e.getMessage());
+        }
+        return null;
+    }
+
     public String parseoRespuestaXML(RespuestaGeneral respuesta, List<E_DatosGuiaMasiva> datos) {
         try {
             JAXBContext contexto = JAXBContext.newInstance(E_RespuestaGuiasMasivas.class);
@@ -504,11 +678,24 @@ public class C_GuiasMasivas {
             return stringWriter.toString();
         } catch (JAXBException e) {
             e.printStackTrace();
+            System.err.println("Ocurrio un error " + e.getMessage());
         }
         return null;
     }
-    
+
     public static String concatenarEstados(List<String> estados) {
         return estados.stream().collect(Collectors.joining(", "));
+    }
+
+    private static String tarificar(java.lang.String cadenaxml) {
+        com.guatex.sig.utils.WSPGTarificador_Service service = new com.guatex.sig.utils.WSPGTarificador_Service();
+        com.guatex.sig.utils.WSPGTarificador port = service.getWSPGTarificadorPort();
+        return port.tarificar(cadenaxml);
+    }
+
+    private static String tomaServicio(java.lang.String parameter) {
+        com.guatex.tomaservicio.service.WSPGTomaServicio_Service service = new com.guatex.tomaservicio.service.WSPGTomaServicio_Service();
+        com.guatex.tomaservicio.service.WSPGTomaServicio port = service.getWSPGTomaServicioPort();
+        return port.tomaServicio(parameter);
     }
 }
