@@ -289,54 +289,6 @@ public class C_GuiasMasivas {
         return respuesta;
     }
 
-    public List<E_DatosGuiaMasiva> tarificacion(E_GuiasMasivas objeto, E_Cliente remitente) {
-        List<E_DatosGuiaMasiva> datos = objeto.getListaDatosGuia();
-
-        int fila = 1;
-        for (E_DatosGuiaMasiva dato : objeto.getListaDatosGuia()) {
-            int linea = 1;
-            for (E_DetalleLinea lineaDetalle : dato.getDETALLE()) {
-                System.out.println("Fila: " + fila + " linea detalle: " + linea + " ----- INICIO LINEA DETALLE------");
-
-                String XML
-                        = "<TARIFAWS>"
-                        + "  <VALIDACREDENCIALES>"
-                        + "    <CODIGO>" + objeto.getCredenciales().getPadre() + "</CODIGO>"
-                        + "    <USUARIO>" + objeto.getCredenciales().getCodigo() + "</USUARIO>"
-                        + "    <PASSWORD>" + objeto.getCredenciales().getPassword() + "</PASSWORD>"
-                        + "  </VALIDACREDENCIALES>"
-                        + "  <DATOSENTRADA>"
-                        + "     <CODCOB>" + objeto.getCredenciales().getCodcob() + "</CODCOB>"
-                        + "    <CODIGOENVIO>" + lineaDetalle.getTIPOENVIO() + "</CODIGOENVIO>"
-                        + "    <CANTPIEZAS>" + lineaDetalle.getPIEZAS() + "</CANTPIEZAS>"
-                        + "    <PESOENVIO>" + lineaDetalle.getPESO() + "</PESOENVIO>"
-                        + "    <CODORIGEN>" + dato.getCLIENTE().getCOBERTURA().getCODIGOPUNTO() + "</CODORIGEN>"
-                        + "    <CODDESTINO>" + dato.getPTODES() + "</CODDESTINO>"
-                        + "  </DATOSENTRADA>"
-                        + "</TARIFAWS>";
-
-                System.out.println("remitente " + remitente.getCOBERTURA().getCODIGOPUNTO());
-                System.out.println("el destinatario " + dato.getPTODES());
-
-                /**
-                 * Realiza el llamado a web service.
-                 */
-                E_Tarificador tarificador = new ConvertidorXML().parseoTarificador(tarificar(XML));
-
-                if (tarificador.getCODIGO().equalsIgnoreCase("S")) {
-                    dato.getTARIFICADOR().add(tarificador);
-                } else {
-                    dato.AddStateLastPosition(tarificador.getDESCIPCION());
-                }
-
-                linea++;
-            }
-            fila++;
-        }
-
-        return datos;
-    }
-
     /**
      * Método valida que si el cliente usa COD con el CODCOB seleccionado.
      *
@@ -685,12 +637,6 @@ public class C_GuiasMasivas {
 
     public static String concatenarEstados(List<String> estados) {
         return estados.stream().collect(Collectors.joining(", "));
-    }
-
-    private static String tarificar(java.lang.String cadenaxml) {
-        com.guatex.sig.utils.WSPGTarificador_Service service = new com.guatex.sig.utils.WSPGTarificador_Service();
-        com.guatex.sig.utils.WSPGTarificador port = service.getWSPGTarificadorPort();
-        return port.tarificar(cadenaxml);
     }
 
     private static String tomaServicio(java.lang.String parameter) {
