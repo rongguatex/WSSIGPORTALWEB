@@ -45,4 +45,9 @@ public class E_respuestaClientes {
         this._DATOS_CLIENTES = _DATOS_CLIENTES;
     }
 
+    @Override
+    public String toString() {
+        return "E_respuestaClientes{" + "_CODIGO=" + _CODIGO + ", _MENSAJE=" + _MENSAJE + ", _DATOS_CLIENTES=" + _DATOS_CLIENTES + '}';
+    }
+
 }

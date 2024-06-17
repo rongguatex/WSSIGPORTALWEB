@@ -1,0 +1,34 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.guatex.sig.datos;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+/**
+ *
+ * @author RGALICIA
+ */
+public class D_GuiasHijas {
+
+    public boolean eliminaHijas(String noguia) {
+        String query = "DELETE JGUIASHIJAS WHERE HNOGUIA = ? ";
+        try (Connection con = new Conexion().AbrirConexion();
+                PreparedStatement ps = con.prepareStatement(query)) {
+            ps.setString(1, quitaNulo(noguia));
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Ocurrio un error " + e.getLocalizedMessage());
+            return false;
+        }
+    }
+
+    private String quitaNulo(String var) {
+        return var == null ? ""
+                : var.trim().replaceAll("NULL", "").replaceAll("null", "");
+    }
+}
