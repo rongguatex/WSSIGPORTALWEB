@@ -1,11 +1,16 @@
 package com.guatex.sig.utils;
 
+import com.guatex.sig.entidades.EReporteClienteXML;
 import com.guatex.sig.entidades.EReporteClientes;
 import com.guatex.sig.entidades.E_Cliente;
 import com.guatex.sig.entidades.E_Municipio;
 import com.guatex.sig.entidades.E_respuestaClientes;
+import java.io.StringWriter;
 import java.util.LinkedList;
 import java.util.List;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 
 public class ConvertidorXML {
 
@@ -124,6 +129,43 @@ public class ConvertidorXML {
         return xml;
     }
 
+    public String respXMLListadoClientes(List<EReporteClienteXML> clientes) {
+        try {
+            JAXBContext jaxbContext = JAXBContext.newInstance(ClientesWrapper.class);
+            Marshaller marshaller = jaxbContext.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+
+            ClientesWrapper wrapper = new ClientesWrapper();
+            wrapper.setClientes(clientes);
+
+            StringWriter writer = new StringWriter();
+            marshaller.marshal(wrapper, writer);
+            return writer.toString();
+        } catch (JAXBException e) {
+            e.printStackTrace();
+            return "<RespuestaClientes><codigo>002</codigo><mensaje>Error al convertir los datos a XML: " + e.getMessage() + "</mensaje></RespuestaClientes>";
+        }
+    }
+
+    // Renamed method to avoid clash
+    public String respXMLClientes(List<EReporteClienteXML> clientes) {
+        try {
+            JAXBContext jaxbContext = JAXBContext.newInstance(ClientesWrapper.class);
+            Marshaller marshaller = jaxbContext.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+
+            ClientesWrapper wrapper = new ClientesWrapper();
+            wrapper.setClientes(clientes);
+
+            StringWriter writer = new StringWriter();
+            marshaller.marshal(wrapper, writer);
+            return writer.toString();
+        } catch (JAXBException e) {
+            e.printStackTrace();
+            return "<RespuestaClientes><codigo>002</codigo><mensaje>Error al convertir los datos a XML: " + e.getMessage() + "</mensaje></RespuestaClientes>";
+        }
+    }
+
     public String getTag(String tag, String dato) {
         String respuesta = dato;
         if (dato.contains("<" + tag + ">")) {
@@ -135,4 +177,5 @@ public class ConvertidorXML {
     public String addTag(String tag, String dato) {
         return "<" + tag + ">" + dato + "</" + tag + ">";
     }
+
 }

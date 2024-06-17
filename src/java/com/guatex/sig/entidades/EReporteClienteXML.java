@@ -5,11 +5,15 @@
  */
 package com.guatex.sig.entidades;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  *
  * @author PJUNIOR-3
  */
-public class EReporteClientes {
+@XmlRootElement
+public class EReporteClienteXML {
 
     private String CODIGO = "";
     private String CODCOB = "";
@@ -28,16 +32,10 @@ public class EReporteClientes {
     private String RECOGEOFICINA = "";
     private String DEPTODES = "";
     private String PADRE = "";
-    private String ESTADO = "";
+    
+     private String ESTADO = "";
 
-    public String getCODIGO() {
-        return CODIGO;
-    }
-
-    public void setCODIGO(String CODIGO) {
-        this.CODIGO = CODIGO;
-    }
-
+    @XmlElement(name = "CODCOB")
     public String getCODCOB() {
         return CODCOB;
     }
@@ -46,6 +44,16 @@ public class EReporteClientes {
         this.CODCOB = CODCOB;
     }
 
+    @XmlElement(name = "CODIGO")
+    public String getCODIGO() {
+        return CODIGO;
+    }
+
+    public void setCODIGO(String CODIGO) {
+        this.CODIGO = CODIGO;
+    }
+
+    @XmlElement(name = "NOMBRE")
     public String getNOMBRE() {
         return NOMBRE;
     }
@@ -54,6 +62,7 @@ public class EReporteClientes {
         this.NOMBRE = NOMBRE;
     }
 
+    @XmlElement(name = "CONTACTO")
     public String getCONTACTO() {
         return CONTACTO;
     }
@@ -62,46 +71,7 @@ public class EReporteClientes {
         this.CONTACTO = CONTACTO;
     }
 
-    public String getDIRECCION() {
-        return DIRECCION;
-    }
-
-    public void setDIRECCION(String DIRECCION) {
-        this.DIRECCION = DIRECCION;
-    }
-
-    public String getMUNICIPIO() {
-        return MUNICIPIO;
-    }
-
-    public void setMUNICIPIO(String MUNICIPIO) {
-        this.MUNICIPIO = MUNICIPIO;
-    }
-
-    public String getPUNTO() {
-        return PUNTO;
-    }
-
-    public void setPUNTO(String PUNTO) {
-        this.PUNTO = PUNTO;
-    }
-
-    public String getEMAIL() {
-        return EMAIL;
-    }
-
-    public void setEMAIL(String EMAIL) {
-        this.EMAIL = EMAIL;
-    }
-
-    public String getTELEFONO() {
-        return TELEFONO;
-    }
-
-    public void setTELEFONO(String TELEFONO) {
-        this.TELEFONO = TELEFONO;
-    }
-
+    @XmlElement(name = "NIT")
     public String getNIT() {
         return NIT;
     }
@@ -110,6 +80,34 @@ public class EReporteClientes {
         this.NIT = NIT;
     }
 
+    @XmlElement(name = "EMAIL")
+    public String getEMAIL() {
+        return EMAIL;
+    }
+
+    public void setEMAIL(String EMAIL) {
+        this.EMAIL = EMAIL;
+    }
+
+    @XmlElement(name = "TELEFONO")
+    public String getTELEFONO() {
+        return TELEFONO;
+    }
+
+    public void setTELEFONO(String TELEFONO) {
+        this.TELEFONO = TELEFONO;
+    }
+
+    @XmlElement(name = "DIRECCION")
+    public String getDIRECCION() {
+        return DIRECCION;
+    }
+
+    public void setDIRECCION(String DIRECCION) {
+        this.DIRECCION = DIRECCION;
+    }
+
+    @XmlElement(name = "CAMPO1")
     public String getCAMPO1() {
         return CAMPO1;
     }
@@ -118,6 +116,7 @@ public class EReporteClientes {
         this.CAMPO1 = CAMPO1;
     }
 
+    @XmlElement(name = "CAMPO2")
     public String getCAMPO2() {
         return CAMPO2;
     }
@@ -126,6 +125,7 @@ public class EReporteClientes {
         this.CAMPO2 = CAMPO2;
     }
 
+    @XmlElement(name = "CAMPO3")
     public String getCAMPO3() {
         return CAMPO3;
     }
@@ -134,6 +134,7 @@ public class EReporteClientes {
         this.CAMPO3 = CAMPO3;
     }
 
+    @XmlElement(name = "CAMPO4")
     public String getCAMPO4() {
         return CAMPO4;
     }
@@ -142,6 +143,25 @@ public class EReporteClientes {
         this.CAMPO4 = CAMPO4;
     }
 
+    @XmlElement(name = "MUNICIPIO")
+    public String getMUNICIPIO() {
+        return MUNICIPIO;
+    }
+
+    public void setMUNICIPIO(String MUNICIPIO) {
+        this.MUNICIPIO = MUNICIPIO;
+    }
+
+    @XmlElement(name = "PUNTO")
+    public String getPUNTO() {
+        return PUNTO;
+    }
+
+    public void setPUNTO(String PUNTO) {
+        this.PUNTO = PUNTO;
+    }
+
+    @XmlElement(name = "RECOGEOFICINA")
     public String getRECOGEOFICINA() {
         return RECOGEOFICINA;
     }
@@ -150,14 +170,7 @@ public class EReporteClientes {
         this.RECOGEOFICINA = RECOGEOFICINA;
     }
 
-    public String getPADRE() {
-        return PADRE;
-    }
-
-    public void setPADRE(String PADRE) {
-        this.PADRE = PADRE;
-    }
-
+    @XmlElement(name = "DEPTODES")
     public String getDEPTODES() {
         return DEPTODES;
     }
@@ -166,6 +179,15 @@ public class EReporteClientes {
         this.DEPTODES = DEPTODES;
     }
 
+    @XmlElement(name = "PADRE")
+    public String getPADRE() {
+        return PADRE;
+    }
+
+    public void setPADRE(String PADRE) {
+        this.PADRE = PADRE;
+    }
+ @XmlElement(name = "ESTADO")
     public String getESTADO() {
         return ESTADO;
     }

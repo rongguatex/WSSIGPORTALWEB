@@ -344,6 +344,27 @@ public class DReporteClientes {
         return existe;
     }
 
+    public boolean verificoPuntoExistente(EReporteClientes cliente) {
+        boolean existe = false;
+
+        String query = "SELECT * FROM TRFMUNICIPIOS WHERE PUNTODECOBERTURA = ? AND NOMBRE = ?";
+        try (Connection con = new Conexion().AbrirConexion();
+                PreparedStatement ps = con.prepareStatement(query)) {
+
+            ps.setString(1, cliente.getPUNTO());
+            ps.setString(2, cliente.getMUNICIPIO());
+            try (ResultSet rs = ps.executeQuery()) {
+                existe = rs.next();
+            }
+
+        } catch (Exception ex) {
+            System.out.println("Ocurrió un error al intentar validar el punto de cobertura");
+            ex.printStackTrace();
+        }
+
+        return existe;
+    }
+
     public int insertarClientes(EReporteClientes clientes) {
 
         int rowsAffected = 0;
@@ -351,9 +372,6 @@ public class DReporteClientes {
         PreparedStatement ps = null;
 
         String Query = "";
-
-        System.out.println("clientes " + clientes.getMUNICIPIO() + " - " + clientes.getPUNTO());
-        System.out.println("recoge oficina " + clientes.getRECOGEOFICINA());
 
         try {
 
@@ -384,6 +402,68 @@ public class DReporteClientes {
             ps.setString(15, clientes.getDEPTODES());
             ps.setString(16, clientes.getMUNICIPIO());
             ps.setString(17, clientes.getPUNTO());
+            //System.out.println("lo que llevo en MUNICIPIO: [" + clientes.getMUNICIPIO() + "] [" + clientes.getPUNTO() + "]");
+            rowsAffected = ps.executeUpdate();
+
+        } catch (Exception ex) {
+            System.out.println("Error al intentar insertar cliente");
+            ex.printStackTrace();
+
+        } finally {
+            try {
+                if (ps != null) {
+                    ps.close();
+
+                }
+                if (con != null) {
+                    con.close();
+
+                }
+            } catch (Exception ex) {
+                System.out.println("Error al intentar cerrar la BD");
+                ex.printStackTrace();
+            }
+        }
+        return rowsAffected;
+
+    }
+
+    public int insertarClientesMasivo(EReporteClientes clientes) {
+
+        int rowsAffected = 0;
+        Connection con = null;
+        PreparedStatement ps = null;
+
+        String Query = "";
+
+//        System.out.println("clientes " + clientes.getMUNICIPIO() + " - " + clientes.getPUNTO());
+//        System.out.println("recoge oficina " + clientes.getRECOGEOFICINA());
+        try {
+
+            Query = " INSERT INTO FACCLICLIENTES ("
+                    + " CODIGO, C_NOMBRE, C_CONTACTO, C_DIRECC , C_EMAIL, C_TEL, C_NIT, "
+                    + "  CAMPO1, CAMPO2, CAMPO3, CAMPO4, PADRE, C_MNCP, C_PTO , CODCOB)"
+                    + "  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ";
+
+            con = new Conexion().AbrirConexion();
+            ps = con.prepareStatement(Query);
+
+            ps.setString(1, clientes.getCODIGO());
+            ps.setString(2, clientes.getNOMBRE());
+            ps.setString(3, clientes.getCONTACTO());
+            ps.setString(4, clientes.getDIRECCION());
+            ps.setString(5, clientes.getEMAIL());
+            ps.setString(6, clientes.getTELEFONO());
+            ps.setString(7, clientes.getNIT());
+            ps.setString(8, clientes.getCAMPO1());
+            ps.setString(9, clientes.getCAMPO2());
+            ps.setString(10, clientes.getCAMPO3());
+            ps.setString(11, clientes.getCAMPO4());
+            ps.setString(12, clientes.getPADRE()); //
+            ps.setString(13, clientes.getMUNICIPIO());
+            ps.setString(14, clientes.getPUNTO());
+            ps.setString(15, clientes.getCODCOB());
+
             System.out.println("lo que llevo en MUNICIPIO: [" + clientes.getMUNICIPIO() + "] [" + clientes.getPUNTO() + "]");
             rowsAffected = ps.executeUpdate();
 
@@ -560,6 +640,51 @@ public class DReporteClientes {
         }
 
         return cliente;
+    }
+
+    public boolean validarClienteExiste(EReporteClientes cliente) {
+        boolean existeCliente = false;
+
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        String Query = " SELECT CODIGO "
+                + " FROM FACCLICLIENTES "
+                + " WHERE CODIGO = ? AND PADRE = ? AND CODCOB = ? ";
+
+        try {
+            con = new Conexion().AbrirConexion();
+            ps = con.prepareStatement(Query);
+            ps.setString(1, cliente.getCODIGO());
+            ps.setString(2, cliente.getCODCOB());
+            ps.setString(3, cliente.getCODCOB());
+
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                existeCliente = true;
+                System.out.println("SI EXISTE CLIENTE!!!");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return existeCliente;
     }
 
     private String quitaNulo(String dato) {
