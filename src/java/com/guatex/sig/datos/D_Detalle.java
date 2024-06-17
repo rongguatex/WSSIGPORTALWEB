@@ -10,6 +10,7 @@ import com.guatex.sig.entidadesRespuesta.E_RespuestaDetalle;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -85,6 +86,19 @@ public class D_Detalle {
                         return 0;
                     }
                 });
+    }
+
+    public boolean EliminarGuiasDetalle(String noguia) {
+        noguia = quitaNulo(noguia);
+        String query = "DELETE FROM JGUIASDETALLE WHERE NOGUIA = ?";
+        try (Connection con = new Conexion().AbrirConexion();
+                PreparedStatement ps = con.prepareStatement(query)) {
+            ps.setString(1, noguia);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return false;
+        }
     }
 
     /**

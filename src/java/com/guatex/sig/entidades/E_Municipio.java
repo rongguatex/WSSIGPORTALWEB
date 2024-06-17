@@ -3,8 +3,8 @@ package com.guatex.sig.entidades;
 public class E_Municipio {
 
     private String _CODIGO;
-    private String _NOMBRE = "";
-    private String _TIPO = "";
+    private String _NOMBRE;
+    private String _TIPO;
 
     public String getCODIGO() {
         return _CODIGO;
@@ -32,6 +32,6 @@ public class E_Municipio {
 
     @Override
     public String toString() {
-        return this._NOMBRE;
-    }
+        return "E_Municipio{" + "_CODIGO=" + _CODIGO + ", _NOMBRE=" + _NOMBRE + ", _TIPO=" + _TIPO + '}';
+    }    
 }

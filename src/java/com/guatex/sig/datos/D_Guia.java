@@ -5,11 +5,13 @@
  */
 package com.guatex.sig.datos;
 
+import com.guatex.sig.entidades.E_Credenciales;
 import com.guatex.sig.entidades.E_Guia;
 import com.guatex.sig.entidadesRespuesta.E_RespuestaGuia;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -105,37 +107,41 @@ public class D_Guia {
      * @param noguia - número de guía a buscar
      * @return - objeto con código de respuesta y datos de la guía.
      */
-    public E_RespuestaGuia obtenerDatosxGuiaNoImpresa(String noguia) {
-        noguia = quitaNulo(noguia);
-        if (!noguia.isEmpty()) {
+    public E_RespuestaGuia obtenerDatosxGuiaNoImpresa(E_Credenciales datos) {
+        datos.setNoguia(quitaNulo(datos.getNoguia()));
+        if (!datos.getNoguia().isEmpty()) {
             List<E_Guia> datosGuia = new LinkedList<>();
-            String query = " SELECT  "
-                    + "         J.IDGUIA, J.NOGUIA, J.CODCOB, J.IDSERVICIO, "
-                    + "         CONVERT(VARCHAR(10), J.FECHA, 103) AS FECHA, "
-                    + "         J.CODREM, J.NOMREM, J.TELREM, J.DIRREM, "
-                    + "         J.CODDES, J.NOMDES, J.TELDES, J.DIRDES, "
-                    + "         J.PTOORI, J.PTODES, J.MNCPORI, J.MNCPDES, "
-                    + "         J.LLAVECLIENTE, J.DESCRENV, J.CONTACTO, J.EMAIL, "
-                    + "         J.PIEZAS, J.PESO, J.TIPTAR,  "
-                    + "         J.COBEX, J.SEGURO, J.DECLARADO, J.COD_VALORACOBRAR, "
-                    + "         ISNULL(SEABREPAQUETE, 'N') SEABREPAQUETE, "
-                    + "         CONTSEG, FECOPE, HORAOPE,  RECOGEOFICINA, "
-                    + "         CAMPO1, CAMPO2, CAMPO3, CAMPO4, "
-                    + "         CODORIGEN, CODDESTINO,  "
-                    + "         OBSERVACIONES, OBSERVACIONESENTRE "
-                    + " FROM JGUIAS J  "
-                    + " WHERE J.NOGUIA = ?  "
-                    + " AND ISNULL(J.IMPRESO, 'N') != 'P' "
-                    + " AND NOT EXISTS (  "
-                    + "    SELECT   "
-                    + "         NOGUIA   "
-                    + "    FROM GUIAS G   "
+            String query = " SELECT   "
+                    + "    J.IDGUIA, J.NOGUIA, J.CODCOB, J.IDSERVICIO,  "
+                    + "    CONVERT(VARCHAR(10), J.FECHA, 103) AS FECHA,  "
+                    + "    J.CODREM, J.NOMREM, J.TELREM, J.DIRREM,  "
+                    + "    J.CODDES, J.NOMDES, J.TELDES, J.DIRDES,  "
+                    + "    J.PTOORI, J.PTODES, J.MNCPORI, J.MNCPDES,  "
+                    + "    J.LLAVECLIENTE, J.DESCRENV, J.CONTACTO, J.EMAIL,  "
+                    + "    J.PIEZAS, J.PESO, J.TIPTAR,   "
+                    + "    J.COBEX, J.SEGURO, J.DECLARADO, J.COD_VALORACOBRAR,  "
+                    + "    ISNULL(J.SEABREPAQUETE,'N') SEABREPAQUETE,  "
+                    + "    J.CONTSEG, J.FECOPE, J.HORAOPE,  J.RECOGEOFICINA,  "
+                    + "    J.CAMPO1, J.CAMPO2, J.CAMPO3, J.CAMPO4,  "
+                    + "    J.CODORIGEN, J.CODDESTINO,   "
+                    + "    J.OBSERVACIONES, J.OBSERVACIONESENTRE  "
+                    + "FROM JGUIAS J   "
+                    + "INNER JOIN FACCLIENTES FC ON J.CODCOB = FC.CODIGO  "
+                    + "WHERE NOGUIA = ? "
+                    + "AND FC.PADRE = ? "
+                    + "AND ISNULL(J.IMPRESO, 'N') != 'P' "
+                    + "AND NOT EXISTS ( "
+                    + "    SELECT "
+                    + "        NOGUIA "
+                    + "    FROM GUIAS G "
                     + "    WHERE G.NOGUIA = J.NOGUIA  "
-                    + " ) ";
+                    + ") ";
 
             try (Connection con = new Conexion().AbrirConexion();
                     PreparedStatement ps = con.prepareStatement(query)) {
-                ps.setString(1, noguia);
+                System.out.println(datos);
+                ps.setString(1, datos.getNoguia());
+                ps.setString(2, datos.getPadre());
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
                         E_Guia guia = new E_Guia();
@@ -200,6 +206,65 @@ public class D_Guia {
         return new E_RespuestaGuia("400", null);
     }
 
+    public E_RespuestaGuia actualizaDatosGuia(E_Guia datos) {
+        String query = ""
+                + " IF EXISTS (SELECT NOGUIA FROM JGUIAS J WHERE J.NOGUIA = ? AND J.IMPRESO = 'G')  "//1
+                + " BEGIN  "
+                + "    UPDATE JGUIAS SET   "
+                + "        FECHA = GETDATE(),  "
+                + "        CODREM = ? , NOMREM = ?, TELREM = ?, DIRREM = ?,  "//2-5
+                + "        CODDES =?, NOMDES = ?, TELDES = ?, DIRDES = ?,  "//6-9
+                + "        PTOORI = ?, PTODES = ?, CODCOB = ?, OBSERVACIONES = ?,  "//10-13
+                + "        FECOPE = GETDATE(), HORAOPE = SUBSTRING(CONVERT(nvarchar(30), GETDATE(), 108),1,5),  "
+                + "        COBEX = ?, DESCRENV = ?, RECOGEOFICINA = ?,  "//14-16
+                + "        MNCPORI = ?, MNCPDES = ?, CONTACTO = ?, LLAVECLIENTE = ?, rutzona = ?, IMPRESO = ?,  "//17-22
+                + "        CAMPO1 = ?, CAMPO2 = ?, CAMPO3 = ?, CAMPO4 = ?,  " //23-26
+                + "        CODORIGEN = ?, CODDESTINO = ?, OBSERVACIONESENTRE = ?  "//27-29
+                + "    WHERE NOGUIA = ?  "//30
+                + " END ";
+        //faltan los datos cod, seguro, contseg, declarado
+        try (Connection con = new Conexion().AbrirConexion();
+                PreparedStatement ps = con.prepareStatement(query)) {
+            ps.setString(1, datos.getNOGUIA());
+            ps.setString(2, datos.getCODREM());
+            ps.setString(3, datos.getNOMREM());
+            ps.setString(4, datos.getTELREM());
+            ps.setString(5, datos.getDIRREM());
+            ps.setString(6, datos.getCODDES());
+            ps.setString(7, datos.getNOMDES());
+            ps.setString(8, datos.getTELDES());
+            ps.setString(9, datos.getDIRDES());
+            ps.setString(10, datos.getPTOORI());
+            ps.setString(11, datos.getPTODES());
+            ps.setString(12, datos.getCODCOB());
+            ps.setString(13, datos.getOBSERVACIONES());
+            ps.setString(14, datos.getCOBEX());
+            ps.setString(15, datos.getDESCRENV());
+            ps.setString(16, datos.getRECOGEOFICINA());
+            ps.setString(17, datos.getMNCPORI());
+            ps.setString(18, datos.getMNCPDES());
+            ps.setString(19, datos.getCONTACTO());
+            ps.setString(20, datos.getLLAVECLIENTE());
+            ps.setString(21, datos.getRUTAZONA());
+            ps.setString(22, datos.getIMPRESO());
+            ps.setString(23, datos.getCAMPO1());
+            ps.setString(24, datos.getCAMPO2());
+            ps.setString(25, datos.getCAMPO3());
+            ps.setString(26, datos.getCAMPO4());
+            ps.setString(27, datos.getCODORIGEN());
+            ps.setString(28, datos.getCODDESTINO());
+            ps.setString(29, datos.getOBSERVACIONESENTRE());
+            ps.setString(30, datos.getNOGUIA());
+            if (ps.executeUpdate() > 0) {
+                return new E_RespuestaGuia("200");
+            }
+            return new E_RespuestaGuia("204");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new E_RespuestaGuia("500");
+        }
+    }
+
     /**
      * Este método sirve para obtener solamente el valor del campo1,2, 3 y 4. El
      * fin es quitar todo lo que venga antes del caracter "/" y obtener
@@ -240,6 +305,11 @@ public class D_Guia {
      * @return devuelve un valor vacío
      */
     private String quitaNulo(String var) {
-        return var == null ? "" : var.trim();
+        if (var == null) {
+            return "";
+        } else {
+            var = var.replaceAll("null", "").replaceAll("NULL", "");
+            return var.trim();
+        }
     }
 }

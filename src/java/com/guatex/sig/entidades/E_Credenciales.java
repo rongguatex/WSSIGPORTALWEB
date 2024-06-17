@@ -29,6 +29,9 @@ public class E_Credenciales {
 
     @XmlElement(name = "CODCOB")
     private String codcob;
+    
+    @XmlElement(name = "NOGUIA")
+    private String noguia;
 
     public String getPadre() {
         return padre;
@@ -66,12 +69,20 @@ public class E_Credenciales {
         this.codcob = codcob;
     }
 
+    public String getNoguia() {
+        return noguia;
+    }
+
+    public void setNoguia(String noguia) {
+        this.noguia = noguia;
+    }
+
     @Override
     public String toString() {
         if (padre != null && !padre.isEmpty()
                 && codigo != null && !codigo.isEmpty()
                 && password != null && !password.isEmpty()) {
-            return "E_Credenciales{" + "padre=" + padre + ", codigo=" + codigo + ", password=" + password + '}';
+            return "E_Credenciales{ noguia= "+ noguia + "padre=" + padre + ", codigo=" + codigo + ", password= " + password + '}';
         }
         return null;
     }

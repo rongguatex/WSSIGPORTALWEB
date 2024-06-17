@@ -7,70 +7,193 @@ package com.guatex.sig.entidades;
 
 import java.util.LinkedList;
 import java.util.List;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author RGALICIA
  */
+@XmlRootElement(name = "DATOSGUIA")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class E_Guia {
 
+    @XmlElement(name = "CODCOB")
     private String _CODCOB;
+
+    @XmlElement(name = "IDGUIA")
     private String _IDGUIA;
+
+    @XmlElement(name = "NOGUIA")
     private String _NOGUIA;
+
+    @XmlElement(name = "FECHA")
     private String _FECHA;
+
+    @XmlElement(name = "CODREM")
     private String _CODREM;
+
+    @XmlElement(name = "NOMREM")
     private String _NOMREM;
+
+    @XmlElement(name = "TELREM")
     private String _TELREM;
+
+    @XmlElement(name = "DIRREM")
     private String _DIRREM;
+
+    @XmlElement(name = "CODDES")
     private String _CODDES;
+
+    @XmlElement(name = "NOMDES")
     private String _NOMDES;
+
+    @XmlElement(name = "TELDES")
     private String _TELDES;
+
+    @XmlElement(name = "DIRDES")
     private String _DIRDES;
+
+    @XmlElement(name = "PTOORI")
     private String _PTOORI;
+
+    @XmlElement(name = "PTODES")
     private String _PTODES;
+
+    @XmlElement(name = "DECLARADO")
     private String _DECLARADO;
+
+    @XmlElement(name = "SEGURO")
     private String _SEGURO;
+
+    @XmlElement(name = "CONTSEG")
     private String _CONTSEG;
+
+    @XmlElement(name = "FECOPE")
     private String _FECOPE;
+
+    @XmlElement(name = "HORAOPE")
     private String _HORAOPE;
+
+    @XmlElement(name = "DESCRENV")
     private String _DESCRENV;
+
+    @XmlElement(name = "RECOGEOFICINA")
     private String _RECOGEOFICINA;
+
+    @XmlElement(name = "MNCPORI")
     private String _MNCPORI;
+
+    @XmlElement(name = "MNCPDES")
     private String _MNCPDES;
+
+    @XmlElement(name = "COMPLEMENTODIRREM")
     private String _COMPLEMENTODIRREM;
+
+    @XmlElement(name = "COMPLEMENTODIRDES")
     private String _COMPLEMENTODIRDES;
+
+    @XmlElement(name = "CONTACTO")
     private String _CONTACTO;
+
+    @XmlElement(name = "LLAVECLIENTE")
     private String _LLAVECLIENTE;
+
+    @XmlElement(name = "EMAIL")
     private String _EMAIL;
+
+    @XmlElement(name = "IDSERVICIO")
     private String _IDSERVICIO;
+
+    @XmlElement(name = "TIPOUSUARIO")
     private String _TIPOUSUARIO;
+
+    @XmlElement(name = "DATOSMINIMOS")
     private String _DATOSMINIMOS;
+
+    @XmlElement(name = "IMPRESO")
     private String _IMPRESO;
+
+    @XmlElement(name = "CAMPO1")
     private String _CAMPO1;
+
+    @XmlElement(name = "CAMPO2")
     private String _CAMPO2;
+
+    @XmlElement(name = "CAMPO3")
     private String _CAMPO3;
+
+    @XmlElement(name = "CAMPO4")
     private String _CAMPO4;
+
+    @XmlElement(name = "COBEX")
     private String _COBEX;
+    
+    @XmlElement(name = "TIPTAR")
     private String _TIPTAR;
+    
+    @XmlElement(name = "RUTAZONA")
     private String _RUTAZONA;
+    
+    @XmlElement(name = "EMAILENVIADO")
     private String _EMAILENVIADO;
+    
+    @XmlElement(name = "IMPOPER")
     private String _IMPOPER;
+    
+    @XmlElement(name = "TIPOENVIOS")
     private String _TIPOENVIOS;
+    
+    @XmlElement(name = "PIEZAS")
     private int _PIEZAS;
+    
+    @XmlElement(name = "NUMERO_PIEZA")
     private int _NUMERO_PIEZA;
+    
+    @XmlElement(name = "PESO")
     private String _PESO;
+    
+    @XmlElementWrapper(name = "LISTADODETALLEGUIA")
+    @XmlElement(name = "LINEADETALLE")
     private List<E_DetalleLinea> _DETALLE = new LinkedList<>();
+    
+    @XmlElement(name = "SELECCIONADO")
     private boolean _SELECCIONADO;
+    
+    @XmlElement(name = "IMPRIMECOD")
     private String _IMPRIMECOD;
+    
+    @XmlElement(name = "PRECIOCOD")
     private String _PRECIOCOD;
+    
+    @XmlElement(name = "SEABREPAQUETE")
     private String _SEABREPAQUETE = "";
+    
+    @XmlElement(name = "FECHA_INICIAL")
     private String _FECHA_INICIAL = "";
+    
+    @XmlElement(name = "FECHA_FINAL")
     private String _FECHA_FINAL = "";
+    
+    @XmlElement(name = "TABLA")
     private String _TABLA = "";
+    
+    @XmlElement(name = "COD_VALORACOBRAR")
     private String _COD_VALORACOBRAR = "";
+    
+    @XmlElement(name = "OBSERVACIONES")
     private String _OBSERVACIONES = "";
+    
+    @XmlElement(name = "OBSERVACIONESENTRE")
     private String _OBSERVACIONESENTRE = "";
+    
+    @XmlElement(name = "CODORIGEN")
     private String _CODORIGEN = "";
+    
+    @XmlElement(name = "CODDESTINO")
     private String _CODDESTINO = "";
 
     public String getCOD_VALORACOBRAR() {
@@ -586,7 +709,7 @@ public class E_Guia {
 
     public void setSEABREPAQUETE(String _SEABREPAQUETE) {
         this._SEABREPAQUETE = _SEABREPAQUETE;
-    }    
+    }
 
     public List<E_DetalleLinea> getDETALLE() {
         return _DETALLE;
@@ -635,5 +758,21 @@ public class E_Guia {
     public void setCODDESTINO(String _CODDESTINO) {
         this._CODDESTINO = _CODDESTINO;
     }
-    
+
+    @Override
+    public String toString() {
+        return "E_Guia{ \n"
+                + "     CODCOB=" + _CODCOB + ", \n"
+                + "     NOGUIA=" + _NOGUIA + ", \n"
+                + "     NOMREM=" + _NOMREM + ", \n"
+                + "     CODDES=" + _CODDES + ",\n "
+                + "     PTOORI=" + _PTOORI + ", \n"
+                + "     PTODES=" + _PTODES + ", \n "
+                + "     MNCPORI=" + _MNCPORI + ", \n"
+                + "     MNCPDES=" + _MNCPDES + ", \n"
+                + "     IDSERVICIO=" + _IDSERVICIO + ", \n"
+                + "     IMPRESO=" + _IMPRESO + ", \n "
+                + "DETALLE=" + _DETALLE + '}';
+    }
+
 }

@@ -13,7 +13,7 @@ public class E_RespuestaGuia {
     private String _CODIGO;
     private String _MENSAJE;
     private List<E_Guia> _LISTADO_GUIAS = new LinkedList<>();
-
+    
     public E_RespuestaGuia(String _CODIGO, List<E_Guia> _LISTADO_GUIAS) {
         this._CODIGO = _CODIGO;
         if (_CODIGO.equals("200")) {
@@ -27,6 +27,20 @@ public class E_RespuestaGuia {
             this._MENSAJE = "Ocurrió un error, no encuentra parametros";
         }
     }
+
+    public E_RespuestaGuia(String _CODIGO) {
+        this._CODIGO = _CODIGO;
+        if (_CODIGO.equals("200")) {
+            this._MENSAJE = "OK";
+        } else if (_CODIGO.equals("204")) {
+            this._MENSAJE = "No se obtuvo información de la base de datos.";
+        } else if (_CODIGO.equals("500")) {
+            this._MENSAJE = "Ocurrió un error con la base de datos.";
+        } else if (_CODIGO.equals("400")) {
+            this._MENSAJE = "Ocurrió un error, no encuentra parametros";
+        }
+    }
+    
 
     public String getCODIGO() {
         return _CODIGO;
@@ -50,6 +64,11 @@ public class E_RespuestaGuia {
 
     public void setLISTADO_GUIAS(List<E_Guia> _LISTADO_GUIAS) {
         this._LISTADO_GUIAS = _LISTADO_GUIAS;
+    }
+
+    @Override
+    public String toString() {
+        return "E_RespuestaGuia{" + "_CODIGO=" + _CODIGO + ", _MENSAJE=" + _MENSAJE + ", _LISTADO_GUIAS=" + _LISTADO_GUIAS + '}';
     }
 
 }

@@ -1,12 +1,11 @@
 package com.guatex.sig.services;
 
 import com.guatex.sig.controllers.C_GuiasMasivas;
+import com.guatex.sig.controllers.ModificarGuiaController;
 import com.guatex.sig.datos.D_Clientes;
-import com.guatex.sig.datos.D_Depto_Municipios;
 import com.guatex.sig.datos.D_Detalle;
 import com.guatex.sig.datos.D_Guia;
 import com.guatex.sig.datos.D_ImpresionSIG;
-import com.guatex.sig.datos.D_PuntoCobertura;
 import com.guatex.sig.entidades.E_Cliente;
 import com.guatex.sig.entidades.E_Departamento;
 import com.guatex.sig.entidades.E_Guia;
@@ -99,32 +98,9 @@ public class WSSIGCLIENTES {
      * código de respuesta 400
      */
     @WebMethod(operationName = "obtenerDatosxGuiaNoImpresa")
-    public String obtenerDatosxGuiaNoImpresa(@WebParam(name = "datos") String noguia) {
-        noguia = noguia == null ? "" : noguia.trim();
-        if (!noguia.isEmpty()) {
-            E_RespuestaGuia respuesta = new D_Guia().obtenerDatosxGuiaNoImpresa(noguia);
-            E_Departamento departamento = new E_Departamento();
-            E_Municipio municipio = new E_Municipio();
-            E_PuntoCobertura puntoCobertura = new E_PuntoCobertura();
-            if (respuesta.getCODIGO().equals("200")) {
-                puntoCobertura = new D_PuntoCobertura().BuscarUbicacionEspecifica(
-                        respuesta.getLISTADO_GUIAS().get(0).getPTOORI(),
-                        respuesta.getLISTADO_GUIAS().get(0).getMNCPORI()
-                );
-                List<E_Departamento> departamentos = new D_Depto_Municipios().ObtenerDeptosMunicipios();
-                for (E_Departamento depto : departamentos) {
-                    if (depto.getNOMBRE().equalsIgnoreCase(puntoCobertura.getDEPARTAMENTO())) {
-                        departamento = depto;
-                        for (E_Municipio muni : depto.getMUNICIPIOS()) {
-                            if (muni.getNOMBRE().equalsIgnoreCase(puntoCobertura.getMUNICIPIO())) {
-                                municipio = muni;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            return new ConvertidorXML().respuestaXMLDatosGuia(respuesta, departamento, municipio, puntoCobertura);
+    public String obtenerDatosxGuiaNoImpresa(@WebParam(name = "datos") String XML) {
+        if (!(XML == null ? "" : XML.trim()).isEmpty()) {
+            return new ModificarGuiaController().obtenerDatosGuia(XML);
         }
         return new ConvertidorXML().BadRequest();
     }
@@ -133,6 +109,14 @@ public class WSSIGCLIENTES {
     public String creacionGuiasMasivas(@WebParam(name = "datos") String XML) {
         if (!(XML == null ? "" : XML.trim()).isEmpty()) {
             return new C_GuiasMasivas().creacionGuiasMasivas(XML.trim());
+        }
+        return new ConvertidorXML().BadRequest();
+    }
+
+    @WebMethod(operationName = "modificaGuia")
+    public String modificaGuia(@WebParam(name = "datos") String XML) {
+        if (!(XML == null ? "" : XML.trim()).isEmpty()) {
+            return new ModificarGuiaController().modificaGuia(XML.trim());
         }
         return new ConvertidorXML().BadRequest();
     }
