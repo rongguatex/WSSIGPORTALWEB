@@ -25,9 +25,6 @@ import javax.jws.WebParam;
 @WebService(serviceName = "WSCLIENTESCRUD")
 public class WSCLIENTESCRUD {
 
-    /**
-     * This is a sample web service operation
-     */
     @WebMethod(operationName = "insertarClientes")
     public String insertarClientes(@WebParam(name = "datos") String datos) {
         String respXML = "";
@@ -202,9 +199,8 @@ public class WSCLIENTESCRUD {
                 // Validar campos no vacíos
                 boolean clienteValido = true;
                 String estado = "";
-                
-                System.out.println("CODCOB[" + c.getCODCOB() + "]");
-                
+
+                //System.out.println("CODCOB[" + c.getCODCOB() + "]");
                 if (!validoDatosVacios(c.getCODIGO())) {
                     // validar que codigo no exista
                     estado += " --> El codigo de cliente no puede ser vacio.";
@@ -244,7 +240,7 @@ public class WSCLIENTESCRUD {
                 }
 
                 if (clienteValido) {
-                   
+
                     estado += "OK";
                 } else {
                     inserto = false;
@@ -261,7 +257,6 @@ public class WSCLIENTESCRUD {
                 }
             }
 
-            System.out.println(respXML);
             return respXML;
 
         } catch (Exception e) {

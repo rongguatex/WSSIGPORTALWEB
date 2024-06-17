@@ -59,7 +59,7 @@ public class DReporteClientes {
 
         try {
 
-            con = new ConexionProd().AbrirConexion();
+            con = new Conexion().AbrirConexion();
             ps = con.prepareStatement(Query);
             ps.setString(1, r.CODCOB);
             ps.setString(2, r.CODCOB);
