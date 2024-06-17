@@ -25,6 +25,14 @@ public class E_Cliente {
     private E_Departamento _DEPARTAMENTO = new E_Departamento();
     private E_Municipio _MUNICIPIO = new E_Municipio();
 
+    public E_Cliente(String punto, String ubicacion) {
+        this._PUNTO = punto;
+        this._UBICACION = ubicacion;
+    }
+
+    public E_Cliente() {
+    }
+
     public boolean isSELECCIONADO() {
         return _SELECCIONADO;
     }
@@ -70,6 +78,9 @@ public class E_Cliente {
     }
 
     public void setUNIFICACLI(String _UNIFICACLI) {
+        if (_UNIFICACLI == null || _UNIFICACLI.isEmpty()) {
+            _UNIFICACLI = "N";
+        }
         this._UNIFICACLI = _UNIFICACLI;
     }
 
@@ -191,5 +202,10 @@ public class E_Cliente {
 
     public void setPADRE(String _PADRE) {
         this._PADRE = _PADRE;
+    }
+
+    @Override
+    public String toString() {
+        return "E_Cliente{" + "_SELECCIONADO=" + _SELECCIONADO + ", _CODCOB=" + _CODCOB + ", _CODIGO=" + _CODIGO + ", _NIT=" + _NIT + ", _TELEFONO=" + _TELEFONO + ", _NOMBRE=" + _NOMBRE + ", _DIRECCION=" + _DIRECCION + ", _CONTACTO=" + _CONTACTO + ", _UBICACION=" + _UBICACION + ", _PUNTO=" + _PUNTO + ", _CORREO=" + _CORREO + ", _CAMPO1=" + _CAMPO1 + ", _CAMPO2=" + _CAMPO2 + ", _CAMPO3=" + _CAMPO3 + ", _CAMPO4=" + _CAMPO4 + ", _PADRE=" + _PADRE + ", _UNIFICACLI=" + _UNIFICACLI + ", _RECOGEOFICINA=" + _RECOGEOFICINA + ", __COBERTURA=" + __COBERTURA + ", _DEPARTAMENTO=" + _DEPARTAMENTO + ", _MUNICIPIO=" + _MUNICIPIO + '}';
     }
 }

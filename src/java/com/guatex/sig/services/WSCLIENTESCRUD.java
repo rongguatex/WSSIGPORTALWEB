@@ -6,8 +6,6 @@
 package com.guatex.sig.services;
 
 import com.guatex.sig.datos.DReporteClientes;
-import com.guatex.sig.datos.D_Clientes;
-import com.guatex.sig.entidades.EReporteClienteXML;
 import com.guatex.sig.entidades.EReporteClientes;
 import com.guatex.sig.entidades.E_Cliente;
 import com.guatex.sig.entidades.E_respuestaClientes;
@@ -144,7 +142,7 @@ public class WSCLIENTESCRUD {
         System.out.println("entre y tengo de peticion [" + XML + "]");
         E_Cliente cliente = new ConvertidorXML().extraerCliente(XML);
         E_respuestaClientes respuesta = new DReporteClientes().ObtenerCliente(cliente);
-        return new ConvertidorXML().respuestaXML(respuesta);
+        return new ConvertidorXML().respuestaXMLDatosCliente(respuesta);
     }
 
     @WebMethod(operationName = "listadoClientes")
