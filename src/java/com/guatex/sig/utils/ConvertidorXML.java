@@ -1,5 +1,7 @@
 package com.guatex.sig.utils;
 
+import com.guatex.sig.entidades.EReporteClienteXML;
+import com.guatex.sig.entidades.EReporteClientes;
 import com.guatex.sig.entidades.E_Cliente;
 import com.guatex.sig.entidades.E_Departamento;
 import com.guatex.sig.entidades.E_DetalleLinea;
@@ -12,6 +14,9 @@ import com.guatex.sig.entidades.E_Tarificador;
 import com.guatex.sig.entidades.E_Ubicacion;
 import com.guatex.sig.entidades.E_respuestaClientes;
 import com.guatex.sig.entidades.RespuestaGeneral;
+import java.io.StringWriter;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import com.guatex.sig.entidadesRespuesta.E_RespuestaDetalle;
 import com.guatex.sig.entidadesRespuesta.E_RespuestaGuia;
 import java.io.StringReader;
@@ -98,6 +103,35 @@ public class ConvertidorXML {
         return XML;
     }
 
+    public String respuestaXMLListadoClientes(List<EReporteClientes> listadoClientes) {
+
+        String XML = "<RESPUESTA>"
+                + "<CLIENTES>";
+        for (EReporteClientes cliente : listadoClientes) {
+            XML += "<CLIENTE>"
+                    + addTag("CODIGO", cliente.getCODIGO())
+                    + addTag("CODCOB", cliente.getCODCOB())
+                    + addTag("PADRE", cliente.getPADRE())
+                    + addTag("NOMBRE", cliente.getNOMBRE())
+                    + addTag("CONTACTO", cliente.getCONTACTO())
+                    + addTag("DIRECION", cliente.getDIRECCION())
+                    + addTag("PUNTO", cliente.getPUNTO())
+                    + addTag("CORREO", cliente.getEMAIL())
+                    + addTag("TELEFONO", cliente.getTELEFONO())
+                    + addTag("NIT", cliente.getNIT())
+                    + addTag("RECOGEOFICINA", cliente.getRECOGEOFICINA())
+                    + addTag("CAMPO1", cliente.getCAMPO1())
+                    + addTag("CAMPO2", cliente.getCAMPO2())
+                    + addTag("CAMPO3", cliente.getCAMPO3())
+                    + addTag("CAMPO4", cliente.getCAMPO4())
+                    + "</CLIENTE>";
+        }
+        XML += "</CLIENTES>"
+                + "</RESPUESTA>";
+        System.out.println(XML);
+        return XML;
+    }
+
     private String municipios(E_Cliente cliente) {
         String xml = "";
         for (E_Municipio m : cliente.getDEPARTAMENTO().getMUNICIPIOS()) {
@@ -107,6 +141,43 @@ public class ConvertidorXML {
                     + "</MUNICIPIODEPTO>";
         }
         return xml;
+    }
+
+    public String respXMLListadoClientes(List<EReporteClienteXML> clientes) {
+        try {
+            JAXBContext jaxbContext = JAXBContext.newInstance(ClientesWrapper.class);
+            Marshaller marshaller = jaxbContext.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+
+            ClientesWrapper wrapper = new ClientesWrapper();
+            wrapper.setClientes(clientes);
+
+            StringWriter writer = new StringWriter();
+            marshaller.marshal(wrapper, writer);
+            return writer.toString();
+        } catch (JAXBException e) {
+            e.printStackTrace();
+            return "<RespuestaClientes><codigo>002</codigo><mensaje>Error al convertir los datos a XML: " + e.getMessage() + "</mensaje></RespuestaClientes>";
+        }
+    }
+
+    // Renamed method to avoid clash
+    public String respXMLClientes(List<EReporteClienteXML> clientes) {
+        try {
+            JAXBContext jaxbContext = JAXBContext.newInstance(ClientesWrapper.class);
+            Marshaller marshaller = jaxbContext.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+
+            ClientesWrapper wrapper = new ClientesWrapper();
+            wrapper.setClientes(clientes);
+
+            StringWriter writer = new StringWriter();
+            marshaller.marshal(wrapper, writer);
+            return writer.toString();
+        } catch (JAXBException e) {
+            e.printStackTrace();
+            return "<RespuestaClientes><codigo>002</codigo><mensaje>Error al convertir los datos a XML: " + e.getMessage() + "</mensaje></RespuestaClientes>";
+        }
     }
 
     /**
@@ -448,4 +519,5 @@ public class ConvertidorXML {
     public String addTag(String tag, String dato) {
         return "<" + tag + ">" + dato + "</" + tag + ">";
     }
+
 }
