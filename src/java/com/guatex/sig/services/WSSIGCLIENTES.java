@@ -1,5 +1,6 @@
 package com.guatex.sig.services;
 
+import com.guatex.sig.datos.DReporteClientes;
 import com.guatex.sig.datos.D_Clientes;
 import com.guatex.sig.datos.D_Detalle;
 import com.guatex.sig.datos.D_Guia;
@@ -65,4 +66,9 @@ public class WSSIGCLIENTES {
             return new ConvertidorXML().BadRequest();
         }
     }
+    
+
+    
+    
+     
 }
