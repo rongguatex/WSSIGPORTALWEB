@@ -37,57 +37,35 @@ public class ModificarGuiaController {
     public String modificaGuia(String XML) {
         System.out.println(XML);
 
-        WSSIGCLIENTES<E_Guia> parseo = (WSSIGCLIENTES<E_Guia>) parseoXML(XML, WSSIGCLIENTES.class, E_Guia.class);
-        if (parseo.getCredenciales() != null && parseo.getDatosEntrada() != null) {
+        WSSIGCLIENTES<?> parseo = (WSSIGCLIENTES<?>) parseoXML(XML, WSSIGCLIENTES.class);
+        System.out.println(parseo);
+        if (parseo.getCredenciales() != null) {
             E_Credenciales credenciales = parseo.getCredenciales();
             RespuestaGeneral validacionCredenciales = new ValidacionCredenciales().validar(credenciales);
             if ("0000".equals(validacionCredenciales.getCodigo())) {
-                E_Guia datos = parseo.getDatosEntrada();
-                
-                
-
-                if (datos.getDETALLE().isEmpty()) {
-                    return new ConvertidorXML().BadRequest();
-                }
-
-                for (E_DetalleLinea linea : datos.getDETALLE()) {
-                    double peso = 0;
-                    try {
-                        peso = Double.parseDouble(linea.getPESO());
-                    } catch (NumberFormatException e) {
-                        e.getLocalizedMessage();
-                        peso = 0;
-                    }
-                    if (!linea.getTIPOENVIO().isEmpty() || linea.getPIEZAS() >= 0 || peso >= 0) {
-                        E_GeneradorGuia creacionGuia = new E_GeneradorGuia();
-                        creacionGuia.setUSUARIO(credenciales.getUsuario());
-                        String guiaGenerada = new GeneradorGuia().generarGuiaHija(creacionGuia);
-                        
-                        System.out.println("-----------> " + guiaGenerada);
-                    } else {
-                        return new ConvertidorXML().BadRequest();
-                    }
-                }
-
+                E_Credenciales datos = parseo.getCredenciales();
                 boolean existErrorEliminacion = false;
-//                existErrorEliminacion = !new D_Detalle().EliminarGuiasDetalle(quitaNulo(datos.getNOGUIA()));
-//                existErrorEliminacion = !new D_GuiasHijas().eliminaHijas(quitaNulo(datos.getNOGUIA()));
+                existErrorEliminacion = !new D_Guia().eliminaGuia(quitaNulo(datos.getNoguia()));
+                
+                if(existErrorEliminacion) {
+                    return "<RESPUESTA><CODIGO>9999</CODIGO><MENSAJE>Error al eliminar guía</MENSAJE></RESPUESTA>";
+                }
+                
+                existErrorEliminacion = !new D_Detalle().EliminarGuiasDetalle(quitaNulo(datos.getNoguia()));
+                
+                if(existErrorEliminacion) {
+                    return "<RESPUESTA><CODIGO>9999</CODIGO><MENSAJE>Error al eliminar guía detalle</MENSAJE></RESPUESTA>";
+                }
+                existErrorEliminacion = !new D_GuiasHijas().eliminaHijas(quitaNulo(datos.getNoguia()));
 
-//                E_RespuestaGuia respuesta = new E_RespuestaGuia("204");
-//                if (existErrorEliminacion) {
-//                    respuesta = new D_Guia().actualizaDatosGuia(datos);
-//                }
-//                if (respuesta.getCODIGO().equals("200")) {
-//                    //inserta nuevos detalles
-//
-//                
-//                }
+                if(existErrorEliminacion) {
+                    return "<RESPUESTA><CODIGO>9999</CODIGO><MENSAJE>Error al eliminar guías hijas</MENSAJE></RESPUESTA>";
+                }
+                
                 return new ConvertidorXML().OK();
-
             }
         }
 
-        System.out.println("Credenciales inválidas.");
         return new ConvertidorXML().BadRequest();
     }
 
@@ -99,6 +77,7 @@ public class ModificarGuiaController {
      * @return
      */
     public String obtenerDatosGuia(String XML) {
+        System.out.println("--> " + XML);
         WSSIGCLIENTES<?> parseo = (WSSIGCLIENTES<?>) parseoXML(XML, WSSIGCLIENTES.class);
 
         if (parseo != null) {
