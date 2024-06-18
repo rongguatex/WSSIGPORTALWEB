@@ -206,63 +206,23 @@ public class D_Guia {
         return new E_RespuestaGuia("400", null);
     }
 
-    public E_RespuestaGuia actualizaDatosGuia(E_Guia datos) {
-        String query = ""
-                + " IF EXISTS (SELECT NOGUIA FROM JGUIAS J WHERE J.NOGUIA = ? AND J.IMPRESO = 'G')  "//1
-                + " BEGIN  "
-                + "    UPDATE JGUIAS SET   "
-                + "        FECHA = GETDATE(),  "
-                + "        CODREM = ? , NOMREM = ?, TELREM = ?, DIRREM = ?,  "//2-5
-                + "        CODDES =?, NOMDES = ?, TELDES = ?, DIRDES = ?,  "//6-9
-                + "        PTOORI = ?, PTODES = ?, CODCOB = ?, OBSERVACIONES = ?,  "//10-13
-                + "        FECOPE = GETDATE(), HORAOPE = SUBSTRING(CONVERT(nvarchar(30), GETDATE(), 108),1,5),  "
-                + "        COBEX = ?, DESCRENV = ?, RECOGEOFICINA = ?,  "//14-16
-                + "        MNCPORI = ?, MNCPDES = ?, CONTACTO = ?, LLAVECLIENTE = ?, rutzona = ?, IMPRESO = ?,  "//17-22
-                + "        CAMPO1 = ?, CAMPO2 = ?, CAMPO3 = ?, CAMPO4 = ?,  " //23-26
-                + "        CODORIGEN = ?, CODDESTINO = ?, OBSERVACIONESENTRE = ?  "//27-29
-                + "    WHERE NOGUIA = ?  "//30
-                + " END ";
-        //faltan los datos cod, seguro, contseg, declarado
+    public boolean eliminaGuia(String noguia) {
+        noguia = quitaNulo(noguia);
+        if (noguia.isEmpty()) {
+            return false;
+        }
+
+        String query = "DELETE FROM JGUIAS WHERE NOGUIA = ? ";
         try (Connection con = new Conexion().AbrirConexion();
                 PreparedStatement ps = con.prepareStatement(query)) {
-            ps.setString(1, datos.getNOGUIA());
-            ps.setString(2, datos.getCODREM());
-            ps.setString(3, datos.getNOMREM());
-            ps.setString(4, datos.getTELREM());
-            ps.setString(5, datos.getDIRREM());
-            ps.setString(6, datos.getCODDES());
-            ps.setString(7, datos.getNOMDES());
-            ps.setString(8, datos.getTELDES());
-            ps.setString(9, datos.getDIRDES());
-            ps.setString(10, datos.getPTOORI());
-            ps.setString(11, datos.getPTODES());
-            ps.setString(12, datos.getCODCOB());
-            ps.setString(13, datos.getOBSERVACIONES());
-            ps.setString(14, datos.getCOBEX());
-            ps.setString(15, datos.getDESCRENV());
-            ps.setString(16, datos.getRECOGEOFICINA());
-            ps.setString(17, datos.getMNCPORI());
-            ps.setString(18, datos.getMNCPDES());
-            ps.setString(19, datos.getCONTACTO());
-            ps.setString(20, datos.getLLAVECLIENTE());
-            ps.setString(21, datos.getRUTAZONA());
-            ps.setString(22, datos.getIMPRESO());
-            ps.setString(23, datos.getCAMPO1());
-            ps.setString(24, datos.getCAMPO2());
-            ps.setString(25, datos.getCAMPO3());
-            ps.setString(26, datos.getCAMPO4());
-            ps.setString(27, datos.getCODORIGEN());
-            ps.setString(28, datos.getCODDESTINO());
-            ps.setString(29, datos.getOBSERVACIONESENTRE());
-            ps.setString(30, datos.getNOGUIA());
-            if (ps.executeUpdate() > 0) {
-                return new E_RespuestaGuia("200");
-            }
-            return new E_RespuestaGuia("204");
+            ps.setString(1, noguia);
+            return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
-            return new E_RespuestaGuia("500");
+            System.out.println("Error en eliminación de guía " + e.getLocalizedMessage());
         }
+
+        return false;
     }
 
     /**
