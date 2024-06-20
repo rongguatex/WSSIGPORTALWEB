@@ -229,7 +229,7 @@ public class C_GuiasMasivas {
             String seabrepaquete = "<SEABREPAQUETE />";
 
             if (datos.getCOD().equalsIgnoreCase("S")) {
-                llevaCOD = "<COD_VALORACOBRAR>S<COD_VALORACOBRAR>";
+                llevaCOD = "<COD_VALORACOBRAR>S</COD_VALORACOBRAR>";
                 seabrepaquete = "<SEABREPAQUETE>S</SEABREPAQUETE >";
             }
 
