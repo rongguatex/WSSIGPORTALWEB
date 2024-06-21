@@ -50,13 +50,16 @@ public class WSCLIENTESCRUD {
         cliente.setPADRE(c.getTag("PADRE", datos));
         cliente.setRECOGEOFICINA(c.getTag("RECOGEOFICINA", datos));
 
+        System.out.println("traigo punto " + cliente.getPUNTO());
+
         if (reporte.verificoClienteExistente(cliente)) {
             respXML = "<RESPUESTA>"
                     + "<CODIGO>003</CODIGO>"
                     + "<MENSAJE>El codigo de cliente ya existe</MENSAJE>"
                     + "</RESPUESTA>";
         } else {
-            int filasAfectados = new DReporteClientes().insertarClientes(cliente);
+            cliente = reporte.obtengoPuntosCobertura(cliente);
+            int filasAfectados = reporte.insertarClientes(cliente);
 
             respXML = "<RESPUESTA>"
                     + "<CODIGO>" + (filasAfectados > 0 ? "001" : "0002") + "</CODIGO>"
@@ -72,7 +75,7 @@ public class WSCLIENTESCRUD {
     @WebMethod(operationName = "actualizarCliente")
     public String actualizaCliente(@WebParam(name = "datos") String datos) {
         String respXML = "";
-
+        System.out.println(datos);
         DReporteClientes reporte = new DReporteClientes();
 
         EReporteClientes cliente = new EReporteClientes();
@@ -96,7 +99,8 @@ public class WSCLIENTESCRUD {
         cliente.setPADRE(c.getTag("PADRE", datos));
         cliente.setRECOGEOFICINA(c.getTag("RECOGEOFICINA", datos));
 
-        int filasAfectados = new DReporteClientes().actualizarCliente(cliente);
+        cliente = reporte.obtengoPuntosCobertura(cliente);
+        int filasAfectados = reporte.actualizarCliente(cliente);
 
         respXML = "<RESPUESTA>"
                 + "<CODIGO>" + (filasAfectados > 0 ? "001" : "0002") + "</CODIGO>"
