@@ -7,6 +7,7 @@ package com.guatex.sig.datos;
 
 import com.guatex.sig.entidades.E_DetalleLinea;
 import com.guatex.sig.entidadesRespuesta.E_RespuestaDetalle;
+import com.guatex.sig.utils.Utils;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,6 +22,8 @@ import java.util.Optional;
  */
 public class D_Detalle {
 
+    Utils util = new Utils();
+    
     /**
      * Obtiene listado de detalles como piezas, peso y tarifa de una guia
      *
@@ -29,7 +32,7 @@ public class D_Detalle {
      */
     public E_RespuestaDetalle buscarDetalleGuia(String noguia) {
         List<E_DetalleLinea> detalle = new LinkedList<>();
-        if (!quitaNulo(noguia).isEmpty()) {
+        if (!util.limpiaStr(noguia).isEmpty()) {
             String query = "SELECT "
                     + "	JGD.LINEA AS LINEA, "
                     + "	JGD.PIEZAS AS PIEZAS, "
@@ -40,15 +43,15 @@ public class D_Detalle {
                     + " WHERE JGD.NOGUIA = ? ";
             try (Connection con = new Conexion().AbrirConexion();
                     PreparedStatement ps = con.prepareStatement(query)) {
-                ps.setString(1, quitaNulo(noguia));
+                ps.setString(1, util.limpiaStr(noguia));
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
                         E_DetalleLinea linea = new E_DetalleLinea();
-                        linea.setLINEA(quitaNulo(rs.getString("LINEA")));
-                        linea.setPIEZAS(convertirAEntero(quitaNulo(rs.getString("PIEZAS"))).orElse(0));
-                        linea.setTIPOENVIO(quitaNulo(rs.getString("TIPOENVIO")));
-                        linea.setPESO(quitaNulo(rs.getString("PESO")));
-                        linea.setTARIFA(quitaNulo(rs.getString("TARIFA")));
+                        linea.setLINEA(util.limpiaStr(rs.getString("LINEA")));
+                        linea.setPIEZAS(convertirAEntero(util.limpiaStr(rs.getString("PIEZAS"))).orElse(0));
+                        linea.setTIPOENVIO(util.limpiaStr(rs.getString("TIPOENVIO")));
+                        linea.setPESO(util.limpiaStr(rs.getString("PESO")));
+                        linea.setTARIFA(util.limpiaStr(rs.getString("TARIFA")));
                         detalle.add(linea);
                     }
 
@@ -89,7 +92,7 @@ public class D_Detalle {
     }
 
     public boolean EliminarGuiasDetalle(String noguia) {
-        noguia = quitaNulo(noguia);
+        noguia = util.limpiaStr(noguia);
         String query = "DELETE FROM JGUIASDETALLE WHERE NOGUIA = ?";
         try (Connection con = new Conexion().AbrirConexion();
                 PreparedStatement ps = con.prepareStatement(query)) {
@@ -99,15 +102,5 @@ public class D_Detalle {
             ex.printStackTrace();
             return false;
         }
-    }
-
-    /**
-     * Quita el valor nulo
-     *
-     * @param var
-     * @return devuelve un valor vacío
-     */
-    private String quitaNulo(String var) {
-        return var == null ? "" : var.trim();
     }
 }
