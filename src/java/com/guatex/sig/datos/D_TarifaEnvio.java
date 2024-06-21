@@ -6,6 +6,7 @@
 package com.guatex.sig.datos;
 
 import com.guatex.sig.entidades.E_TarifaEnvio;
+import com.guatex.sig.utils.Utils;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,9 +17,11 @@ import java.sql.SQLException;
  * @author RGALICIA
  */
 public class D_TarifaEnvio {
+    
+     Utils util = new Utils();
 
     public E_TarifaEnvio BuscarTipoEnvio(String CodigoTarifa, String CodigoEnvio) {
-        if (quitaNulo(CodigoTarifa).isEmpty() || quitaNulo(CodigoEnvio).isEmpty()) {
+        if (util.limpiaStr(CodigoTarifa).isEmpty() || util.limpiaStr(CodigoEnvio).isEmpty()) {
              return null;
         }
         
@@ -36,10 +39,10 @@ public class D_TarifaEnvio {
                 E_TarifaEnvio tipoenvio = null;
                 while (rs.next()) {
                     tipoenvio = new E_TarifaEnvio();
-                    tipoenvio.setCODIGO(quitaNulo(rs.getString("CODIGO")));
-                    tipoenvio.setNOMBRE(quitaNulo(rs.getString("NOMBRE")));
-                    tipoenvio.setPESOFIJO(quitaNulo(rs.getString("PESOFIJO")));
-                    tipoenvio.setABREVIATURA(quitaNulo(rs.getString("ABREVIATURA")));
+                    tipoenvio.setCODIGO(util.limpiaStr(rs.getString("CODIGO")));
+                    tipoenvio.setNOMBRE(util.limpiaStr(rs.getString("NOMBRE")));
+                    tipoenvio.setPESOFIJO(util.limpiaStr(rs.getString("PESOFIJO")));
+                    tipoenvio.setABREVIATURA(util.limpiaStr(rs.getString("ABREVIATURA")));
                 }
                 return tipoenvio;
             }
@@ -47,9 +50,5 @@ public class D_TarifaEnvio {
             e.printStackTrace();
             return null;
         }
-    }
-
-    private String quitaNulo(String var) {
-        return var == null ? "" : var.trim();
     }
 }

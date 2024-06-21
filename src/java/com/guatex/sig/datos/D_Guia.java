@@ -8,6 +8,7 @@ package com.guatex.sig.datos;
 import com.guatex.sig.entidades.E_Credenciales;
 import com.guatex.sig.entidades.E_Guia;
 import com.guatex.sig.entidadesRespuesta.E_RespuestaGuia;
+import com.guatex.sig.utils.Utils;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,6 +22,7 @@ import java.util.Optional;
  * @author RGALICIA
  */
 public class D_Guia {
+    Utils util = new Utils();
 
     /**
      * Busca las guías (campo IMPRESO = P | G) en un rango de fechas, que esten
@@ -65,28 +67,28 @@ public class D_Guia {
 
         try (Connection con = new Conexion().AbrirConexion();
                 PreparedStatement ps = con.prepareStatement(query)) {
-            ps.setString(1, quitaNulo(datos.getCODCOB()));
-            ps.setString(2, quitaNulo(datos.getFECHA_INICIAL()));
-            ps.setString(3, quitaNulo(datos.getFECHA_FINAL()));
-            ps.setString(4, quitaNulo(datos.getIMPRESO()));
+            ps.setString(1, util.limpiaStr(datos.getCODCOB()));
+            ps.setString(2, util.limpiaStr(datos.getFECHA_INICIAL()));
+            ps.setString(3, util.limpiaStr(datos.getFECHA_FINAL()));
+            ps.setString(4, util.limpiaStr(datos.getIMPRESO()));
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     E_Guia guia = new E_Guia();
-                    guia.setNOGUIA(quitaNulo(rs.getString("NOGUIA")));
-                    guia.setCONTACTO(quitaNulo(rs.getString("CONTACTO")));
-                    guia.setNOMDES(quitaNulo(rs.getString("NOMDES")));
-                    guia.setTELDES(quitaNulo(rs.getString("TELDES")));
-                    guia.setDIRDES(quitaNulo(rs.getString("DIRDES")));
-                    guia.setCODCOB(quitaNulo(rs.getString("CODCOB")));
-                    guia.setSEGURO(quitaNulo(rs.getString("SEGURO")));
-                    guia.setDECLARADO(quitaNulo(rs.getString("DECLARADO")));
-                    guia.setMNCPDES(quitaNulo(rs.getString("MNCPDES")));
-                    guia.setFECHA(quitaNulo(rs.getString("FECHA")));
-                    guia.setDESCRENV(quitaNulo(rs.getString("DESCRENV")));
-                    guia.setSEABREPAQUETE(quitaNulo(rs.getString("SEABREPAQUETE")));
-                    guia.setCONTSEG(quitaNulo(rs.getString("CONTSEG")));
-                    guia.setCOD_VALORACOBRAR(quitaNulo(rs.getString("COD_VALORACOBRAR")));
+                    guia.setNOGUIA(util.limpiaStr(rs.getString("NOGUIA")));
+                    guia.setCONTACTO(util.limpiaStr(rs.getString("CONTACTO")));
+                    guia.setNOMDES(util.limpiaStr(rs.getString("NOMDES")));
+                    guia.setTELDES(util.limpiaStr(rs.getString("TELDES")));
+                    guia.setDIRDES(util.limpiaStr(rs.getString("DIRDES")));
+                    guia.setCODCOB(util.limpiaStr(rs.getString("CODCOB")));
+                    guia.setSEGURO(util.limpiaStr(rs.getString("SEGURO")));
+                    guia.setDECLARADO(util.limpiaStr(rs.getString("DECLARADO")));
+                    guia.setMNCPDES(util.limpiaStr(rs.getString("MNCPDES")));
+                    guia.setFECHA(util.limpiaStr(rs.getString("FECHA")));
+                    guia.setDESCRENV(util.limpiaStr(rs.getString("DESCRENV")));
+                    guia.setSEABREPAQUETE(util.limpiaStr(rs.getString("SEABREPAQUETE")));
+                    guia.setCONTSEG(util.limpiaStr(rs.getString("CONTSEG")));
+                    guia.setCOD_VALORACOBRAR(util.limpiaStr(rs.getString("COD_VALORACOBRAR")));
                     listadoGuias.add(guia);
                 }
                 if (!listadoGuias.isEmpty()) {
@@ -108,7 +110,7 @@ public class D_Guia {
      * @return - objeto con código de respuesta y datos de la guía.
      */
     public E_RespuestaGuia obtenerDatosxGuiaNoImpresa(E_Credenciales datos) {
-        datos.setNoguia(quitaNulo(datos.getNoguia()));
+        datos.setNoguia(util.limpiaStr(datos.getNoguia()));
         if (!datos.getNoguia().isEmpty()) {
             List<E_Guia> datosGuia = new LinkedList<>();
             String query = " SELECT   "
@@ -146,50 +148,50 @@ public class D_Guia {
                     while (rs.next()) {
                         E_Guia guia = new E_Guia();
                         //datos generales de guía
-                        guia.setIDGUIA(quitaNulo(rs.getString("IDGUIA")));
-                        guia.setNOGUIA(quitaNulo(rs.getString("NOGUIA")));
-                        guia.setCODCOB(quitaNulo(rs.getString("CODCOB")));
-                        guia.setIDSERVICIO(quitaNulo(rs.getString("IDSERVICIO")));
-                        guia.setFECHA(quitaNulo(rs.getString("FECHA")));
+                        guia.setIDGUIA(util.limpiaStr(rs.getString("IDGUIA")));
+                        guia.setNOGUIA(util.limpiaStr(rs.getString("NOGUIA")));
+                        guia.setCODCOB(util.limpiaStr(rs.getString("CODCOB")));
+                        guia.setIDSERVICIO(util.limpiaStr(rs.getString("IDSERVICIO")));
+                        guia.setFECHA(util.limpiaStr(rs.getString("FECHA")));
                         //datos de remitente
-                        guia.setCODREM(quitaNulo(rs.getString("CODREM")));
-                        guia.setNOMREM(quitaNulo(rs.getString("NOMREM")));
-                        guia.setTELREM(quitaNulo(rs.getString("TELREM")));
-                        guia.setDIRREM(quitaNulo(rs.getString("DIRREM")));
-                        guia.setCONTACTO(quitaNulo(rs.getString("CONTACTO")));
-                        guia.setOBSERVACIONES(quitaNulo(rs.getString("OBSERVACIONES")));
+                        guia.setCODREM(util.limpiaStr(rs.getString("CODREM")));
+                        guia.setNOMREM(util.limpiaStr(rs.getString("NOMREM")));
+                        guia.setTELREM(util.limpiaStr(rs.getString("TELREM")));
+                        guia.setDIRREM(util.limpiaStr(rs.getString("DIRREM")));
+                        guia.setCONTACTO(util.limpiaStr(rs.getString("CONTACTO")));
+                        guia.setOBSERVACIONES(util.limpiaStr(rs.getString("OBSERVACIONES")));
                         //datos de destinatario
-                        guia.setCODDES(quitaNulo(rs.getString("CODDES")));
-                        guia.setNOMDES(quitaNulo(rs.getString("NOMDES")));
-                        guia.setTELDES(quitaNulo(rs.getString("TELDES")));
-                        guia.setDIRDES(quitaNulo(rs.getString("DIRDES")));
-                        guia.setOBSERVACIONESENTRE(quitaNulo(rs.getString("OBSERVACIONESENTRE")));
+                        guia.setCODDES(util.limpiaStr(rs.getString("CODDES")));
+                        guia.setNOMDES(util.limpiaStr(rs.getString("NOMDES")));
+                        guia.setTELDES(util.limpiaStr(rs.getString("TELDES")));
+                        guia.setDIRDES(util.limpiaStr(rs.getString("DIRDES")));
+                        guia.setOBSERVACIONESENTRE(util.limpiaStr(rs.getString("OBSERVACIONESENTRE")));
                         //otros datos
-                        guia.setPTOORI(quitaNulo(rs.getString("PTOORI")));
-                        guia.setPTODES(quitaNulo(rs.getString("PTODES")));
-                        guia.setMNCPORI(quitaNulo(rs.getString("MNCPORI")));
-                        guia.setMNCPDES(quitaNulo(rs.getString("MNCPDES")));
-                        guia.setLLAVECLIENTE(quitaNulo(rs.getString("LLAVECLIENTE")));
-                        guia.setDESCRENV(quitaNulo(rs.getString("DESCRENV")));
-                        guia.setEMAIL(quitaNulo(rs.getString("EMAIL")));
-                        guia.setPIEZAS(convertirAEntero(quitaNulo(rs.getString("PIEZAS"))).orElse(0));
-                        guia.setPESO(quitaNulo(rs.getString("PESO")));
-                        guia.setTIPTAR(quitaNulo(rs.getString("TIPTAR")));
-                        guia.setCOBEX(quitaNulo(rs.getString("COBEX")));
-                        guia.setSEGURO(quitaNulo(rs.getString("SEGURO")));
-                        guia.setDECLARADO(quitaNulo(rs.getString("DECLARADO")));
-                        guia.setCOD_VALORACOBRAR(quitaNulo(rs.getString("COD_VALORACOBRAR")));
-                        guia.setSEABREPAQUETE(quitaNulo(rs.getString("SEABREPAQUETE")));
-                        guia.setCONTSEG(quitaNulo(rs.getString("CONTSEG")));
-                        guia.setFECOPE(quitaNulo(rs.getString("FECOPE")));
-                        guia.setHORAOPE(quitaNulo(rs.getString("HORAOPE")));
-                        guia.setRECOGEOFICINA(quitaNulo(rs.getString("RECOGEOFICINA")));
-                        guia.setCAMPO1(obtenerCodigo(quitaNulo(rs.getString("CAMPO1"))));
-                        guia.setCAMPO2(obtenerCodigo(quitaNulo(rs.getString("CAMPO2"))));
-                        guia.setCAMPO3(obtenerCodigo(quitaNulo(rs.getString("CAMPO3"))));
-                        guia.setCAMPO4(obtenerCodigo(quitaNulo(rs.getString("CAMPO4"))));
-                        guia.setCODORIGEN(quitaNulo(rs.getString("CODORIGEN")));
-                        guia.setCODDESTINO(quitaNulo(rs.getString("CODDESTINO")));
+                        guia.setPTOORI(util.limpiaStr(rs.getString("PTOORI")));
+                        guia.setPTODES(util.limpiaStr(rs.getString("PTODES")));
+                        guia.setMNCPORI(util.limpiaStr(rs.getString("MNCPORI")));
+                        guia.setMNCPDES(util.limpiaStr(rs.getString("MNCPDES")));
+                        guia.setLLAVECLIENTE(util.limpiaStr(rs.getString("LLAVECLIENTE")));
+                        guia.setDESCRENV(util.limpiaStr(rs.getString("DESCRENV")));
+                        guia.setEMAIL(util.limpiaStr(rs.getString("EMAIL")));
+                        guia.setPIEZAS(util.convertirAEntero(util.limpiaStr(rs.getString("PIEZAS"))).orElse(0));
+                        guia.setPESO(util.limpiaStr(rs.getString("PESO")));
+                        guia.setTIPTAR(util.limpiaStr(rs.getString("TIPTAR")));
+                        guia.setCOBEX(util.limpiaStr(rs.getString("COBEX")));
+                        guia.setSEGURO(util.limpiaStr(rs.getString("SEGURO")));
+                        guia.setDECLARADO(util.limpiaStr(rs.getString("DECLARADO")));
+                        guia.setCOD_VALORACOBRAR(util.limpiaStr(rs.getString("COD_VALORACOBRAR")));
+                        guia.setSEABREPAQUETE(util.limpiaStr(rs.getString("SEABREPAQUETE")));
+                        guia.setCONTSEG(util.limpiaStr(rs.getString("CONTSEG")));
+                        guia.setFECOPE(util.limpiaStr(rs.getString("FECOPE")));
+                        guia.setHORAOPE(util.limpiaStr(rs.getString("HORAOPE")));
+                        guia.setRECOGEOFICINA(util.limpiaStr(rs.getString("RECOGEOFICINA")));
+                        guia.setCAMPO1(util.obtenerCodigo(util.limpiaStr(rs.getString("CAMPO1"))));
+                        guia.setCAMPO2(util.obtenerCodigo(util.limpiaStr(rs.getString("CAMPO2"))));
+                        guia.setCAMPO3(util.obtenerCodigo(util.limpiaStr(rs.getString("CAMPO3"))));
+                        guia.setCAMPO4(util.obtenerCodigo(util.limpiaStr(rs.getString("CAMPO4"))));
+                        guia.setCODORIGEN(util.limpiaStr(rs.getString("CODORIGEN")));
+                        guia.setCODDESTINO(util.limpiaStr(rs.getString("CODDESTINO")));
                         datosGuia.add(guia);
                     }
                 }
@@ -207,7 +209,7 @@ public class D_Guia {
     }
 
     public boolean eliminaGuia(String noguia) {
-        noguia = quitaNulo(noguia);
+        noguia = util.limpiaStr(noguia);
         if (noguia.isEmpty()) {
             return false;
         }
@@ -223,53 +225,5 @@ public class D_Guia {
         }
 
         return false;
-    }
-
-    /**
-     * Este método sirve para obtener solamente el valor del campo1,2, 3 y 4. El
-     * fin es quitar todo lo que venga antes del caracter "/" y obtener
-     * solamente el código.
-     *
-     * @param campo
-     * @return - código seteado en el campo 1, 2, 3, y 4.
-     */
-    public String obtenerCodigo(String campo) {
-        return campo.substring(campo.indexOf("/") + 1, campo.length());
-    }
-
-    /**
-     * Convierte cualquier valor tipo string a entero, al ingresar un valor nulo
-     * o un valor no válido devuelve un Opcional vacío.
-     *
-     * @param valor
-     * @return valor convertido en tipo entero ó un Opcional vacío de no ser un
-     * valor válido.
-     */
-    public Optional<Integer> convertirAEntero(String valor) {
-        return Optional.ofNullable(valor)
-                .map(String::trim)
-                .filter(s -> !s.isEmpty())
-                .map(s -> {
-                    try {
-                        return Integer.parseInt(s);
-                    } catch (NumberFormatException e) {
-                        return 0;
-                    }
-                });
-    }
-
-    /**
-     * Quita el valor nulo
-     *
-     * @param var
-     * @return devuelve un valor vacío
-     */
-    private String quitaNulo(String var) {
-        if (var == null) {
-            return "";
-        } else {
-            var = var.replaceAll("null", "").replaceAll("NULL", "");
-            return var.trim();
-        }
     }
 }

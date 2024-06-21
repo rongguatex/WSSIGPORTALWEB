@@ -6,6 +6,7 @@
 package com.guatex.sig.datos;
 
 import com.guatex.sig.entidades.E_ValoresCOD;
+import com.guatex.sig.utils.Utils;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.Connection;
@@ -18,7 +19,7 @@ import java.sql.SQLException;
  * @author RGALICIA
  */
 public class D_ValoresCOD {
-
+    
     public E_ValoresCOD ObtengoValoresCOD(String CODCOB) {
         String query = "SELECT ISNULL(COD_MINMONTO,0) COD_MINMONTO, ISNULL(COD_MAXMONTO, 0) COD_MAXMONTO, ISNULL(COD_MAXGUIAS,0) COD_MAXGUIAS "
                 + " FROM FACCLIENTES "
@@ -40,9 +41,5 @@ public class D_ValoresCOD {
             ex.printStackTrace();
             return null;
         }
-    }
-
-    private String quitaNulo(String var) {
-        return var == null ? "" : var.trim();
     }
 }

@@ -6,6 +6,7 @@
 package com.guatex.sig.datos;
 
 import com.guatex.sig.entidades.E_ImpresionSIG;
+import com.guatex.sig.utils.Utils;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
