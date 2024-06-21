@@ -378,9 +378,7 @@ public class DReporteClientes {
             Query = "INSERT INTO FACCLICLIENTES ("
                     + "CODIGO, CODCOB, C_NOMBRE, C_CONTACTO, C_DIRECC , C_EMAIL, C_TEL, C_NIT,"
                     + "  CAMPO1, CAMPO2, CAMPO3, CAMPO4, RECOGEOFICINA, PADRE, C_MNCP, C_PTO  )"
-                    + "  SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,"
-                    + " (SELECT NOMBRE FROM OPEMUNI WHERE DEPTO = ? AND CODIGO = ?),"
-                    + "    (SELECT PUNTODECOBERTURA FROM TRFMUNICIPIOS WHERE CODIGO = ?)";
+                    + "  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
 
             con = new Conexion().AbrirConexion();
             ps = con.prepareStatement(Query);
@@ -399,9 +397,8 @@ public class DReporteClientes {
             ps.setString(12, clientes.getCAMPO4());
             ps.setString(13, clientes.getRECOGEOFICINA());
             ps.setString(14, clientes.getPADRE());
-            ps.setString(15, clientes.getDEPTODES());
-            ps.setString(16, clientes.getMUNICIPIO());
-            ps.setString(17, clientes.getPUNTO());
+            ps.setString(15, clientes.getMUNICIPIO());
+            ps.setString(16, clientes.getPUNTO());
             //System.out.println("lo que llevo en MUNICIPIO: [" + clientes.getMUNICIPIO() + "] [" + clientes.getPUNTO() + "]");
             rowsAffected = ps.executeUpdate();
 
@@ -685,6 +682,48 @@ public class DReporteClientes {
         }
 
         return existeCliente;
+    }
+
+    public EReporteClientes obtengoPuntosCobertura(EReporteClientes cliente) {
+
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        String Query = " SELECT PUNTODECOBERTURA, NOMBRE "
+                + " FROM TRFMUNICIPIOS "
+                + " WHERE CODIGO = ?  ";
+
+        try {
+            con = new Conexion().AbrirConexion();
+            ps = con.prepareStatement(Query);
+            ps.setString(1, cliente.getPUNTO());
+
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                cliente.setPUNTO(rs.getString("PUNTODECOBERTURA"));
+                cliente.setMUNICIPIO(rs.getString("NOMBRE"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return cliente;
     }
 
     private String quitaNulo(String dato) {
