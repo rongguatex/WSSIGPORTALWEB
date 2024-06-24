@@ -14,8 +14,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class D_Clientes {
-
+    
     Utils util = new Utils();
+
     /**
      * Método que retorna todos los clientes que en sus campos CODIGO, NOMBRE,
      * CONTACTO O TELEFONO contienen los datos recibidos .
@@ -26,7 +27,7 @@ public class D_Clientes {
     public E_respuestaClientes ObtenerListadoClientes(E_Cliente cliente) {
         List<E_Cliente> clientes = new LinkedList<>();
         String Query = "";
-
+        
         if (cliente.getUNIFICACLI().equalsIgnoreCase("S")) {
             if (cliente.getCODCOB().equalsIgnoreCase(cliente.getPADRE())) {
                 Query = "SELECT  CODIGO, CODCOB, PADRE, C_NOMBRE AS NOMBRE, C_CONTACTO AS CONTACTO, C_DIRECC AS DIRECCION, "
@@ -48,14 +49,14 @@ public class D_Clientes {
                     + "WHERE ISNULL(CODIGO,'') LIKE ? AND ISNULL(C_NOMBRE,'') LIKE ? AND ISNULL(C_CONTACTO,'') LIKE ? AND ISNULL(C_TEL,'') LIKE ? "
                     + "AND CODCOB = ? ";
         }
-
+        
         try (Connection con = new Conexion().AbrirConexion();
                 PreparedStatement ps = con.prepareStatement(Query)) {
             ps.setString(1, "%" + cliente.getCODIGO() + "%");
             ps.setString(2, "%" + util.limpiaStr(cliente.getNOMBRE()) + "%");
             ps.setString(3, "%" + util.limpiaStr(cliente.getCONTACTO()) + "%");
             ps.setString(4, "%" + util.limpiaStr(cliente.getTELEFONO()) + "%");
-
+            
             if (cliente.getUNIFICACLI().equalsIgnoreCase("S")) {
                 if (cliente.getCODCOB().equalsIgnoreCase(cliente.getPADRE())) {
                     ps.setString(5, util.limpiaStr(cliente.getPADRE()));
@@ -66,7 +67,7 @@ public class D_Clientes {
             } else {
                 ps.setString(5, util.limpiaStr(cliente.getCODCOB()));
             }
-
+            
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     E_Cliente NuevoCliente = new E_Cliente();
@@ -126,16 +127,16 @@ public class D_Clientes {
                             }
                         }
                     }
-
+                    
                     clientes.add(NuevoCliente);
                 }
-
+                
                 if (!clientes.isEmpty()) {
                     return new E_respuestaClientes("200", clientes);
                 } else {
                     return new E_respuestaClientes("204", clientes);
                 }
-
+                
             }
         } catch (Exception e) {
             e.printStackTrace(System.err);
@@ -144,15 +145,16 @@ public class D_Clientes {
     }
 
     /**
-     * Método que busca toda la información del cliente por CODIGO
+     * Método que busca toda la información del cliente por CODIGO.
      *
-     * @param cliente - XML
+     * @param cliente - en padre y codcob colocar el mismo dato. ejemplo:
+     * padre=GUD0001; codcob:GUD0001
      * @return Información del cliente
      */
     public E_respuestaClientes ObtenerCliente(E_Cliente cliente) {
         List<E_Cliente> datosCliente = new LinkedList<>();
         String Query = "";
-
+        cliente.setCODCOB(cliente.getPADRE());
         if (cliente.getUNIFICACLI().equalsIgnoreCase("S")) {
             if (cliente.getCODCOB().equalsIgnoreCase(cliente.getPADRE())) {
                 Query = "SELECT  CODIGO, CODCOB, PADRE, C_NOMBRE AS NOMBRE, C_CONTACTO AS CONTACTO, C_DIRECC AS DIRECCION, "
@@ -174,11 +176,11 @@ public class D_Clientes {
                     + "WHERE ISNULL(CODIGO,'') = ?  "
                     + "AND CODCOB = ? ";
         }
-
+        
         try (Connection con = new Conexion().AbrirConexion();
                 PreparedStatement ps = con.prepareStatement(Query)) {
             ps.setString(1, util.limpiaStr(cliente.getCODIGO()));
-
+            
             if (cliente.getUNIFICACLI().equalsIgnoreCase("S")) {
                 if (cliente.getCODCOB().equalsIgnoreCase(util.limpiaStr(cliente.getPADRE()))) {
                     ps.setString(2, util.limpiaStr(cliente.getPADRE()));
@@ -189,7 +191,7 @@ public class D_Clientes {
             } else {
                 ps.setString(2, util.limpiaStr(cliente.getCODCOB()));
             }
-
+            
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     E_Cliente NuevoCliente = new E_Cliente();
@@ -205,7 +207,7 @@ public class D_Clientes {
                     NuevoCliente.setNIT(util.limpiaStr(rs.getString("NIT")));
                     NuevoCliente.setTELEFONO(util.limpiaStr(rs.getString("TELEFONO")));
                     NuevoCliente.setRECOGEOFICINA(util.limpiaStr(rs.getString("RECOGEOFICINA")));
-
+                    
                     if (rs.getString("CAMPO1") != null) {
                         if (util.limpiaStr(rs.getString("CAMPO1")).contains("/")) {
                             NuevoCliente.setCAMPO1(util.limpiaStr(rs.getString("CAMPO1")).substring(util.limpiaStr(rs.getString("CAMPO1")).indexOf("/") + 1, util.limpiaStr(rs.getString("CAMPO1")).length()));
@@ -236,7 +238,7 @@ public class D_Clientes {
                     }
                     NuevoCliente.setPADRE(util.limpiaStr(rs.getString("PADRE")));
                     NuevoCliente.setCOBERTURA(new D_PuntoCobertura().BuscarUbicacionEspecifica(NuevoCliente.getPUNTO(), NuevoCliente.getUBICACION()));
-
+                    
                     List<E_Departamento> departamentos = new D_Depto_Municipios().ObtenerDeptosMunicipios();
                     if (departamentos != null) {
                         for (E_Departamento depto : departamentos) {
@@ -264,16 +266,16 @@ public class D_Clientes {
             return new E_respuestaClientes("500", datosCliente);
         }
     }
-
+    
     public E_PuntoCobertura obtenerUbicacionCliCliente(String codcob, String codigoCliente) {
-
+        
         String query = "Select  C_MNCP,C_PTO FROM FACCLICLIENTES WHERE CODCOB = ? and CODIGO = ?";
-
+        
         try (Connection con = new Conexion().AbrirConexion();
                 PreparedStatement ps = con.prepareStatement(query)) {
             ps.setString(1, codcob);
             ps.setString(2, codigoCliente);
-
+            
             try (ResultSet rs = ps.executeQuery()) {
                 E_PuntoCobertura ubicacion = new E_PuntoCobertura();
                 while (rs.next()) {
