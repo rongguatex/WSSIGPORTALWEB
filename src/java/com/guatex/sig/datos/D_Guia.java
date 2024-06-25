@@ -47,7 +47,7 @@ public class D_Guia {
                 + " J.SEGURO,  "
                 + " J.DECLARADO, "
                 + " J.MNCPDES,  "
-                + " J.FECHA, "
+                + " CONVERT(VARCHAR(15), J.FECHA, 105) AS FECHA, "
                 + " J.DESCRENV, "
                 + " J.SEABREPAQUETE, "
                 + " J.CONTSEG, "
