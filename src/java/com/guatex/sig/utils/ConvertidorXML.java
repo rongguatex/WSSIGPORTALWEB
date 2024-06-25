@@ -99,7 +99,6 @@ public class ConvertidorXML {
         }
         XML += "</LISTADO_CLIENTES>"
                 + "</RESPUESTA>";
-        System.out.println("[" + XML + "]");
         return XML;
     }
 
@@ -128,7 +127,6 @@ public class ConvertidorXML {
         }
         XML += "</CLIENTES>"
                 + "</RESPUESTA>";
-        System.out.println(XML);
         return XML;
     }
 
@@ -283,7 +281,6 @@ public class ConvertidorXML {
         }
         XML += "</LISTADO_GUIAS>"
                 + "</RESPUESTA>";
-        System.out.println("[" + XML + "]");
         return XML;
     }
 
@@ -395,7 +392,6 @@ public class ConvertidorXML {
         }
         XML += "</LISTADO_GUIAS>"
                 + "</RESPUESTA>";
-        System.out.println("[" + XML + "]");
         return XML;
     }
 
@@ -489,7 +485,6 @@ public class ConvertidorXML {
      * @return
      */
     public String BadRequest() {
-        System.out.println("bad request");
         return "<RESPUESTA>"
                 + addTag("CODIGO", "400")
                 + addTag("MENSAJE", "BAD REQUEST")
