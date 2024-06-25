@@ -262,8 +262,8 @@ public class DReporteClientes {
             rs = ps.executeQuery();
 
             while (rs.next()) {
-                reporte.setPADRE(rs.getString("PADRE"));
-                reporte.setUNIFICA(rs.getString("UNIFICACLI"));
+                reporte.setPADRE(util.limpiaStr(rs.getString("PADRE")));
+                reporte.setUNIFICA(util.limpiaStr(rs.getString("UNIFICACLI")));
             }
 
         } catch (Exception ex) {
