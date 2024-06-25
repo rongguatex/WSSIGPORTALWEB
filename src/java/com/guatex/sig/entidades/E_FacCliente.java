@@ -290,7 +290,7 @@ public class E_FacCliente {
 
     @Override
     public String toString() {
-        return "E_FacCliente{" + "_CODIGO=" + _CODIGO + ", _NOMBRE=" + _NOMBRE + ",  \n"
+        return "\n\nE_FacCliente{" + "_CODIGO=" + _CODIGO + ", _NOMBRE=" + _NOMBRE + ",  \n"
                 + "_CLIENTE=" + _CLIENTE + ", _TELEFONO=" + _TELEFONO + ", _CORREO=" + _CORREO + ", \n "
                 + "_MUNICIPIO=" + _MUNICIPIO + ", _LOCALIDAD=" + _LOCALIDAD + ", _NIT=" + _NIT + ", \n "
                 + "_PUNTO=" + _PUNTO + ", _PADRE=" + _PADRE + ", _DIRECCION=" + _DIRECCION + ", \n "

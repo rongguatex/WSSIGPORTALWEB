@@ -78,7 +78,8 @@ public class E_TarifaMuni {
 
     @Override
     public String toString() {
-        return "E_TarifaMuni{" + "_NOMBRE=" + _NOMBRE + ", _PUNTODECOBERTURA=" + _PUNTODECOBERTURA + ", _TIPODETARIFA=" + _TIPODETARIFA + ", _TOTALZONASEXTRA=" + _TOTALZONASEXTRA + ", _COBERTURAEXTRA=" + _COBERTURAEXTRA + ", _CODIGOCOBERTURA=" + _CODIGOCOBERTURA + '}';
+        return "\n\nE_TarifaMuni{" + "_NOMBRE=" + _NOMBRE + ", _PUNTODECOBERTURA=" + _PUNTODECOBERTURA + ", _TIPODETARIFA=" + _TIPODETARIFA + ", \n"
+                + "_TOTALZONASEXTRA=" + _TOTALZONASEXTRA + ", _COBERTURAEXTRA=" + _COBERTURAEXTRA + ", _CODIGOCOBERTURA=" + _CODIGOCOBERTURA + '}';
     }
 
     

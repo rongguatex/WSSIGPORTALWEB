@@ -206,6 +206,13 @@ public class E_Cliente {
 
     @Override
     public String toString() {
-        return "E_Cliente{" + "_SELECCIONADO=" + _SELECCIONADO + ", _CODCOB=" + _CODCOB + ", _CODIGO=" + _CODIGO + ", _NIT=" + _NIT + ", _TELEFONO=" + _TELEFONO + ", _NOMBRE=" + _NOMBRE + ", _DIRECCION=" + _DIRECCION + ", _CONTACTO=" + _CONTACTO + ", _UBICACION=" + _UBICACION + ", _PUNTO=" + _PUNTO + ", _CORREO=" + _CORREO + ", _CAMPO1=" + _CAMPO1 + ", _CAMPO2=" + _CAMPO2 + ", _CAMPO3=" + _CAMPO3 + ", _CAMPO4=" + _CAMPO4 + ", _PADRE=" + _PADRE + ", _UNIFICACLI=" + _UNIFICACLI + ", _RECOGEOFICINA=" + _RECOGEOFICINA + ", __COBERTURA=" + __COBERTURA + ", _DEPARTAMENTO=" + _DEPARTAMENTO + ", _MUNICIPIO=" + _MUNICIPIO + '}';
+        return "\n\nE_Cliente{" + "_SELECCIONADO=" + _SELECCIONADO + ", _CODCOB=" + _CODCOB + ", _CODIGO=" + _CODIGO + ", _NIT=" + _NIT + ", \n"
+                + "_TELEFONO=" + _TELEFONO + ", _NOMBRE=" + _NOMBRE + ", _DIRECCION=" + _DIRECCION + ", _CONTACTO=" + _CONTACTO + ", \n"
+                + "_UBICACION=" + _UBICACION + ", _PUNTO=" + _PUNTO + ", _CORREO=" + _CORREO + ", \n"
+                + "_CAMPO1=" + _CAMPO1 + ", _CAMPO2=" + _CAMPO2 + ", _CAMPO3=" + _CAMPO3 + ", _CAMPO4=" + _CAMPO4 + ", \n"
+                + "_PADRE=" + _PADRE + ", _UNIFICACLI=" + _UNIFICACLI + ", _RECOGEOFICINA=" + _RECOGEOFICINA + ", \n"
+                + "__COBERTURA=" + __COBERTURA + ", \n"
+                + "_DEPARTAMENTO=" + _DEPARTAMENTO + ",\n"
+                + " _MUNICIPIO=" + _MUNICIPIO + '}';
     }
 }
