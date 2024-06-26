@@ -20,7 +20,6 @@ import javax.xml.bind.Marshaller;
 import com.guatex.sig.entidadesRespuesta.E_RespuestaDetalle;
 import com.guatex.sig.entidadesRespuesta.E_RespuestaGuia;
 import java.io.StringReader;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import javax.xml.bind.JAXBContext;

@@ -24,7 +24,8 @@ public class D_TarifaEnvio {
         if (util.limpiaStr(CodigoTarifa).isEmpty() || util.limpiaStr(CodigoEnvio).isEmpty()) {
              return null;
         }
-        
+        //ESTE PROCESO SE PUEDE MEJORAR
+        System.out.println("codtarifa " + CodigoTarifa + " codigo envio " + CodigoEnvio);
         String query = "SELECT CODIGO, NOMBRE, ISNULL(PESOFIJO,0) PESOFIJO, ABREVIATURA FROM TRFENVIOS "
                 + "WHERE CODIGO IN (SELECT CODIGOENVIO FROM TRFTARIFARIO "
                 + "WHERE CODIGOTARIFA = ? AND CODIGO = ? "

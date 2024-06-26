@@ -267,13 +267,13 @@ public class D_Clientes {
         }
     }
     
-    public E_PuntoCobertura obtenerUbicacionCliCliente(String codcob, String codigoCliente) {
+    public E_PuntoCobertura obtenerUbicacionCliCliente(String padre, String codigoCliente) {
         
-        String query = "Select  C_MNCP,C_PTO FROM FACCLICLIENTES WHERE CODCOB = ? and CODIGO = ?";
+        String query = "Select  C_MNCP,C_PTO FROM FACCLICLIENTES WHERE PADRE = ? and CODIGO = ?";
         
         try (Connection con = new Conexion().AbrirConexion();
                 PreparedStatement ps = con.prepareStatement(query)) {
-            ps.setString(1, codcob);
+            ps.setString(1, padre);
             ps.setString(2, codigoCliente);
             
             try (ResultSet rs = ps.executeQuery()) {
