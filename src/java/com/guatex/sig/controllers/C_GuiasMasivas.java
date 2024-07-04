@@ -16,10 +16,8 @@ import com.guatex.sig.entidades.E_DetalleLinea;
 import com.guatex.sig.entidades.E_FacCliente;
 import com.guatex.sig.entidades.E_GuiasMasivas;
 import com.guatex.sig.entidades.E_PuntoCobertura;
-import com.guatex.sig.entidades.E_TarifaCliente;
 import com.guatex.sig.entidades.E_TarifaEnvio;
 import com.guatex.sig.entidades.E_TarifaMuni;
-import com.guatex.sig.entidades.E_Tarificador;
 import com.guatex.sig.entidades.E_ValoresCOD;
 import com.guatex.sig.entidades.E_respuestaClientes;
 import com.guatex.sig.entidades.RespuestaGeneral;
@@ -70,6 +68,7 @@ public class C_GuiasMasivas {
                 cliente.setCODCOB(datos.getCredenciales().getCodcob());
                 cliente.setUNIFICACLI(parametrosRemitente.getUNIFICACLI());
 
+                //se obtiene datos de cliente, en tarifaOrigen se usa punto y ubicación que se obtienen de este método.
                 cliente = new D_Clientes().ObtenerCliente(cliente).getDATOS_CLIENTES().get(0);
 
                 //obtener tarifa origen del remitente y valores parametrizados para COD
@@ -92,50 +91,53 @@ public class C_GuiasMasivas {
                  */
                 for (E_DatosGuiaMasiva dato : datos.getListaDatosGuia()) {
                     /**
-                     * se agrega datos del remitente
+                     * se asigna el código del cliente que se va a validar.
+                     * se agrega datos del remitente.
                      */
-                    dato.setCLIENTE(cliente);
+                    System.out.println("\n------------------------------------------ Nuevo objeto -------------------------------------------------");
+                    System.out.println("anterior [" + cliente.getCODIGO() + "] nuevo [" + dato.getCODIGO() + "]");
+                    cliente.setCODIGO(dato.getCODIGO());
                     dato.setCODCOB(datos.getCredenciales().getCodcob());
+                    dato.setCLIENTE(cliente);
                     dato.setTARIFA_ORIGEN(tarifaOrigen);
 
-                    System.out.println("\n------------------------------------------ Nuevo objeto -------------------------------------------------");
                     boolean errUbicacion = false;
                     dato.getESTADO().clear();
 
                     if (dato.getCODIGO().isEmpty()) {
                         if (dato.getCODIGO_DESTINATARIO().isEmpty()) {
-                            dato.AddStateLastPosition("Falta campo CÓDIGO DESTINATARIO.");
+                            dato.AddStateLastPosition("Campo CÓDIGO DESTINATARIO --> Campo vacío.");
                             errUbicacion = true;
                         }
 
                         if (dato.getMUNICIPIO_DESTINATARIO().isEmpty()) {
-                            dato.AddStateLastPosition("Falta campo MUNICIPIO DESTINATARIO. ");
+                            dato.AddStateLastPosition("Campo MUNICIPIO DESTINATARIO --> Campo vacío. ");
                             errUbicacion = true;
                         }
                     }
 
                     if (!errUbicacion) {
-                        if (dato.getCODIGO().isEmpty()) {
-                            E_PuntoCobertura ubicacion = new D_Clientes().obtenerUbicacionCliCliente(datos.getCredenciales().getCodcob(), dato.getCODIGO());
+                        if (!dato.getCODIGO().isEmpty()) {
+                            E_PuntoCobertura ubicacion = new D_Clientes().obtenerUbicacionCliCliente(datos.getCredenciales().getPadre(), dato.getCODIGO());
                             if (!ubicacion.getPUNTO().isEmpty() && !ubicacion.getUBICACION().isEmpty()) {
                                 dato.setCODIGO_DESTINATARIO(ubicacion.getPUNTO());
                                 dato.setMUNICIPIO_DESTINATARIO(ubicacion.getUBICACION());
                                 System.out.println("validando ando: coddes [" + dato.getCODIGO_DESTINATARIO() + "] mncpdest [" + dato.getMUNICIPIO_DESTINATARIO() + "]");
                             } else {
-                                dato.AddStateLastPosition("Campo código y municipio destinatario inválido.");
+                                dato.AddStateLastPosition("-Campo CÓDIGO Y MUNICIPIO DESTINATARIO --> Datos inválidos.");
                             }
                         }
 
                         E_TarifaMuni destino = new D_Tarifa().buscarTarifaMunicipio(new E_Cliente(dato.getCODIGO_DESTINATARIO(), dato.getMUNICIPIO_DESTINATARIO()));
                         if (destino == null) {
-                            dato.AddStateLastPosition("Código y municipio destinatario inválido.");
+                            dato.AddStateLastPosition("Campo CÓDIGO Y MUNICIPIO DESTINATARIO --> Datos inválidos.");
                         } else {
                             dato.setPTODES(destino.getCODIGOCOBERTURA());
                         }
 
                     }
 
-                    System.out.println("Antes de ingresar viene - dato.gettipopiezapeso " + dato.getTIPO_PIEZA_PESO());
+                    System.out.println("Antes de ingresar viene - TIPO-PIEZA-PESO " + dato.getTIPO_PIEZA_PESO());
                     /**
                      * Validación de TIPO PIEZA y PESO. parsea el valor tipo
                      * pieza y peso que viene en formato 1-1-1, 1-1-1... n
@@ -154,24 +156,23 @@ public class C_GuiasMasivas {
                      * Validacion de lineas detalle.
                      */
                     if (lineasdetalle != null) {
-                        System.out.println("antes de entrar a la función validarLineasDetalle " + lineasdetalle);
                         if (!lineasdetalle.isEmpty()) {
-                            RespuestaGeneral respuesta = validarLineasDetalle(dato, lineasdetalle, datos.getCredenciales().getCodcob(), tarifaOrigen);
+                            RespuestaGeneral respuesta = validarLineasDetalle(dato, lineasdetalle, datos.getCredenciales().getCodcob(), tarifaOrigen, parametrosRemitente);
                             if (respuesta.getCodigo().equals("9999")) {
                                 dato.AddStatesErrorList(respuesta.getErrores());
                             }
                         } else {
-                            System.out.println("Campo TIPO-PIEZA-PESO vacío o inválido");
-                            dato.AddStateLastPosition("Campo TIPO-PIEZA-PESO vacío o inválido..");
+                            System.out.println("Campo TIPO-PIEZA-PESO --> Campo vacío o inválido");
+                            dato.AddStateLastPosition("Campo TIPO-PIEZA-PESO --> Campo vacío o inválido..");
                         }
                     } else {
-                        System.out.println("Campo TIPO-PIEZA-PESO inválido");
-                        dato.AddStateLastPosition("Campo TIPO-PIEZA-PESO inválido.");
+                        System.out.println("Campo TIPO-PIEZA-PESO --> Campo inválido");
+                        dato.AddStateLastPosition("Campo TIPO-PIEZA-PESO --> Campo inválido.");
                     }
 
                     /**
                      * Verifica si el cliente tiene COD Validación de campo COD
-                     * y PRECIO
+                     * y PRECIO.
                      */
                     if (!dato.getCOD().isEmpty()) {
                         if (quitaNulo(parametrosRemitente.getLCOD()).equalsIgnoreCase("N") || quitaNulo(parametrosRemitente.getLCOD()).equalsIgnoreCase("S")) {
@@ -180,17 +181,17 @@ public class C_GuiasMasivas {
                                 dato.AddStatesErrorList(respuesta.getErrores());
                             }
                         } else {
-                            dato.AddStateLastPosition("Campo COD no tiene un valor válido.");
+                            dato.AddStateLastPosition("Campo COD --> Valor inválido.");
                         }
                     } else {
-                        dato.AddStateLastPosition("Campo COD está vació.");
+                        dato.AddStateLastPosition("Campo COD --> Campo vació.");
                     }
 
                     if (dato.getESTADO().size() > 0) {
                         dato.setESTADO(Arrays.asList(concatenarEstados(dato.getESTADO())));
                         existenErrores = true;
                     }
-                    System.out.println("VALIDACION COMPLETA  Errores: [" + dato.getESTADO().size() + "] " + dato.getESTADO().toString());
+                    System.out.println("-------------> VALIDACION COMPLETA  Errores: [" + dato.getESTADO().size() + "] " + dato.getESTADO().toString());
                 }
 
                 /**
@@ -229,7 +230,7 @@ public class C_GuiasMasivas {
             String seabrepaquete = "<SEABREPAQUETE />";
 
             if (datos.getCOD().equalsIgnoreCase("S")) {
-                llevaCOD = "<COD_VALORACOBRAR>S<COD_VALORACOBRAR>";
+                llevaCOD = "<COD_VALORACOBRAR>S</COD_VALORACOBRAR>";
                 seabrepaquete = "<SEABREPAQUETE>S</SEABREPAQUETE >";
             }
 
@@ -299,10 +300,7 @@ public class C_GuiasMasivas {
      * encntrados en las validaciones.
      */
     public RespuestaGeneral validaCOD(E_FacCliente parametrosRemitente, E_DatosGuiaMasiva dato, E_ValoresCOD valorCod) {
-        System.out.println("dato.getCOD()   " + dato.getCOD());
-
         List<String> Errores = new ArrayList<>();
-
         String precioCOD = "";
 
         try {
@@ -322,36 +320,32 @@ public class C_GuiasMasivas {
                 try {
                     double precio = dato.getPRECIO().equals("") ? 0 : Double.parseDouble(dato.getPRECIO());
                     if (precio < valorCod.getValorCODMin()) {
-                        Errores.add("El valor COD mínimo admitido es: [Q." + valorCod.getValorCODMin() + "]");
+                        Errores.add("Campo PRECIO --> El valor COD mínimo admitido es: [Q." + valorCod.getValorCODMin() + "]");
                     }
 
                     if (precio > valorCod.getValorCODMax()) {
-                        Errores.add("El valor COD máximo admitido es: [Q." + valorCod.getValorCODMax() + "]");
+                        Errores.add("Campo PRECIO --> El valor COD máximo admitido es: [Q." + valorCod.getValorCODMax() + "]");
                     }
                 } catch (NumberFormatException e) {
-                    Errores.add("Campo PRECIO inválido.");
+                    Errores.add("Campo PRECIO --> Campo inválido.");
                 }
             } else {
-
-                Errores.add("Campo COD: CODCOB no tiene habilitado usar COD.marcar con N y dejar precio vacio.");//[solo se pueden crear GUIAS CON COD para este CODCOB, marcar con S.]
+                Errores.add("Campo COD --> CODCOB no tiene habilitado usar COD.marcar con N y dejar vacío el campo PRECIO.");
             }
         } else {
             if (quitaNulo(parametrosRemitente.getLCOD()).equalsIgnoreCase("N")) {
-                if (precioCOD.matches("[^.0-9]")) {
-                    try {
-                        double precio = dato.getPRECIO().equals("") ? 0 : Double.parseDouble(dato.getPRECIO());
-                        if (precio > 0) {
-                            Errores.add("PRECIO debe de estar vacio.");
-                        }
-                    } catch (NumberFormatException e) {
-                        Errores.add("Campo PRECIO inválido.");
+                try {
+                    double precio = dato.getPRECIO().equals("") ? 0 : Double.parseDouble(dato.getPRECIO());
+                    if (precio > 0) {
+                        Errores.add("Campo PRECIO --> CODCOB no tiene habilitado usar COD, Campo PRECIO debe de estar vacío o marcar con 0 (cero).");
                     }
+                } catch (NumberFormatException e) {
+                    System.err.println("Error en el parseo del dato [" + dato.getPRECIO() + " a double, se muestra el mensaje de excepción pero el proceso continua normal y se envía mensaje de error en el estado]");
+                    e.printStackTrace();
+                    Errores.add("Campo PRECIO --> Campo inválido.");
                 }
             }
         }
-//        } else {
-//            Errores.add("Campo PRECIO vacío.");
-//        }
 
         if (Errores.size() > 0) {
             return new RespuestaGeneral("9999", "Existen " + Errores.size() + " errores", Errores);
@@ -385,18 +379,17 @@ public class C_GuiasMasivas {
                         datoFila.setMUNICIPIO_DESTINATARIO(quitaNulo(cliCliente.getCOBERTURA().getUBICACION()));
                     }
                 } else {
-                    datoFila.AddStateFirstPosition("Código de cliente no existe o es inválido");
-//                    System.out.println("Código de cliente inválido " + datoFila.getESTADO());
+                    datoFila.AddStateFirstPosition("Campo CÓDIGO --> Código de cliente no existe o es inválido");
                 }
             } else {
                 if (datoFila.getNOMBRE().isEmpty()) {
-                    datoFila.AddStateLastPosition("Campo NOMBRE vacío.");
+                    datoFila.AddStateLastPosition("Campo NOMBRE --> Campo vacío.");
                 }
                 if (datoFila.getTELEFONO().isEmpty()) {
-                    datoFila.AddStateLastPosition("Campo TELÉFONO vacío.");
+                    datoFila.AddStateLastPosition("Campo TELÉFONO --> Campo vacío.");
                 }
                 if (datoFila.getDIRECCION().isEmpty()) {
-                    datoFila.AddStateLastPosition("Campo DIRECCIÓN vacío.");
+                    datoFila.AddStateLastPosition("Campo DIRECCIÓN --> Campo vacío.");
                 }
             }
         }
@@ -414,30 +407,30 @@ public class C_GuiasMasivas {
      * @return - Respuesta general con código, mensaje y listado de errores
      * encntrados en las validaciones.
      */
-    public RespuestaGeneral validarLineasDetalle(E_DatosGuiaMasiva dato, List<E_DetalleLinea> lineaDetalle, String codcob, E_TarifaMuni tarifaOrigen) {
+    public RespuestaGeneral validarLineasDetalle(E_DatosGuiaMasiva dato, List<E_DetalleLinea> lineaDetalle, String codcob, E_TarifaMuni tarifaOrigen, E_FacCliente parametrosRemitente) {
         List<String> Errores = new ArrayList<>();
         int index = 1;
         for (E_DetalleLinea detalle : lineaDetalle) {
-            String codigoTarifa = obtenerCodigoTarifa(dato, codcob, tarifaOrigen);
-
+            String codigoTarifa = obtenerCodigoTarifa(dato, codcob, tarifaOrigen, parametrosRemitente);
+            
             if (codigoTarifa != null) {
                 E_TarifaEnvio tarifaEnvio = new D_TarifaEnvio().BuscarTipoEnvio(codigoTarifa, detalle.getTIPOENVIO());
                 if (tarifaEnvio == null) {
-                    Errores.add("En linea detalle " + index + " el tipo de pieza es inválido.");
+                    Errores.add("Campo TIPO-PIEZA-PESO --> En linea detalle " + index + " el tipo de pieza es inválido.");
                 }
             }
 
             if (detalle.getPIEZAS() <= 0) {
-                Errores.add("En linea detalle " + index + " la cantidad de piezas es inválido.");
+                Errores.add("Campo TIPO-PIEZA-PESO --> En linea detalle " + index + " la cantidad de piezas es inválido.");
             }
 
             if (Double.parseDouble(detalle.getPESO()) <= 0) {
-                Errores.add("En linea detalle " + index + " el peso es inválido.");
+                Errores.add("Campo TIPO-PIEZA-PESO --> En linea detalle " + index + " el peso es inválido.");
             }
             index++;
         }
 
-        System.out.println("Cantidad Errores " + Errores.size() + " Errores: " + Errores.toString());
+        System.out.println("Cantidad Errores en validación de guías detalle: " + Errores.size() + " Errores: " + Errores.toString());
 
         if (Errores.size() > 0) {
             return new RespuestaGeneral("9999", "Existen " + Errores.size() + " errores en las lineas de detalle", Errores);
@@ -454,7 +447,7 @@ public class C_GuiasMasivas {
      * @param tarifaOrigen
      * @return - String con el códgio de la tárifa del envío.
      */
-    public String obtenerCodigoTarifa(E_DatosGuiaMasiva dato, String codcob, E_TarifaMuni tarifaOrigen) {
+    public String obtenerCodigoTarifa(E_DatosGuiaMasiva dato, String codcob, E_TarifaMuni tarifaOrigen, E_FacCliente tarifaCliente) {
         String cobex = "N";
 
         /**
@@ -473,7 +466,6 @@ public class C_GuiasMasivas {
             }
         }
 
-        E_TarifaCliente tarifaCliente = new D_Tarifa().obtenerTarifaCliente(codcob);
         if (tarifaCliente != null) {
             String codigoTarifa;
             if (!quitaNulo(tarifaCliente.getTARIFAUNICA()).isEmpty()) {

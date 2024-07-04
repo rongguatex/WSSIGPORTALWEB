@@ -9,6 +9,7 @@ import com.guatex.sig.entidades.E_Cliente;
 import com.guatex.sig.entidades.E_DetalleLinea;
 import com.guatex.sig.entidades.E_TarifaCliente;
 import com.guatex.sig.entidades.E_TarifaMuni;
+import com.guatex.sig.utils.Utils;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,6 +21,8 @@ import java.util.List;
  * @author RGALICIA
  */
 public class D_Tarifa {
+    
+    Utils util = new Utils();
 
     public E_TarifaCliente obtenerTarifaCliente(String codcob) {
         if (codcob.isEmpty()) {
@@ -34,10 +37,10 @@ public class D_Tarifa {
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     tarifa = new E_TarifaCliente();
-                    tarifa.setCODIGO(quitaNulo(rs.getString("CODIGO")));
-                    tarifa.setTARIFAUNICA(quitaNulo(rs.getString("TARIFAUNICA")));
-                    tarifa.setTARIFANORMAL(quitaNulo(rs.getString("TARIFANORMAL")));
-                    tarifa.setTARIFAEXTRA(quitaNulo(rs.getString("TARIFAEXTRA")));
+                    tarifa.setCODIGO(util.limpiaStr(rs.getString("CODIGO")));
+                    tarifa.setTARIFAUNICA(util.limpiaStr(rs.getString("TARIFAUNICA")));
+                    tarifa.setTARIFANORMAL(util.limpiaStr(rs.getString("TARIFANORMAL")));
+                    tarifa.setTARIFAEXTRA(util.limpiaStr(rs.getString("TARIFAEXTRA")));
                 }
                 return tarifa;
             }
@@ -63,12 +66,12 @@ public class D_Tarifa {
                 E_TarifaMuni tarifa = null;
                 while (rs.next()) {
                     tarifa = new E_TarifaMuni();
-                    tarifa.setNOMBRE(quitaNulo(rs.getString("NOMBRE")));
-                    tarifa.setPUNTODECOBERTURA(quitaNulo(rs.getString("PUNTODECOBERTURA")));
-                    tarifa.setTIPODETARIFA(quitaNulo(rs.getString("TIPODETARIFA")));
-                    tarifa.setTOTALZONASEXTRA(quitaNulo(rs.getString("TOTALZONASEXTRA")));
-                    tarifa.setCOBERTURAEXTRA(quitaNulo(rs.getString("COBERTURAEXTRA")));
-                    tarifa.setCODIGOCOBERTURA(quitaNulo(rs.getString("CODIGO")));
+                    tarifa.setNOMBRE(util.limpiaStr(rs.getString("NOMBRE")));
+                    tarifa.setPUNTODECOBERTURA(util.limpiaStr(rs.getString("PUNTODECOBERTURA")));
+                    tarifa.setTIPODETARIFA(util.limpiaStr(rs.getString("TIPODETARIFA")));
+                    tarifa.setTOTALZONASEXTRA(util.limpiaStr(rs.getString("TOTALZONASEXTRA")));
+                    tarifa.setCOBERTURAEXTRA(util.limpiaStr(rs.getString("COBERTURAEXTRA")));
+                    tarifa.setCODIGOCOBERTURA(util.limpiaStr(rs.getString("CODIGO")));
                 }
                 return tarifa;
             }
@@ -76,9 +79,5 @@ public class D_Tarifa {
             e.printStackTrace();
             return null;
         }
-    }
-
-    public String quitaNulo(String var) {
-        return var == null ? "" : var.trim();
     }
 }

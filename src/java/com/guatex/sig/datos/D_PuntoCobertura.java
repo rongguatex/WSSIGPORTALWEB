@@ -2,12 +2,15 @@ package com.guatex.sig.datos;
 
 import com.guatex.sig.entidades.E_PuntoCobertura;
 import com.guatex.sig.utils.ConvertirDiasAFrecuencia;
+import com.guatex.sig.utils.Utils;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 public class D_PuntoCobertura {
 
+    Utils util = new Utils();
+    
     public E_PuntoCobertura BuscarUbicacionEspecifica(String Punto, String Ubicacion) {
         E_PuntoCobertura PuntoCobertura = new E_PuntoCobertura();
         String Query = "SELECT "
@@ -35,30 +38,30 @@ public class D_PuntoCobertura {
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    PuntoCobertura.setCODIGOPUNTO(quitaNulo(rs.getString("CODIGO")));
-                    PuntoCobertura.setPUNTO(quitaNulo(rs.getString("PUNTO")));
-                    PuntoCobertura.setUBICACION(quitaNulo(rs.getString("UBIC")));
-                    PuntoCobertura.setDEPARTAMENTO(quitaNulo(rs.getString("DEPTO")));
-                    PuntoCobertura.setMUNICIPIO(quitaNulo(rs.getString("MUNI")));
-                    if ("1".equals(quitaNulo(rs.getString("L")))) {
+                    PuntoCobertura.setCODIGOPUNTO(util.limpiaStr(rs.getString("CODIGO")));
+                    PuntoCobertura.setPUNTO(util.limpiaStr(rs.getString("PUNTO")));
+                    PuntoCobertura.setUBICACION(util.limpiaStr(rs.getString("UBIC")));
+                    PuntoCobertura.setDEPARTAMENTO(util.limpiaStr(rs.getString("DEPTO")));
+                    PuntoCobertura.setMUNICIPIO(util.limpiaStr(rs.getString("MUNI")));
+                    if ("1".equals(util.limpiaStr(rs.getString("L")))) {
                         PuntoCobertura.setLUNES('L');
                     }
-                    if ("1".equals(quitaNulo(rs.getString("M")))) {
+                    if ("1".equals(util.limpiaStr(rs.getString("M")))) {
                         PuntoCobertura.setMARTES('M');
                     }
-                    if ("1".equals(quitaNulo(rs.getString("Mi")))) {
+                    if ("1".equals(util.limpiaStr(rs.getString("Mi")))) {
                         PuntoCobertura.setMIERCOLES('M');
                     }
-                    if ("1".equals(quitaNulo(rs.getString("J")))) {
+                    if ("1".equals(util.limpiaStr(rs.getString("J")))) {
                         PuntoCobertura.setJUEVES('J');
                     }
-                    if ("1".equals(quitaNulo(rs.getString("V")))) {
+                    if ("1".equals(util.limpiaStr(rs.getString("V")))) {
                         PuntoCobertura.setVIERNES('V');
                     }
-                    if ("1".equals(quitaNulo(rs.getString("S")))) {
+                    if ("1".equals(util.limpiaStr(rs.getString("S")))) {
                         PuntoCobertura.setSABADO('S');
                     }
-                    if ("1".equals(quitaNulo(rs.getString("RECOGEOFICINA")))) {
+                    if ("1".equals(util.limpiaStr(rs.getString("RECOGEOFICINA")))) {
                         PuntoCobertura.setRECOGEOFICINA(true);
                     }else{ PuntoCobertura.setRECOGEOFICINA(false);}
                     String frecuencia = new ConvertirDiasAFrecuencia().Convertir(1, "", PuntoCobertura);
@@ -72,9 +75,4 @@ public class D_PuntoCobertura {
         }
 
     }
-
-    public String quitaNulo(String var) {
-        return var == null ? "" : var.trim();
-    }
-    
 }

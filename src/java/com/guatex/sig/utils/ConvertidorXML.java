@@ -20,7 +20,6 @@ import javax.xml.bind.Marshaller;
 import com.guatex.sig.entidadesRespuesta.E_RespuestaDetalle;
 import com.guatex.sig.entidadesRespuesta.E_RespuestaGuia;
 import java.io.StringReader;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import javax.xml.bind.JAXBContext;
@@ -99,7 +98,6 @@ public class ConvertidorXML {
         }
         XML += "</LISTADO_CLIENTES>"
                 + "</RESPUESTA>";
-        System.out.println("[" + XML + "]");
         return XML;
     }
 
@@ -128,7 +126,6 @@ public class ConvertidorXML {
         }
         XML += "</CLIENTES>"
                 + "</RESPUESTA>";
-        System.out.println(XML);
         return XML;
     }
 
@@ -283,7 +280,6 @@ public class ConvertidorXML {
         }
         XML += "</LISTADO_GUIAS>"
                 + "</RESPUESTA>";
-        System.out.println("[" + XML + "]");
         return XML;
     }
 
@@ -395,7 +391,6 @@ public class ConvertidorXML {
         }
         XML += "</LISTADO_GUIAS>"
                 + "</RESPUESTA>";
-        System.out.println("[" + XML + "]");
         return XML;
     }
 
@@ -489,7 +484,6 @@ public class ConvertidorXML {
      * @return
      */
     public String BadRequest() {
-        System.out.println("bad request");
         return "<RESPUESTA>"
                 + addTag("CODIGO", "400")
                 + addTag("MENSAJE", "BAD REQUEST")

@@ -20,7 +20,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "WSSIGCLIENTES")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class E_GuiasMasivas {
-     @XmlElement(name = "CREDENCIALES")
+
+    @XmlElement(name = "CREDENCIALES")
     E_Credenciales credenciales;
 
     @XmlElementWrapper(name = "LISTADODATOSGUIA")
@@ -45,6 +46,6 @@ public class E_GuiasMasivas {
 
     @Override
     public String toString() {
-        return "E_GuiasMasivas{" + "credenciales=" + credenciales + ", listaDatosGuia=" + listaDatosGuia + '}';
+        return "\n\nE_GuiasMasivas{" + "credenciales=" + credenciales + ", listaDatosGuia=" + listaDatosGuia + "\n" + '}';
     }
 }

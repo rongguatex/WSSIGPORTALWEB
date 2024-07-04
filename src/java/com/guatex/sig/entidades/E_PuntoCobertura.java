@@ -122,6 +122,8 @@ public class E_PuntoCobertura {
 
     @Override
     public String toString() {
-        return "E_PuntoCobertura{" + "FRECUENCIA=" + FRECUENCIA + ", DEPARTAMENTO=" + DEPARTAMENTO + ", MUNICIPIO=" + MUNICIPIO + ", UBICACION=" + UBICACION + ", PUNTO=" + PUNTO + ", CODIGOPUNTO=" + CODIGOPUNTO + ", RECOGEOFICINA=" + RECOGEOFICINA + ", LUNES=" + LUNES + ", MARTES=" + MARTES + ", MIERCOLES=" + MIERCOLES + ", JUEVES=" + JUEVES + ", VIERNES=" + VIERNES + ", SABADO=" + SABADO + '}';
+        return "E_PuntoCobertura{" + "FRECUENCIA=" + FRECUENCIA + ", DEPARTAMENTO=" + DEPARTAMENTO + ", MUNICIPIO=" + MUNICIPIO + ", \n"
+                + "UBICACION=" + UBICACION + ", PUNTO=" + PUNTO + ", CODIGOPUNTO=" + CODIGOPUNTO + ", \n"
+                + "RECOGEOFICINA=" + RECOGEOFICINA + ", LUNES=" + LUNES + ", MARTES=" + MARTES + ", MIERCOLES=" + MIERCOLES + ", JUEVES=" + JUEVES + ", VIERNES=" + VIERNES + ", SABADO=" + SABADO + '}';
     }
 }

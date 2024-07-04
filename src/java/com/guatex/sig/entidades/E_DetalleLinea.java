@@ -21,49 +21,49 @@ public class E_DetalleLinea {
 
     @XmlElement(name = "IDGUIA")
     private String _IDGUIA;
-    
+
     @XmlElement(name = "NOGUIA")
     private String _NOGUIA;
-    
+
     @XmlElement(name = "LINEA")
     private String _LINEA;
-    
+
     @XmlElement(name = "PIEZAS")
     private int _PIEZAS;
-    
+
     @XmlElement(name = "TIPOENVIO")
     private String _TIPOENVIO;
-    
+
     @XmlElement(name = "ABVENVIO")
     private String _ABVENVIO;
-    
+
     @XmlElement(name = "DESCRIPCIONENVIO")
     private String _DESCRIPCIONENVIO;
-    
+
     @XmlElement(name = "PESO")
     private String _PESO;
-    
+
     @XmlElement(name = "PESOTOTAL")
     private String _PESOTOTAL;
-    
+
     @XmlElement(name = "COSTOTARIFA")
     private String _COSTOTARIFA;
-    
+
     @XmlElement(name = "TARIFA")
     private String _TARIFA;
-    
+
     @XmlElement(name = "MANUAL")
     private String _MANUAL;
-    
+
     @XmlElement(name = "PBULTOS")
     private String _PBULTOS;
-    
+
     @XmlElement(name = "TABLAZONA")
     private String _TABLAZONA;
-    
+
     @XmlElement(name = "CODTARIFA")
     private String _CODTARIFA;
-    
+
     @XmlElement(name = "ESTADO")
     private boolean _ESTADO;
 
@@ -211,21 +211,12 @@ public class E_DetalleLinea {
 
     @Override
     public String toString() {
-        return "\nE_DETALLELINEA{" + "\n"
-                + "     _IDGUIA=" + _IDGUIA + ", \n"
-                + "     _NOGUIA=" + _NOGUIA + ",\n"
-                + "      _LINEA=" + _LINEA + ",\n"
-                + "      _PIEZAS=" + _PIEZAS + ", \n"
-                + "     _TIPOENVIO=" + _TIPOENVIO + ",\n"
-                + "      _ABVENVIO=" + _ABVENVIO + ",\n"
-                + "      _DESCRIPCIONENVIO=" + _DESCRIPCIONENVIO + ",\n"
-                + "      _PESO=" + _PESO + ",\n"
-                + "      _PESOTOTAL=" + _PESOTOTAL + ", \n"
-                + "     _COSTOTARIFA=" + _COSTOTARIFA + ",\n"
-                + "      _TARIFA=" + _TARIFA + ", \n"
-                + "     _MANUAL=" + _MANUAL + ",\n"
-                + "     _PBULTOS=" + _PBULTOS + ", \n"
-                + "     _TABLAZONA=" + _TABLAZONA + ", \n"
-                + "     _CODTARIFA=" + _CODTARIFA + "\n"+ '}';
+        return "E_DetalleLinea{" + "    _IDGUIA=" + _IDGUIA + ", _NOGUIA=" + _NOGUIA + " _LINEA, " + _LINEA + " \n"
+                + "     _TIPOENVIO= " + _TIPOENVIO + ", _PIEZAS= " + _PIEZAS + ", _PESO= " + _PESO + "\n"
+                + "     _ABVENVIO=" + _ABVENVIO + ", _DESCRIPCIONENVIO=" + _DESCRIPCIONENVIO + ", \n"
+                + ",    _PESOTOTAL=" + _PESOTOTAL + ", _COSTOTARIFA=" + _COSTOTARIFA + ", \n"
+                + "     _TARIFA=" + _TARIFA + ", _MANUAL=" + _MANUAL + ", _PBULTOS=" + _PBULTOS + ", \n"
+                + "     _TABLAZONA=" + _TABLAZONA + ", _CODTARIFA=" + _CODTARIFA + ", _ESTADO=" + _ESTADO + "\n" + '}' + "\n";
     }
+
 }

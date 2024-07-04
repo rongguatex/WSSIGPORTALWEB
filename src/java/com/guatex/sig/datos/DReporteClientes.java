@@ -11,6 +11,7 @@ import com.guatex.sig.entidades.E_Cliente;
 import com.guatex.sig.entidades.E_Departamento;
 import com.guatex.sig.entidades.E_Municipio;
 import com.guatex.sig.entidades.E_respuestaClientes;
+import com.guatex.sig.utils.Utils;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -23,6 +24,7 @@ import java.util.List;
  * @author PJUNIOR-3
  */
 public class DReporteClientes {
+    Utils util = new Utils();
 
     public List<EReporteClientes> reporteClientes(String CODCOB) {
         List<EReporteClientes> listaClientes = new LinkedList<>();
@@ -189,13 +191,13 @@ public class DReporteClientes {
         try {
             query = "SELECT CODIGO, C_NOMBRE, C_CONTACTO, C_DIRECC, C_EMAIL, C_TEL, C_NIT, "
                     + "CAMPO1, CAMPO2, CAMPO3, CAMPO4, RECOGEOFICINA, C_MNCP, C_PTO "
-                    + "FROM FACCLICLIENTES WHERE PADRE = ? AND CODCOB = ?";
+                    + "FROM FACCLICLIENTES WHERE PADRE = ?";
 
             con = new Conexion().AbrirConexion();
             ps = con.prepareStatement(query);
 
             ps.setString(1, PADRE);
-            ps.setString(2, CODCOB);
+//            ps.setString(2, CODCOB);
 
             rs = ps.executeQuery();
 
@@ -203,22 +205,22 @@ public class DReporteClientes {
                 EReporteClientes cliente = new EReporteClientes();
 
                 cliente = new EReporteClientes();
-                cliente.setNOMBRE(rs.getString("C_NOMBRE"));
-                cliente.setCONTACTO(rs.getString("C_CONTACTO"));
-                cliente.setDIRECCION(rs.getString("C_DIRECC"));
-                cliente.setEMAIL(rs.getString("C_EMAIL"));
-                cliente.setTELEFONO(rs.getString("C_TEL"));
-                cliente.setNIT(rs.getString("C_NIT"));
-                cliente.setCAMPO1(rs.getString("CAMPO1").replaceAll("/", ""));
-                cliente.setCAMPO2(rs.getString("CAMPO2").replaceAll("/", ""));
-                cliente.setCAMPO3(rs.getString("CAMPO3").replaceAll("/", ""));
-                cliente.setCAMPO4(rs.getString("CAMPO4").replaceAll("/", ""));
-                cliente.setRECOGEOFICINA(rs.getString("RECOGEOFICINA"));
-                cliente.setMUNICIPIO(rs.getString("C_MNCP"));
-                cliente.setPUNTO(rs.getString("C_PTO"));
+                cliente.setNOMBRE(util.limpiaStr(rs.getString("C_NOMBRE")));
+                cliente.setCONTACTO(util.limpiaStr(rs.getString("C_CONTACTO")));
+                cliente.setDIRECCION(util.limpiaStr(rs.getString("C_DIRECC")));
+                cliente.setEMAIL(util.limpiaStr(rs.getString("C_EMAIL")));
+                cliente.setTELEFONO(util.limpiaStr(rs.getString("C_TEL")));
+                cliente.setNIT(util.limpiaStr(rs.getString("C_NIT")));
+                cliente.setCAMPO1(util.limpiaStr(rs.getString("CAMPO1")).replaceAll("/", ""));
+                cliente.setCAMPO2(util.limpiaStr(rs.getString("CAMPO2")).replaceAll("/", ""));
+                cliente.setCAMPO3(util.limpiaStr(rs.getString("CAMPO3")).replaceAll("/", ""));
+                cliente.setCAMPO4(util.limpiaStr(rs.getString("CAMPO4")).replaceAll("/", ""));
+                cliente.setRECOGEOFICINA(util.limpiaStr(rs.getString("RECOGEOFICINA")));
+                cliente.setMUNICIPIO(util.limpiaStr(rs.getString("C_MNCP")));
+                cliente.setPUNTO(util.limpiaStr(rs.getString("C_PTO")));
                 cliente.setPADRE(PADRE);
                 cliente.setCODCOB(CODCOB);
-                cliente.setCODIGO(quitaNulo(rs.getString("CODIGO")));
+                cliente.setCODIGO(util.limpiaStr(rs.getString("CODIGO")));
                 clientes.add(cliente);
             }
 
@@ -260,8 +262,8 @@ public class DReporteClientes {
             rs = ps.executeQuery();
 
             while (rs.next()) {
-                reporte.setPADRE(rs.getString("PADRE"));
-                reporte.setUNIFICA(rs.getString("UNIFICACLI"));
+                reporte.setPADRE(util.limpiaStr(rs.getString("PADRE")));
+                reporte.setUNIFICA(util.limpiaStr(rs.getString("UNIFICACLI")));
             }
 
         } catch (Exception ex) {

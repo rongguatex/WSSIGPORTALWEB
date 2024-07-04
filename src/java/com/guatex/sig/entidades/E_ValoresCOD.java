@@ -38,4 +38,9 @@ public class E_ValoresCOD {
     public void setGuiasCODMax(int GuiasCODMax) {
         this.GuiasCODMax = GuiasCODMax;
     }
+
+    @Override
+    public String toString() {
+        return "\n\nE_ValoresCOD{" + "ValorCODMax=" + ValorCODMax + ", ValorCODMin=" + ValorCODMin + ", GuiasCODMax=" + GuiasCODMax + '}';
+    }
 }

@@ -5,6 +5,7 @@ import com.guatex.sig.entidades.E_Departamento;
 import com.guatex.sig.entidades.E_Municipio;
 import com.guatex.sig.entidades.E_PuntoCobertura;
 import com.guatex.sig.entidades.E_respuestaClientes;
+import com.guatex.sig.utils.Utils;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,6 +14,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class D_Clientes {
+    
+    Utils util = new Utils();
 
     /**
      * Método que retorna todos los clientes que en sus campos CODIGO, NOMBRE,
@@ -24,7 +27,7 @@ public class D_Clientes {
     public E_respuestaClientes ObtenerListadoClientes(E_Cliente cliente) {
         List<E_Cliente> clientes = new LinkedList<>();
         String Query = "";
-
+        
         if (cliente.getUNIFICACLI().equalsIgnoreCase("S")) {
             if (cliente.getCODCOB().equalsIgnoreCase(cliente.getPADRE())) {
                 Query = "SELECT  CODIGO, CODCOB, PADRE, C_NOMBRE AS NOMBRE, C_CONTACTO AS CONTACTO, C_DIRECC AS DIRECCION, "
@@ -46,69 +49,69 @@ public class D_Clientes {
                     + "WHERE ISNULL(CODIGO,'') LIKE ? AND ISNULL(C_NOMBRE,'') LIKE ? AND ISNULL(C_CONTACTO,'') LIKE ? AND ISNULL(C_TEL,'') LIKE ? "
                     + "AND CODCOB = ? ";
         }
-
+        
         try (Connection con = new Conexion().AbrirConexion();
                 PreparedStatement ps = con.prepareStatement(Query)) {
             ps.setString(1, "%" + cliente.getCODIGO() + "%");
-            ps.setString(2, "%" + quitaNulo(cliente.getNOMBRE()) + "%");
-            ps.setString(3, "%" + quitaNulo(cliente.getCONTACTO()) + "%");
-            ps.setString(4, "%" + quitaNulo(cliente.getTELEFONO()) + "%");
-
+            ps.setString(2, "%" + util.limpiaStr(cliente.getNOMBRE()) + "%");
+            ps.setString(3, "%" + util.limpiaStr(cliente.getCONTACTO()) + "%");
+            ps.setString(4, "%" + util.limpiaStr(cliente.getTELEFONO()) + "%");
+            
             if (cliente.getUNIFICACLI().equalsIgnoreCase("S")) {
                 if (cliente.getCODCOB().equalsIgnoreCase(cliente.getPADRE())) {
-                    ps.setString(5, quitaNulo(cliente.getPADRE()));
+                    ps.setString(5, util.limpiaStr(cliente.getPADRE()));
                 } else {
-                    ps.setString(5, quitaNulo(cliente.getPADRE()));
-                    ps.setString(6, quitaNulo(cliente.getCODCOB()));
+                    ps.setString(5, util.limpiaStr(cliente.getPADRE()));
+                    ps.setString(6, util.limpiaStr(cliente.getCODCOB()));
                 }
             } else {
-                ps.setString(5, quitaNulo(cliente.getCODCOB()));
+                ps.setString(5, util.limpiaStr(cliente.getCODCOB()));
             }
-
+            
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     E_Cliente NuevoCliente = new E_Cliente();
-                    NuevoCliente.setCODIGO(quitaNulo(rs.getString("CODIGO")));
-                    NuevoCliente.setCODCOB(quitaNulo(rs.getString("CODCOB")));
-                    NuevoCliente.setPADRE(quitaNulo(rs.getString("PADRE")));
-                    NuevoCliente.setNOMBRE(quitaNulo(rs.getString("NOMBRE")));
-                    NuevoCliente.setCONTACTO(quitaNulo(rs.getString("CONTACTO")));
-                    NuevoCliente.setDIRECCION(quitaNulo(rs.getString("DIRECCION")));
-                    NuevoCliente.setUBICACION(quitaNulo(rs.getString("UBICACION")));
-                    NuevoCliente.setPUNTO(quitaNulo(rs.getString("PUNTO")));
-                    NuevoCliente.setCORREO(quitaNulo(rs.getString("CORREO")));
-                    NuevoCliente.setNIT(quitaNulo(rs.getString("NIT")));
-                    NuevoCliente.setTELEFONO(quitaNulo(rs.getString("TELEFONO")));
-                    NuevoCliente.setRECOGEOFICINA(quitaNulo(rs.getString("RECOGEOFICINA")));
+                    NuevoCliente.setCODIGO(util.limpiaStr(rs.getString("CODIGO")));
+                    NuevoCliente.setCODCOB(util.limpiaStr(rs.getString("CODCOB")));
+                    NuevoCliente.setPADRE(util.limpiaStr(rs.getString("PADRE")));
+                    NuevoCliente.setNOMBRE(util.limpiaStr(rs.getString("NOMBRE")));
+                    NuevoCliente.setCONTACTO(util.limpiaStr(rs.getString("CONTACTO")));
+                    NuevoCliente.setDIRECCION(util.limpiaStr(rs.getString("DIRECCION")));
+                    NuevoCliente.setUBICACION(util.limpiaStr(rs.getString("UBICACION")));
+                    NuevoCliente.setPUNTO(util.limpiaStr(rs.getString("PUNTO")));
+                    NuevoCliente.setCORREO(util.limpiaStr(rs.getString("CORREO")));
+                    NuevoCliente.setNIT(util.limpiaStr(rs.getString("NIT")));
+                    NuevoCliente.setTELEFONO(util.limpiaStr(rs.getString("TELEFONO")));
+                    NuevoCliente.setRECOGEOFICINA(util.limpiaStr(rs.getString("RECOGEOFICINA")));
                     if (rs.getString("CAMPO1") != null) {
-                        if (quitaNulo(rs.getString("CAMPO1")).contains("/")) {
-                            NuevoCliente.setCAMPO1(quitaNulo(rs.getString("CAMPO1")).substring(quitaNulo(rs.getString("CAMPO1")).indexOf("/") + 1, quitaNulo(rs.getString("CAMPO1")).length()));
+                        if (util.limpiaStr(rs.getString("CAMPO1")).contains("/")) {
+                            NuevoCliente.setCAMPO1(util.limpiaStr(rs.getString("CAMPO1")).substring(util.limpiaStr(rs.getString("CAMPO1")).indexOf("/") + 1, util.limpiaStr(rs.getString("CAMPO1")).length()));
                         }
                     } else {
-                        NuevoCliente.setCAMPO1(quitaNulo(rs.getString("CAMPO1")));
+                        NuevoCliente.setCAMPO1(util.limpiaStr(rs.getString("CAMPO1")));
                     }
                     if (rs.getString("CAMPO2") != null) {
-                        if (quitaNulo(rs.getString("CAMPO2")).contains("/")) {
-                            NuevoCliente.setCAMPO2(quitaNulo(rs.getString("CAMPO2")).substring(quitaNulo(rs.getString("CAMPO2")).indexOf("/") + 1, quitaNulo(rs.getString("CAMPO2")).length()));
+                        if (util.limpiaStr(rs.getString("CAMPO2")).contains("/")) {
+                            NuevoCliente.setCAMPO2(util.limpiaStr(rs.getString("CAMPO2")).substring(util.limpiaStr(rs.getString("CAMPO2")).indexOf("/") + 1, util.limpiaStr(rs.getString("CAMPO2")).length()));
                         }
                     } else {
-                        NuevoCliente.setCAMPO2(quitaNulo(rs.getString("CAMPO2")));
+                        NuevoCliente.setCAMPO2(util.limpiaStr(rs.getString("CAMPO2")));
                     }
                     if (rs.getString("CAMPO3") != null) {
-                        if (quitaNulo(rs.getString("CAMPO3")).contains("/")) {
-                            NuevoCliente.setCAMPO3(quitaNulo(rs.getString("CAMPO3")).substring(quitaNulo(rs.getString("CAMPO3")).indexOf("/") + 1, quitaNulo(rs.getString("CAMPO3")).length()));
+                        if (util.limpiaStr(rs.getString("CAMPO3")).contains("/")) {
+                            NuevoCliente.setCAMPO3(util.limpiaStr(rs.getString("CAMPO3")).substring(util.limpiaStr(rs.getString("CAMPO3")).indexOf("/") + 1, util.limpiaStr(rs.getString("CAMPO3")).length()));
                         }
                     } else {
-                        NuevoCliente.setCAMPO3(quitaNulo(rs.getString("CAMPO3")));
+                        NuevoCliente.setCAMPO3(util.limpiaStr(rs.getString("CAMPO3")));
                     }
                     if (rs.getString("CAMPO4") != null) {
-                        if (quitaNulo(rs.getString("CAMPO4")).contains("/")) {
-                            NuevoCliente.setCAMPO4(quitaNulo(rs.getString("CAMPO4")).substring(quitaNulo(rs.getString("CAMPO4")).indexOf("/") + 1, quitaNulo(rs.getString("CAMPO4")).length()));
+                        if (util.limpiaStr(rs.getString("CAMPO4")).contains("/")) {
+                            NuevoCliente.setCAMPO4(util.limpiaStr(rs.getString("CAMPO4")).substring(util.limpiaStr(rs.getString("CAMPO4")).indexOf("/") + 1, util.limpiaStr(rs.getString("CAMPO4")).length()));
                         }
                     } else {
-                        NuevoCliente.setCAMPO4(quitaNulo(rs.getString("CAMPO4")));
+                        NuevoCliente.setCAMPO4(util.limpiaStr(rs.getString("CAMPO4")));
                     }
-                    NuevoCliente.setPADRE(quitaNulo(rs.getString("PADRE")));
+                    NuevoCliente.setPADRE(util.limpiaStr(rs.getString("PADRE")));
                     NuevoCliente.setCOBERTURA(new D_PuntoCobertura().BuscarUbicacionEspecifica(NuevoCliente.getPUNTO(), NuevoCliente.getUBICACION()));
                     List<E_Departamento> departamentos = new D_Depto_Municipios().ObtenerDeptosMunicipios();
                     if (departamentos != null) {
@@ -124,16 +127,16 @@ public class D_Clientes {
                             }
                         }
                     }
-
+                    
                     clientes.add(NuevoCliente);
                 }
-
+                
                 if (!clientes.isEmpty()) {
                     return new E_respuestaClientes("200", clientes);
                 } else {
                     return new E_respuestaClientes("204", clientes);
                 }
-
+                
             }
         } catch (Exception e) {
             e.printStackTrace(System.err);
@@ -142,15 +145,16 @@ public class D_Clientes {
     }
 
     /**
-     * Método que busca toda la información del cliente por CODIGO
+     * Método que busca toda la información del cliente por CODIGO.
      *
-     * @param cliente - XML
+     * @param cliente - en padre y codcob colocar el mismo dato. ejemplo:
+     * padre=GUD0001; codcob:GUD0001
      * @return Información del cliente
      */
     public E_respuestaClientes ObtenerCliente(E_Cliente cliente) {
         List<E_Cliente> datosCliente = new LinkedList<>();
         String Query = "";
-
+        cliente.setCODCOB(cliente.getPADRE());
         if (cliente.getUNIFICACLI().equalsIgnoreCase("S")) {
             if (cliente.getCODCOB().equalsIgnoreCase(cliente.getPADRE())) {
                 Query = "SELECT  CODIGO, CODCOB, PADRE, C_NOMBRE AS NOMBRE, C_CONTACTO AS CONTACTO, C_DIRECC AS DIRECCION, "
@@ -172,69 +176,69 @@ public class D_Clientes {
                     + "WHERE ISNULL(CODIGO,'') = ?  "
                     + "AND CODCOB = ? ";
         }
-
+        
         try (Connection con = new Conexion().AbrirConexion();
                 PreparedStatement ps = con.prepareStatement(Query)) {
-            ps.setString(1, quitaNulo(cliente.getCODIGO()));
-
+            ps.setString(1, util.limpiaStr(cliente.getCODIGO()));
+            
             if (cliente.getUNIFICACLI().equalsIgnoreCase("S")) {
-                if (cliente.getCODCOB().equalsIgnoreCase(quitaNulo(cliente.getPADRE()))) {
-                    ps.setString(2, quitaNulo(cliente.getPADRE()));
+                if (cliente.getCODCOB().equalsIgnoreCase(util.limpiaStr(cliente.getPADRE()))) {
+                    ps.setString(2, util.limpiaStr(cliente.getPADRE()));
                 } else {
-                    ps.setString(2, quitaNulo(cliente.getPADRE()));
-                    ps.setString(3, quitaNulo(cliente.getCODCOB()));
+                    ps.setString(2, util.limpiaStr(cliente.getPADRE()));
+                    ps.setString(3, util.limpiaStr(cliente.getCODCOB()));
                 }
             } else {
-                ps.setString(2, quitaNulo(cliente.getCODCOB()));
+                ps.setString(2, util.limpiaStr(cliente.getCODCOB()));
             }
-
+            
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     E_Cliente NuevoCliente = new E_Cliente();
-                    NuevoCliente.setCODIGO(quitaNulo(rs.getString("CODIGO")));
-                    NuevoCliente.setCODCOB(quitaNulo(rs.getString("CODCOB")));
-                    NuevoCliente.setPADRE(quitaNulo(rs.getString("PADRE")));
-                    NuevoCliente.setNOMBRE(quitaNulo(rs.getString("NOMBRE")));
-                    NuevoCliente.setCONTACTO(quitaNulo(rs.getString("CONTACTO")));
-                    NuevoCliente.setDIRECCION(quitaNulo(rs.getString("DIRECCION")));
-                    NuevoCliente.setUBICACION(quitaNulo(rs.getString("UBICACION")));
-                    NuevoCliente.setPUNTO(quitaNulo(rs.getString("PUNTO")));
-                    NuevoCliente.setCORREO(quitaNulo(rs.getString("CORREO")));
-                    NuevoCliente.setNIT(quitaNulo(rs.getString("NIT")));
-                    NuevoCliente.setTELEFONO(quitaNulo(rs.getString("TELEFONO")));
-                    NuevoCliente.setRECOGEOFICINA(quitaNulo(rs.getString("RECOGEOFICINA")));
-
+                    NuevoCliente.setCODIGO(util.limpiaStr(rs.getString("CODIGO")));
+                    NuevoCliente.setCODCOB(util.limpiaStr(rs.getString("CODCOB")));
+                    NuevoCliente.setPADRE(util.limpiaStr(rs.getString("PADRE")));
+                    NuevoCliente.setNOMBRE(util.limpiaStr(rs.getString("NOMBRE")));
+                    NuevoCliente.setCONTACTO(util.limpiaStr(rs.getString("CONTACTO")));
+                    NuevoCliente.setDIRECCION(util.limpiaStr(rs.getString("DIRECCION")));
+                    NuevoCliente.setUBICACION(util.limpiaStr(rs.getString("UBICACION")));
+                    NuevoCliente.setPUNTO(util.limpiaStr(rs.getString("PUNTO")));
+                    NuevoCliente.setCORREO(util.limpiaStr(rs.getString("CORREO")));
+                    NuevoCliente.setNIT(util.limpiaStr(rs.getString("NIT")));
+                    NuevoCliente.setTELEFONO(util.limpiaStr(rs.getString("TELEFONO")));
+                    NuevoCliente.setRECOGEOFICINA(util.limpiaStr(rs.getString("RECOGEOFICINA")));
+                    
                     if (rs.getString("CAMPO1") != null) {
-                        if (quitaNulo(rs.getString("CAMPO1")).contains("/")) {
-                            NuevoCliente.setCAMPO1(quitaNulo(rs.getString("CAMPO1")).substring(quitaNulo(rs.getString("CAMPO1")).indexOf("/") + 1, quitaNulo(rs.getString("CAMPO1")).length()));
+                        if (util.limpiaStr(rs.getString("CAMPO1")).contains("/")) {
+                            NuevoCliente.setCAMPO1(util.limpiaStr(rs.getString("CAMPO1")).substring(util.limpiaStr(rs.getString("CAMPO1")).indexOf("/") + 1, util.limpiaStr(rs.getString("CAMPO1")).length()));
                         }
                     } else {
-                        NuevoCliente.setCAMPO1(quitaNulo(rs.getString("CAMPO1")));
+                        NuevoCliente.setCAMPO1(util.limpiaStr(rs.getString("CAMPO1")));
                     }
                     if (rs.getString("CAMPO2") != null) {
-                        if (quitaNulo(rs.getString("CAMPO2")).contains("/")) {
-                            NuevoCliente.setCAMPO2(quitaNulo(rs.getString("CAMPO2")).substring(quitaNulo(rs.getString("CAMPO2")).indexOf("/") + 1, quitaNulo(rs.getString("CAMPO2")).length()));
+                        if (util.limpiaStr(rs.getString("CAMPO2")).contains("/")) {
+                            NuevoCliente.setCAMPO2(util.limpiaStr(rs.getString("CAMPO2")).substring(util.limpiaStr(rs.getString("CAMPO2")).indexOf("/") + 1, util.limpiaStr(rs.getString("CAMPO2")).length()));
                         }
                     } else {
-                        NuevoCliente.setCAMPO2(quitaNulo(rs.getString("CAMPO2")));
+                        NuevoCliente.setCAMPO2(util.limpiaStr(rs.getString("CAMPO2")));
                     }
                     if (rs.getString("CAMPO3") != null) {
-                        if (quitaNulo(rs.getString("CAMPO3")).contains("/")) {
-                            NuevoCliente.setCAMPO3(quitaNulo(rs.getString("CAMPO3")).substring(quitaNulo(rs.getString("CAMPO3")).indexOf("/") + 1, quitaNulo(rs.getString("CAMPO3")).length()));
+                        if (util.limpiaStr(rs.getString("CAMPO3")).contains("/")) {
+                            NuevoCliente.setCAMPO3(util.limpiaStr(rs.getString("CAMPO3")).substring(util.limpiaStr(rs.getString("CAMPO3")).indexOf("/") + 1, util.limpiaStr(rs.getString("CAMPO3")).length()));
                         }
                     } else {
-                        NuevoCliente.setCAMPO3(quitaNulo(rs.getString("CAMPO3")));
+                        NuevoCliente.setCAMPO3(util.limpiaStr(rs.getString("CAMPO3")));
                     }
                     if (rs.getString("CAMPO4") != null) {
-                        if (quitaNulo(rs.getString("CAMPO4")).contains("/")) {
+                        if (util.limpiaStr(rs.getString("CAMPO4")).contains("/")) {
                             NuevoCliente.setCAMPO4(rs.getString("CAMPO4").substring(rs.getString("CAMPO4").indexOf("/") + 1, rs.getString("CAMPO4").length()));
                         }
                     } else {
-                        NuevoCliente.setCAMPO4(quitaNulo(rs.getString("CAMPO4")));
+                        NuevoCliente.setCAMPO4(util.limpiaStr(rs.getString("CAMPO4")));
                     }
-                    NuevoCliente.setPADRE(quitaNulo(rs.getString("PADRE")));
+                    NuevoCliente.setPADRE(util.limpiaStr(rs.getString("PADRE")));
                     NuevoCliente.setCOBERTURA(new D_PuntoCobertura().BuscarUbicacionEspecifica(NuevoCliente.getPUNTO(), NuevoCliente.getUBICACION()));
-
+                    
                     List<E_Departamento> departamentos = new D_Depto_Municipios().ObtenerDeptosMunicipios();
                     if (departamentos != null) {
                         for (E_Departamento depto : departamentos) {
@@ -262,21 +266,21 @@ public class D_Clientes {
             return new E_respuestaClientes("500", datosCliente);
         }
     }
-
-    public E_PuntoCobertura obtenerUbicacionCliCliente(String codcob, String codigoCliente) {
-
-        String query = "Select  C_MNCP,C_PTO FROM FACCLICLIENTES WHERE CODCOB = ? and CODIGO = ?";
-
+    
+    public E_PuntoCobertura obtenerUbicacionCliCliente(String padre, String codigoCliente) {
+        
+        String query = "Select  C_MNCP,C_PTO FROM FACCLICLIENTES WHERE PADRE = ? and CODIGO = ?";
+        
         try (Connection con = new Conexion().AbrirConexion();
                 PreparedStatement ps = con.prepareStatement(query)) {
-            ps.setString(1, codcob);
+            ps.setString(1, padre);
             ps.setString(2, codigoCliente);
-
+            
             try (ResultSet rs = ps.executeQuery()) {
                 E_PuntoCobertura ubicacion = new E_PuntoCobertura();
                 while (rs.next()) {
-                    ubicacion.setUBICACION(quitaNulo(rs.getString("C_MNCP")));
-                    ubicacion.setPUNTO(quitaNulo(rs.getString("C_PTO")));
+                    ubicacion.setUBICACION(util.limpiaStr(rs.getString("C_MNCP")));
+                    ubicacion.setPUNTO(util.limpiaStr(rs.getString("C_PTO")));
                 }
                 return ubicacion;
             }
@@ -285,9 +289,4 @@ public class D_Clientes {
             return null;
         }
     }
-    
-    public String quitaNulo(String var) {
-        return var == null ? "" : var.trim();
-    }
-
 }

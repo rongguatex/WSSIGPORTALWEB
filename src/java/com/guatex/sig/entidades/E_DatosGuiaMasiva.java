@@ -334,4 +334,23 @@ public class E_DatosGuiaMasiva {
         this._TARIFICADOR = _TARIFICADOR;
     }
 
+    @Override
+    public String toString() {
+        return "\n"
+                + "E_DatosGuiaMasiva{" + "\n"
+                + "     _CODIGO=" + _CODIGO + ", _NOMBRE=" + _NOMBRE + ", _TELEFONO=" + _TELEFONO + ", _DIRECCION=" + _DIRECCION + ", \n"
+                + "     _CODIGO_DESTINATARIO=" + _CODIGO_DESTINATARIO + ", _MUNICIPIO_DESTINATARIO=" + _MUNICIPIO_DESTINATARIO + ", \n"
+                + "     _TIPO_PIEZA_PESO=" + _TIPO_PIEZA_PESO + ", _DESCRIPCION=" + _DESCRIPCION + ", _LLAVE=" + _LLAVE + ", \n"
+                + "     _COD=" + _COD + ", _PRECIO=" + _PRECIO + ", _PTODES=" + _PTODES + ", \n"
+                + "     _CODREM=" + _CODREM + ", _NOMREM=" + _NOMREM + ", _TELREM=" + _TELREM + ", _DIRREM=" + _DIRREM + ", \n"
+                + "     _PTOREM=" + _PTOREM + ", _MUNIREM=" + _MUNIREM + ", _CODCOB=" + _CODCOB + ", _CODTARIFA=" + _CODTARIFA + ", \n"
+                + "     _COBEX=" + _COBEX + ", _RUTAZONA=" + _RUTAZONA + ", _CODIGOCLIENTE=" + _CODIGOCLIENTE + ", \n"
+                + "     _ESTADO=" + _ESTADO + "\n"
+                + "         _CLIENTE=       " + _CLIENTE + ", \n"
+                + "         _TARIFA_ORIGEN=     " + _TARIFA_ORIGEN + ", \n"
+                + "         _TARIFA_DESTINO=        " + _TARIFA_DESTINO + ", \n"
+                + "         _DETALLE=       " + _DETALLE + ", \n"
+                + "         _TARIFICADOR=       " + _TARIFICADOR + "\n" + '}';
+    }
+
 }

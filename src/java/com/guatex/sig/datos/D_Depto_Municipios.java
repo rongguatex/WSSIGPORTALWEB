@@ -2,6 +2,7 @@ package com.guatex.sig.datos;
 
 import com.guatex.sig.entidades.E_Departamento;
 import com.guatex.sig.entidades.E_Municipio;
+import com.guatex.sig.utils.Utils;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class D_Depto_Municipios {
+    Utils util = new Utils();
 
     public List<E_Departamento> ObtenerDeptosMunicipios() {
         List<E_Departamento> Departamentos = new LinkedList<>();
@@ -33,17 +35,17 @@ public class D_Depto_Municipios {
                         }
                     }
                     if (!encontrado) {
-                        CodigosExistentes.add(quitaNulo(rs.getString("COD_DEPTO")));
+                        CodigosExistentes.add(util.limpiaStr(rs.getString("COD_DEPTO")));
                         E_Departamento NuevoDepartamento = new E_Departamento();
-                        NuevoDepartamento.setCODIGO(quitaNulo(rs.getString("COD_DEPTO")));
-                        NuevoDepartamento.setNOMBRE(quitaNulo(rs.getString("NOM_DEPTO")));
-                        NuevoDepartamento.setPAIS(quitaNulo(rs.getString("COD_PAIS")));
+                        NuevoDepartamento.setCODIGO(util.limpiaStr(rs.getString("COD_DEPTO")));
+                        NuevoDepartamento.setNOMBRE(util.limpiaStr(rs.getString("NOM_DEPTO")));
+                        NuevoDepartamento.setPAIS(util.limpiaStr(rs.getString("COD_PAIS")));
                         Departamentos.add(NuevoDepartamento);
                         for (E_Departamento departamento : Departamentos) {
-                            if (departamento.getCODIGO().equals(quitaNulo(rs.getString("COD_DEPTO")))) {
+                            if (departamento.getCODIGO().equals(util.limpiaStr(rs.getString("COD_DEPTO")))) {
                                 E_Municipio NuevoMunicipio = new E_Municipio();
-                                NuevoMunicipio.setCODIGO(quitaNulo(rs.getString("COD_MUN")));
-                                NuevoMunicipio.setNOMBRE(quitaNulo(rs.getString("NOM_MUN")));
+                                NuevoMunicipio.setCODIGO(util.limpiaStr(rs.getString("COD_MUN")));
+                                NuevoMunicipio.setNOMBRE(util.limpiaStr(rs.getString("NOM_MUN")));
                                 departamento.getMUNICIPIOS().add(NuevoMunicipio);
                                
                             }
@@ -52,8 +54,8 @@ public class D_Depto_Municipios {
                         for (E_Departamento departamento : Departamentos) {
                             if (departamento.getCODIGO() == rs.getString("COD_DEPTO")) {
                                 E_Municipio NuevoMunicipio = new E_Municipio();
-                                NuevoMunicipio.setCODIGO(quitaNulo(rs.getString("COD_MUN")));
-                                NuevoMunicipio.setNOMBRE(quitaNulo(rs.getString("NOM_MUN")));
+                                NuevoMunicipio.setCODIGO(util.limpiaStr(rs.getString("COD_MUN")));
+                                NuevoMunicipio.setNOMBRE(util.limpiaStr(rs.getString("NOM_MUN")));
                                 departamento.getMUNICIPIOS().add(NuevoMunicipio);
                             }
                         }
@@ -65,9 +67,5 @@ public class D_Depto_Municipios {
             e.printStackTrace(System.err);
             return null;
         }
-    }
-
-    private String quitaNulo(String var) {
-        return var == null ? "" : var.trim();
     }
 }
