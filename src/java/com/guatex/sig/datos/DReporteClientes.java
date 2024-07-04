@@ -648,14 +648,14 @@ public class DReporteClientes {
 
         String Query = " SELECT CODIGO "
                 + " FROM FACCLICLIENTES "
-                + " WHERE CODIGO = ? AND PADRE = ? AND CODCOB = ? ";
+                + " WHERE CODIGO = ? AND PADRE = ? ";
 
         try {
             con = new Conexion().AbrirConexion();
             ps = con.prepareStatement(Query);
             ps.setString(1, cliente.getCODIGO());
-            ps.setString(2, cliente.getCODCOB());
-            ps.setString(3, cliente.getCODCOB());
+            ps.setString(2, cliente.getPADRE());
+//            ps.setString(3, cliente.getCODCOB());
 
             rs = ps.executeQuery();
 
