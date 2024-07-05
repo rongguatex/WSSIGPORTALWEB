@@ -2,21 +2,26 @@ package com.guatex.sig.services;
 
 import com.guatex.sig.controllers.C_GuiasMasivas;
 import com.guatex.sig.controllers.ModificarGuiaController;
-import com.guatex.sig.datos.DReporteClientes;
 import com.guatex.sig.datos.D_Clientes;
 import com.guatex.sig.datos.D_Detalle;
 import com.guatex.sig.datos.D_Guia;
 import com.guatex.sig.datos.D_ImpresionSIG;
+import com.guatex.sig.datos.D_UsuarioOpcion;
+import com.guatex.sig.entidades.EWSSIGCLIENTES;
 import com.guatex.sig.entidades.E_Cliente;
 import com.guatex.sig.entidades.E_Departamento;
 import com.guatex.sig.entidades.E_Guia;
 import com.guatex.sig.entidades.E_ImpresionSIG;
+import com.guatex.sig.entidades.E_JUsuarioOpcion;
 import com.guatex.sig.entidades.E_Municipio;
 import com.guatex.sig.entidades.E_PuntoCobertura;
 import com.guatex.sig.entidades.E_respuestaClientes;
+import com.guatex.sig.entidades.RespuestaGeneral;
 import com.guatex.sig.entidadesRespuesta.E_RespuestaDetalle;
 import com.guatex.sig.entidadesRespuesta.E_RespuestaGuia;
 import com.guatex.sig.utils.ConvertidorXML;
+import com.guatex.sig.utils.ParseadorXML;
+import com.guatex.sig.utils.ValidacionCredenciales;
 import java.util.List;
 import javax.jws.WebService;
 import javax.jws.WebMethod;
@@ -118,6 +123,41 @@ public class WSSIGCLIENTES {
     public String modificaGuia(@WebParam(name = "datos") String XML) {
         if (!(XML == null ? "" : XML.trim()).isEmpty()) {
             return new ModificarGuiaController().modificaGuia(XML.trim());
+        }
+        return new ConvertidorXML().BadRequest();
+    }
+
+    @WebMethod(operationName = "obtenerOpciones")
+    public String obtenerOpciones(@WebParam(name = "datos") String XML) {
+        if (!(XML == null ? "" : XML.trim()).isEmpty()) {
+            EWSSIGCLIENTES<?> parseoXML = (EWSSIGCLIENTES<?>) new ParseadorXML().parseoXML(XML, EWSSIGCLIENTES.class);
+
+            if (parseoXML.getCredenciales() == null) {
+                return new ConvertidorXML().BadRequest();
+            }
+
+            if (new ValidacionCredenciales().validar(parseoXML.getCredenciales()).getCodigo().equals("0000")) {
+                List<E_JUsuarioOpcion> opciones = new D_UsuarioOpcion().obtenerOpciones(parseoXML.getCredenciales().getUsuario());
+                if (opciones == null) {
+                    return new ConvertidorXML().InternalServerError();
+                }
+
+                if (!opciones.isEmpty()) {
+                    RespuestaGeneral respuesta = new RespuestaGeneral("200", "OK");
+
+                    String respuestaXML = new ParseadorXML().parseoObj(respuesta, RespuestaGeneral.class);
+
+                    StringBuilder opcionesXML = new StringBuilder("<OPCIONES>");
+                    for (E_JUsuarioOpcion opcion : opciones) {
+                        opcionesXML.append(new ParseadorXML().parseoObj(opcion, E_JUsuarioOpcion.class));
+                    }
+                    opcionesXML.append("</OPCIONES>");
+                    System.out.println("<WSSIGCLIENTES>" + respuestaXML + opcionesXML.toString() + "</WSSIGCLIENTES>");
+                    return "<WSSIGCLIENTES>" + respuestaXML + opcionesXML.toString() + "</WSSIGCLIENTES>";
+                } else {
+                    return new ConvertidorXML().NoContent();
+                }
+            }
         }
         return new ConvertidorXML().BadRequest();
     }

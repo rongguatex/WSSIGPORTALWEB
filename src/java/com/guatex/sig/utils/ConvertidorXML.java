@@ -489,6 +489,20 @@ public class ConvertidorXML {
                 + addTag("MENSAJE", "BAD REQUEST")
                 + "</RESPUESTA>";
     }
+    
+    public String NoContent() {
+        return "<RESPUESTA>"
+                + addTag("CODIGO", "204")
+                + addTag("MENSAJE", "NO CONTENT")
+                + "</RESPUESTA>";
+    }
+    
+    public String InternalServerError() {
+        return "<RESPUESTA>"
+                + addTag("CODIGO", "500")
+                + addTag("MENSAJE", "INTERNAL SERVER ERROR")
+                + "</RESPUESTA>";
+    }
 
     /**
      *
