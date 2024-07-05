@@ -441,8 +441,8 @@ public class DReporteClientes {
 
             Query = " INSERT INTO FACCLICLIENTES ("
                     + " CODIGO, C_NOMBRE, C_CONTACTO, C_DIRECC , C_EMAIL, C_TEL, C_NIT, "
-                    + "  CAMPO1, CAMPO2, CAMPO3, CAMPO4, PADRE, C_MNCP, C_PTO , CODCOB)"
-                    + "  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ";
+                    + "  CAMPO1, CAMPO2, CAMPO3, CAMPO4, PADRE, CODCOB)"
+                    + "  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?) ";
 
             con = new Conexion().AbrirConexion();
             ps = con.prepareStatement(Query);
@@ -458,12 +458,8 @@ public class DReporteClientes {
             ps.setString(9, clientes.getCAMPO2());
             ps.setString(10, clientes.getCAMPO3());
             ps.setString(11, clientes.getCAMPO4());
-            ps.setString(12, clientes.getPADRE()); //
-            ps.setString(13, clientes.getMUNICIPIO());
-            ps.setString(14, clientes.getPUNTO());
-            ps.setString(15, clientes.getCODCOB());
-
-            System.out.println("lo que llevo en MUNICIPIO: [" + clientes.getMUNICIPIO() + "] [" + clientes.getPUNTO() + "]");
+            ps.setString(12, clientes.getPADRE()); //          
+            ps.setString(13, clientes.getCODCOB());
             rowsAffected = ps.executeUpdate();
 
         } catch (Exception ex) {

@@ -143,7 +143,7 @@ public class WSCLIENTESCRUD {
 
     @WebMethod(operationName = "mostrarCliente")
     public String mostrarCliente(@WebParam(name = "datos") String XML) {
-        System.out.println("entre y tengo de peticion [" + XML + "]");
+        //System.out.println("entre y tengo de peticion [" + XML + "]");
         E_Cliente cliente = new ConvertidorXML().extraerCliente(XML);
         E_respuestaClientes respuesta = new DReporteClientes().ObtenerCliente(cliente);
         return new ConvertidorXML().respuestaXMLDatosCliente(respuesta);
@@ -151,7 +151,7 @@ public class WSCLIENTESCRUD {
 
     @WebMethod(operationName = "listadoClientes")
     public String listadoClientes(@WebParam(name = "XML") String XML) {
-        System.out.println("entre y tengo de peticion [" + XML + "]");
+        //System.out.println("entre y tengo de peticion [" + XML + "]");
         ConvertidorXML c = new ConvertidorXML();
         String PADRE = c.getTag("PADRE", XML);
         String CODCOB = c.getTag("CODCOB", XML);
@@ -233,11 +233,6 @@ public class WSCLIENTESCRUD {
                 }
                 if (!validoDatosVacios(c.getDIRECCION())) {
                     estado += " --> El direción de cliente no puede ser vacio.";
-                    clienteValido = false;
-                }
-
-                if (!d.verificoPuntoExistente(c)) {
-                    estado += " --> El PUNTO y COBERTURA no son validos.";
                     clienteValido = false;
                 }
 
