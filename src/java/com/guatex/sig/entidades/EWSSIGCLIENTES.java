@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "WSSIGCLIENTES")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class WSSIGCLIENTES<T> {
+public class EWSSIGCLIENTES<T> {
 
     @XmlElement(name = "CREDENCIALES")
     E_Credenciales credenciales;

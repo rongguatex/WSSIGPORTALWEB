@@ -12,13 +12,10 @@ import com.guatex.sig.datos.D_GuiasHijas;
 import com.guatex.sig.datos.D_PuntoCobertura;
 import com.guatex.sig.entidades.E_Credenciales;
 import com.guatex.sig.entidades.E_Departamento;
-import com.guatex.sig.entidades.E_DetalleLinea;
-import com.guatex.sig.entidades.E_GeneradorGuia;
-import com.guatex.sig.entidades.E_Guia;
 import com.guatex.sig.entidades.E_Municipio;
 import com.guatex.sig.entidades.E_Ubicacion;
 import com.guatex.sig.entidades.RespuestaGeneral;
-import com.guatex.sig.entidades.WSSIGCLIENTES;
+import com.guatex.sig.entidades.EWSSIGCLIENTES;
 import com.guatex.sig.entidadesRespuesta.E_RespuestaGuia;
 import com.guatex.sig.utils.ConvertidorXML;
 import com.guatex.sig.utils.ValidacionCredenciales;
@@ -37,7 +34,7 @@ public class ModificarGuiaController {
     public String modificaGuia(String XML) {
         System.out.println(XML);
 
-        WSSIGCLIENTES<?> parseo = (WSSIGCLIENTES<?>) parseoXML(XML, WSSIGCLIENTES.class);
+        EWSSIGCLIENTES<?> parseo = (EWSSIGCLIENTES<?>) parseoXML(XML, EWSSIGCLIENTES.class);
         System.out.println(parseo);
         if (parseo.getCredenciales() != null) {
             E_Credenciales credenciales = parseo.getCredenciales();
@@ -78,7 +75,7 @@ public class ModificarGuiaController {
      */
     public String obtenerDatosGuia(String XML) {
         System.out.println("--> " + XML);
-        WSSIGCLIENTES<?> parseo = (WSSIGCLIENTES<?>) parseoXML(XML, WSSIGCLIENTES.class);
+        EWSSIGCLIENTES<?> parseo = (EWSSIGCLIENTES<?>) parseoXML(XML, EWSSIGCLIENTES.class);
 
         if (parseo != null) {
             E_Credenciales datos = parseo.getCredenciales();
