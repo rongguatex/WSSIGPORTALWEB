@@ -64,7 +64,7 @@ public class DReporteClientes {
             con = new Conexion().AbrirConexion();
             ps = con.prepareStatement(Query);
             ps.setString(1, r.CODCOB);
-            ps.setString(2, r.CODCOB);
+           // ps.setString(2, r.CODCOB);
             rs = ps.executeQuery();
 
             while (rs.next()) {
@@ -87,7 +87,7 @@ public class DReporteClientes {
                 cliente.setPADRE(rs.getString("PADRE"));
                 listaClientes.add(cliente);
             }
-
+            System.out.println("Reporte de clientes generado con Exito!");
         } catch (Exception ex) {
             System.out.println("Ocurrio un error al intentar buscar CLIENTES");
             ex.printStackTrace();
