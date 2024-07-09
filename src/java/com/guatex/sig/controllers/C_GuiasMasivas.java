@@ -91,8 +91,8 @@ public class C_GuiasMasivas {
                  */
                 for (E_DatosGuiaMasiva dato : datos.getListaDatosGuia()) {
                     /**
-                     * se asigna el código del cliente que se va a validar.
-                     * se agrega datos del remitente.
+                     * se asigna el código del cliente que se va a validar. se
+                     * agrega datos del remitente.
                      */
                     System.out.println("\n------------------------------------------ Nuevo objeto -------------------------------------------------");
                     System.out.println("anterior [" + cliente.getCODIGO() + "] nuevo [" + dato.getCODIGO() + "]");
@@ -119,7 +119,7 @@ public class C_GuiasMasivas {
                     if (!errUbicacion) {
                         if (!dato.getCODIGO().isEmpty()) {
                             E_PuntoCobertura ubicacion = new D_Clientes().obtenerUbicacionCliCliente(datos.getCredenciales().getPadre(), dato.getCODIGO());
-                            if (!ubicacion.getPUNTO().isEmpty() && !ubicacion.getUBICACION().isEmpty()) {
+                            if (ubicacion.getPUNTO() != null && ubicacion.getUBICACION() != null) {
                                 dato.setCODIGO_DESTINATARIO(ubicacion.getPUNTO());
                                 dato.setMUNICIPIO_DESTINATARIO(ubicacion.getUBICACION());
                                 System.out.println("validando ando: coddes [" + dato.getCODIGO_DESTINATARIO() + "] mncpdest [" + dato.getMUNICIPIO_DESTINATARIO() + "]");
@@ -203,6 +203,19 @@ public class C_GuiasMasivas {
                 String respuesta = "";
                 if (!existenErrores) {
                     List<RespuestaTomaServicio> respuestaTomaServicio = tomadeServicio(datos);
+
+                    System.out.println("-----------------------------> respuesta toma de servicio: " + respuestaTomaServicio);
+                    boolean existeError = false;
+                    for (RespuestaTomaServicio res : respuestaTomaServicio) {
+                        if (res.getGeneral().getCodigo().equals("9999")) {
+                            existeError = true;
+                        }
+                    }
+
+                    if (existeError) {
+                        return parseoRespuestaXML(new RespuestaGeneral("204", "Ok"), datos.getListaDatosGuia(), respuestaTomaServicio);
+                    }
+
                     respuesta = parseoRespuestaXML(new RespuestaGeneral("200", "Ok"), datos.getListaDatosGuia(), respuestaTomaServicio);
                 } else {
                     respuesta = parseoRespuestaXML(new RespuestaGeneral("9999", "Existen errores en el archivo excel."), datos.getListaDatosGuia());
@@ -412,7 +425,7 @@ public class C_GuiasMasivas {
         int index = 1;
         for (E_DetalleLinea detalle : lineaDetalle) {
             String codigoTarifa = obtenerCodigoTarifa(dato, codcob, tarifaOrigen, parametrosRemitente);
-            
+
             if (codigoTarifa != null) {
                 E_TarifaEnvio tarifaEnvio = new D_TarifaEnvio().BuscarTipoEnvio(codigoTarifa, detalle.getTIPOENVIO());
                 if (tarifaEnvio == null) {

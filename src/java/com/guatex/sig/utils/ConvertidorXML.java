@@ -458,7 +458,8 @@ public class ConvertidorXML {
     }
 
     public RespuestaGeneral parseoRespuestaTomaServicio(String xml) {
-        if (getTag("CODIGO", xml).equals("9999")) {
+        if (xml.contains("ERROR")) {
+            System.out.println("ERROR: " + getTag("DESCIPCION", xml));
             return new RespuestaGeneral("9999", getTag("DESCRIPCION", xml));
         }
         return new RespuestaGeneral("0000", "Guía insertada correctamente.");
@@ -489,18 +490,25 @@ public class ConvertidorXML {
                 + addTag("MENSAJE", "BAD REQUEST")
                 + "</RESPUESTA>";
     }
-    
+
     public String NoContent() {
         return "<RESPUESTA>"
                 + addTag("CODIGO", "204")
                 + addTag("MENSAJE", "NO CONTENT")
                 + "</RESPUESTA>";
     }
-    
+
     public String InternalServerError() {
         return "<RESPUESTA>"
                 + addTag("CODIGO", "500")
                 + addTag("MENSAJE", "INTERNAL SERVER ERROR")
+                + "</RESPUESTA>";
+    }
+
+    public String IsDerivered() {
+        return "<RESPUESTA>"
+                + addTag("CODIGO", "999")
+                + addTag("MENSAJE", "GUÍA YA HA SIDO ENTREGADA.")
                 + "</RESPUESTA>";
     }
 

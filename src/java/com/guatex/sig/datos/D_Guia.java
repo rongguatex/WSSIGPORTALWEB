@@ -131,7 +131,7 @@ public class D_Guia {
                     + "INNER JOIN FACCLIENTES FC ON J.CODCOB = FC.CODIGO  "
                     + "WHERE NOGUIA = ? "
                     + "AND FC.PADRE = ? "
-                    + "AND ISNULL(J.IMPRESO, 'N') != 'P' "
+                    + "AND ISNULL(J.IMPRESO, 'N') != 'S' "
                     + "AND NOT EXISTS ( "
                     + "    SELECT "
                     + "        NOGUIA "
