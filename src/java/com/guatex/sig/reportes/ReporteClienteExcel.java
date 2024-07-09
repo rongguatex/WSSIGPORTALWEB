@@ -62,7 +62,7 @@ public class ReporteClienteExcel extends HttpServlet {
                 try (ServletOutputStream outStream = response.getOutputStream()) {
                     EReporteClientes cliente = mostrarClientes.get(0); 
                     E_ReporteClienteExcel reporte = new E_ReporteClienteExcel();
-                    reporte.generarXLSX(cliente, mostrarClientes, outStream);
+                    reporte.generarXLSX(cliente, mostrarClientes, outStream, codigo);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
