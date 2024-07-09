@@ -41,7 +41,7 @@ public class E_ReporteClienteExcel {
         this.horaEmision = new SimpleDateFormat("HH:mm:ss");
     }
 
-    public boolean generarXLSX(EReporteClientes cliente, List<EReporteClientes> clientes, ServletOutputStream outputStream) throws IOException {
+    public boolean generarXLSX(EReporteClientes cliente, List<EReporteClientes> clientes, ServletOutputStream outputStream, String CODCOB) throws IOException {
         boolean respuesta = false;
 
         // Crear estilos
@@ -71,7 +71,7 @@ public class E_ReporteClienteExcel {
         Row t2 = sheet.createRow(noColumna++);
 
         Cell TituloGeneral2 = t2.createCell(0);
-        TituloGeneral2.setCellValue("Reporte de Guias");
+        TituloGeneral2.setCellValue("Reporte de clientes: " + CODCOB);
         TituloGeneral2.setCellStyle(estilo2);
         noColumna += 1;
 
@@ -80,25 +80,27 @@ public class E_ReporteClienteExcel {
         Cell CeldaEmision = TituloEmision.createCell(0); // Columna A
         CeldaEmision.setCellValue("Emisión: " + fechaEmision.format(new Date()) + " Hora: " + horaEmision.format(new Date()));
 
-        // Agregar descripción del cliente
-        String[] TituloDescripcion = {"", "CLIENTE:", "CÓDIGO:", "DIRECCIÓN:", ""};
-        String[] DatosDescripcion = {cliente.getCODIGO(), cliente.getCODCOB(), cliente.getDIRECCION()};
-
-        for (int i = 0; i < TituloDescripcion.length; i++) {
-            Row ColumnaDescripcion = sheet.createRow(noColumna += 1);
-            ColumnaDescripcion.setHeight((short) 300);
-
-            Cell celda = ColumnaDescripcion.createCell(0);
-            celda.setCellStyle(estilo2);
-
-            // Componer la celda con el título y el dato correspondiente
-            if (i > 0 && i - 1 < DatosDescripcion.length) {
-                celda.setCellValue(TituloDescripcion[i] + " " + DatosDescripcion[i - 1]);
-            } else {
-                celda.setCellValue(TituloDescripcion[i]);
-            }
-        }
-        noColumna++;
+//        // Agregar descripción del cliente
+//        String[] TituloDescripcion = {"", "CLIENTE:", "CÓDIGO:", "DIRECCIÓN:", ""};
+//        String[] DatosDescripcion = {cliente.getCODIGO(), cliente.getCODCOB(), cliente.getDIRECCION()};
+//
+//        System.out.println("CODIGO: " + cliente.getCODIGO() + " CODCOB: " + cliente.getCODCOB() + " DIRECCION: " + cliente.getDIRECCION());
+//        
+//        for (int i = 0; i < TituloDescripcion.length; i++) {
+//            Row ColumnaDescripcion = sheet.createRow(noColumna += 1);
+//            ColumnaDescripcion.setHeight((short) 300);
+//
+//            Cell celda = ColumnaDescripcion.createCell(0);
+//            celda.setCellStyle(estilo2);
+//
+//            // Componer la celda con el título y el dato correspondiente
+//            if (i > 0 && i - 1 < DatosDescripcion.length) {
+//                celda.setCellValue(TituloDescripcion[i] + " " + DatosDescripcion[i - 1]);
+//            } else {
+//                celda.setCellValue(TituloDescripcion[i]);
+//            }
+//        }
+//        noColumna++;
 
         // Crear encabezado de la tabla
         String[] titulos = {"CODIGO", "NOMBRE", "CONTACTO", "NIT", "EMAIL", "TELEFONO", "DIRECCION", "PUNTO", "LUGAR COBERTURA", "CAMPO1", "CAMPO2", "CAMPO3", "CAMPO4"};
