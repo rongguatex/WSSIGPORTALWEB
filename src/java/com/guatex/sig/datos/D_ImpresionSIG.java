@@ -149,43 +149,43 @@ public class D_ImpresionSIG {
                     return new ConvertidorXML().IsDerivered();
                 }
 
-//                try (PreparedStatement insertPS
-//                        = con.prepareStatement("INSERT INTO SIG_IMPRESION (NOGUIA,  ESTADO,  CODIGO, USUARIO) VALUES (?,'N',?,?) ")) {
-//
-//                    //ciclo para prepatar batch para inserts
-//                    for (E_ImpresionSIG dato : datos) {
-//                        insertPS.setString(1, dato.getNOGUIA());
-//                        insertPS.setString(2, dato.getCODCOB());
-//                        insertPS.setString(3, dato.getUSUARIO());
-//                        insertPS.addBatch();
-//                    }
-//
-//                    int[] insertResults = insertPS.executeBatch();
-//
-//                    for (int arr : insertResults) {
-//                        if (insertResults[arr - 1] == PreparedStatement.EXECUTE_FAILED || insertResults[arr - 1] <= 0) {
-//                            con.rollback();
-//                            System.out.println("Error en batch de INSERT, se realiza rollback");
-//                            return new ConvertidorXML().BadRequest();
-//                        }
-//                    }
-//
-//                    con.commit();
-//                    return new ConvertidorXML().OK();
-//
-//                } catch (SQLException sqlException) {
-//                    System.out.println("ocurrio un error e ingreso al sqlException");
-//                    sqlException.printStackTrace(System.err);
-//                    if (con != null) {
-//                        try {
-//                            System.out.println("Se realiza el rollback");
-//                            con.rollback();
-//                        } catch (SQLException rollbackException) {
-//                            System.out.println("ocurrio un error e ingreso al rollbackException");
-//                            rollbackException.printStackTrace(System.err);
-//                        }
-//                    }
-//                }
+                try (PreparedStatement insertPS
+                        = con.prepareStatement("INSERT INTO SIG_IMPRESION (NOGUIA,  ESTADO,  CODIGO, USUARIO) VALUES (?,'N',?,?) ")) {
+
+                    //ciclo para prepatar batch para inserts
+                    for (E_ImpresionSIG dato : datos) {
+                        insertPS.setString(1, dato.getNOGUIA());
+                        insertPS.setString(2, dato.getCODCOB());
+                        insertPS.setString(3, dato.getUSUARIO());
+                        insertPS.addBatch();
+                    }
+
+                    int[] insertResults = insertPS.executeBatch();
+
+                    for (int arr : insertResults) {
+                        if (insertResults[arr - 1] == PreparedStatement.EXECUTE_FAILED || insertResults[arr - 1] <= 0) {
+                            con.rollback();
+                            System.out.println("Error en batch de INSERT, se realiza rollback");
+                            return new ConvertidorXML().BadRequest();
+                        }
+                    }
+
+                    con.commit();
+                    return new ConvertidorXML().OK();
+
+                } catch (SQLException sqlException) {
+                    System.out.println("ocurrio un error e ingreso al sqlException");
+                    sqlException.printStackTrace(System.err);
+                    if (con != null) {
+                        try {
+                            System.out.println("Se realiza el rollback");
+                            con.rollback();
+                        } catch (SQLException rollbackException) {
+                            System.out.println("ocurrio un error e ingreso al rollbackException");
+                            rollbackException.printStackTrace(System.err);
+                        }
+                    }
+                }
             } catch (SQLException e) {
                 System.out.println("ocurrio un error e ingresa al exception");
                 e.printStackTrace(System.err);
