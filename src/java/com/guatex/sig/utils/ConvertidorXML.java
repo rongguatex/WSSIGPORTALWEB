@@ -512,6 +512,13 @@ public class ConvertidorXML {
                 + "</RESPUESTA>";
     }
 
+    public String isPrinted() {
+        return "<RESPUESTA>"
+                + addTag("CODIGO", "998")
+                + addTag("MENSAJE", "GUÍA YA HA SIDO IMPRESA.")
+                + "</RESPUESTA>";
+    }
+
     /**
      *
      * @param tag

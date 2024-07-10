@@ -36,7 +36,7 @@ public class D_ImpresionSIG {
             try (Connection con = new Conexion().AbrirConexion()) {
                 con.setAutoCommit(false);
 
-                boolean isDelivered = false;
+                boolean isPrinted = false;
 
                 try (PreparedStatement st = con.prepareStatement(" SELECT ISNULL(IMPRESO, 'N') IMPRESO FROM JGUIAS WHERE NOGUIA = ? ")) {
                     for (E_ImpresionSIG dato : datos) {
@@ -45,7 +45,7 @@ public class D_ImpresionSIG {
                         try (ResultSet rs = st.executeQuery()) {
                             while (rs.next()) {
                                 if (util.limpiaStr(rs.getString("IMPRESO")).equalsIgnoreCase("S")) {
-                                    isDelivered = true;
+                                    isPrinted = true;
                                 }
                             }
                         }
@@ -55,8 +55,8 @@ public class D_ImpresionSIG {
                     return new ConvertidorXML().InternalServerError();
                 }
 
-                if (isDelivered) {
-                    return new ConvertidorXML().IsDerivered();
+                if (isPrinted) {
+                    return new ConvertidorXML().isPrinted();//Se devuelve respuesta IsDelivered solo para obtener el código 
                 }
 
                 try (PreparedStatement insertPS = con.prepareStatement("INSERT INTO SIG_IMPRESION (NOGUIA,  ESTADO,  CODIGO, USUARIO) VALUES (?,'N',?,?) ");
@@ -123,67 +123,69 @@ public class D_ImpresionSIG {
         if (datos != null && datos.size() > 0) {
             try (Connection con = new Conexion().AbrirConexion()) {
                 con.setAutoCommit(false);
-                
+
                 boolean isDelivered = false;
 
-                try (PreparedStatement st = con.prepareStatement(" SELECT ISNULL(IMPRESO, 'N') IMPRESO FROM JGUIAS WHERE NOGUIA = ? ")) {
-                    for (E_ImpresionSIG dato : datos) {
+                for (E_ImpresionSIG dato : datos) {
+                    try (PreparedStatement st = con.prepareStatement(" SELECT J.NOGUIA FROM JGUIAS J WHERE J.NOGUIA = ? AND NOT EXISTS(SELECT G.NOGUIA FROM GUIAS G WHERE G.NOGUIA = ? ) ")) {
                         st.setString(1, dato.getNOGUIA());
+                        st.setString(2, dato.getNOGUIA());
 
                         try (ResultSet rs = st.executeQuery()) {
-                            while (rs.next()) {
-                                if (util.limpiaStr(rs.getString("IMPRESO")).equalsIgnoreCase("S")) {
-                                    isDelivered = true;
-                                }
+                            if (!rs.isBeforeFirst()) {
+                                System.out.println(rs.isBeforeFirst());
+                                isDelivered = true;
                             }
                         }
+
+                    } catch (SQLException ex) {
+                        ex.printStackTrace(System.err);
+                        return new ConvertidorXML().InternalServerError();
                     }
-                } catch (SQLException ex) {
-                    ex.printStackTrace(System.err);
-                    return new ConvertidorXML().InternalServerError();
                 }
+                System.out.println("IS DERIVERED?? " + isDelivered);
 
                 if (isDelivered) {
                     return new ConvertidorXML().IsDerivered();
                 }
 
-                try (PreparedStatement insertPS
-                        = con.prepareStatement("INSERT INTO SIG_IMPRESION (NOGUIA,  ESTADO,  CODIGO, USUARIO) VALUES (?,'N',?,?) ")) {
-
-                    //ciclo para prepatar batch para inserts
-                    for (E_ImpresionSIG dato : datos) {
-                        insertPS.setString(1, dato.getNOGUIA());
-                        insertPS.setString(2, dato.getCODCOB());
-                        insertPS.setString(3, dato.getUSUARIO());
-                        insertPS.addBatch();
-                    }
-
-                    int[] insertResults = insertPS.executeBatch();
-
-                    for (int arr : insertResults) {
-                        if (insertResults[arr - 1] == PreparedStatement.EXECUTE_FAILED || insertResults[arr - 1] <= 0) {
-                            con.rollback();
-                            System.out.println("Error en batch de INSERT, se realiza rollback");
-                            return new ConvertidorXML().BadRequest();
-                        }
-                    }
-
-                    con.commit();
-                    return new ConvertidorXML().OK();
-
-                } catch (SQLException sqlException) {
-                    System.out.println("ocurrio un error e ingreso al sqlException");
-                    sqlException.printStackTrace(System.err);
-                    if (con != null) {
-                        try {
-                            System.out.println("Se realiza el rollback");
-                            con.rollback();
-                        } catch (SQLException rollbackException) {
-                            System.out.println("ocurrio un error e ingreso al rollbackException");
-                            rollbackException.printStackTrace(System.err);
-                        }
-                    }
-                }
+//                try (PreparedStatement insertPS
+//                        = con.prepareStatement("INSERT INTO SIG_IMPRESION (NOGUIA,  ESTADO,  CODIGO, USUARIO) VALUES (?,'N',?,?) ")) {
+//
+//                    //ciclo para prepatar batch para inserts
+//                    for (E_ImpresionSIG dato : datos) {
+//                        insertPS.setString(1, dato.getNOGUIA());
+//                        insertPS.setString(2, dato.getCODCOB());
+//                        insertPS.setString(3, dato.getUSUARIO());
+//                        insertPS.addBatch();
+//                    }
+//
+//                    int[] insertResults = insertPS.executeBatch();
+//
+//                    for (int arr : insertResults) {
+//                        if (insertResults[arr - 1] == PreparedStatement.EXECUTE_FAILED || insertResults[arr - 1] <= 0) {
+//                            con.rollback();
+//                            System.out.println("Error en batch de INSERT, se realiza rollback");
+//                            return new ConvertidorXML().BadRequest();
+//                        }
+//                    }
+//
+//                    con.commit();
+//                    return new ConvertidorXML().OK();
+//
+//                } catch (SQLException sqlException) {
+//                    System.out.println("ocurrio un error e ingreso al sqlException");
+//                    sqlException.printStackTrace(System.err);
+//                    if (con != null) {
+//                        try {
+//                            System.out.println("Se realiza el rollback");
+//                            con.rollback();
+//                        } catch (SQLException rollbackException) {
+//                            System.out.println("ocurrio un error e ingreso al rollbackException");
+//                            rollbackException.printStackTrace(System.err);
+//                        }
+//                    }
+//                }
             } catch (SQLException e) {
                 System.out.println("ocurrio un error e ingresa al exception");
                 e.printStackTrace(System.err);
