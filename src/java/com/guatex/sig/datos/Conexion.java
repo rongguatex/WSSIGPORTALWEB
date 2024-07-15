@@ -15,7 +15,7 @@ import java.sql.SQLException;
  */
 public class Conexion {
 
-    private static final String url = "jdbc:sqlserver://192.168.14.224";
+    private static final String url = "jdbc:sqlserver://serverSIG";
     private static final String usuario = "operaciones";
     private static final String pswrd = "gtxgtx01";
 

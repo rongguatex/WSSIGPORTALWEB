@@ -411,13 +411,14 @@ public class ConvertidorXML {
                         + addTag("LINEA", datos.getLINEA())
                         + addTag("PIEZAS", datos.getPIEZAS() + "")
                         + addTag("TIPOENVIO", datos.getTIPOENVIO())
+                        + addTag("DESCRIPCIONENVIO", datos.getDESCRIPCIONENVIO())
                         + addTag("PESO", datos.getPESO())
                         + addTag("TARIFA", datos.getTARIFA())
                         + "</DATOS_DETALLE>";
             }
         }
         XML += "</DETALLE_GUIA>"
-                + "</RESPUESTA>";
+                + "</RESPUESTA>";System.out.println(XML);
         return XML;
     }
 

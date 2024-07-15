@@ -35,8 +35,9 @@ public class D_Detalle {
         if (!util.limpiaStr(noguia).isEmpty()) {
             String query = "SELECT "
                     + "	JGD.LINEA AS LINEA, "
-                    + "	JGD.PIEZAS AS PIEZAS, "
-                    + "	(SELECT NOMBRE FROM TRFENVIOS WHERE CODIGO = JGD.TIPENV) AS TIPOENVIO, "
+                    + "	JGD.PIEZAS AS PIEZAS,"
+                    + "            JGD.TIPENV AS TIPOENVIO,  "
+                    + "	(SELECT NOMBRE FROM TRFENVIOS WHERE CODIGO = JGD.TIPENV) AS DESCRIPCIONENVIO, "
                     + "	JGD.PESO AS PESO, "
                     + "	JGD.TARIFA AS TARIFA "
                     + " FROM JGUIASDETALLE JGD "
@@ -50,6 +51,7 @@ public class D_Detalle {
                         linea.setLINEA(util.limpiaStr(rs.getString("LINEA")));
                         linea.setPIEZAS(convertirAEntero(util.limpiaStr(rs.getString("PIEZAS"))).orElse(0));
                         linea.setTIPOENVIO(util.limpiaStr(rs.getString("TIPOENVIO")));
+                        linea.setDESCRIPCIONENVIO(util.limpiaStr(rs.getString("DESCRIPCIONENVIO")));
                         linea.setPESO(util.limpiaStr(rs.getString("PESO")));
                         linea.setTARIFA(util.limpiaStr(rs.getString("TARIFA")));
                         detalle.add(linea);
