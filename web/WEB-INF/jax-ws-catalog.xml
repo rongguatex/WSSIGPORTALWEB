@@ -6,4 +6,6 @@
     <system systemId="http://192.168.14.117:8080/WSPGTomaServicio/WSPGTomaServicio?xsd=1" uri="wsdl/192.168.14.117_8080/WSPGTomaServicio/WSPGTomaServicio.xsd_1.xsd"/>
     <system systemId="http://192.168.11.178:8080/WSPGTomaServicio/WSPGTomaServicio?WSDL" uri="wsdl/192.168.11.178_8080/WSPGTomaServicio/WSPGTomaServicio.wsdl"/>
     <system systemId="http://192.168.11.178:8080/WSPGTomaServicio/WSPGTomaServicio?xsd=1" uri="wsdl/192.168.11.178_8080/WSPGTomaServicio/WSPGTomaServicio.xsd_1.xsd"/>
+    <system systemId="http://192.168.11.51:8080/WSPGTomaServicio/WSPGTomaServicio?WSDL" uri="wsdl/192.168.11.51_8080/WSPGTomaServicio/WSPGTomaServicio.wsdl"/>
+    <system systemId="http://192.168.11.51:8080/WSPGTomaServicio/WSPGTomaServicio?xsd=1" uri="wsdl/192.168.11.51_8080/WSPGTomaServicio/WSPGTomaServicio.xsd_1.xsd"/>
 </catalog>
