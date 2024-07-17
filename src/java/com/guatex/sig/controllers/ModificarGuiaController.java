@@ -42,7 +42,7 @@ public class ModificarGuiaController {
             if ("0000".equals(validacionCredenciales.getCodigo())) {
                 E_Credenciales datos = parseo.getCredenciales();
                 boolean existErrorEliminacion = false;
-                existErrorEliminacion = !new D_Guia().eliminaGuia(quitaNulo(datos.getNoguia()));
+//                existErrorEliminacion = !new D_Guia().eliminaGuia(quitaNulo(datos.getNoguia()));
                 
                 if(existErrorEliminacion) {
                     return "<RESPUESTA><CODIGO>9999</CODIGO><MENSAJE>Error al eliminar guía</MENSAJE></RESPUESTA>";
