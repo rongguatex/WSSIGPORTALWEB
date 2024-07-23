@@ -107,6 +107,8 @@ public class ModificarGuiaController {
                     ubicacionDestino.setMUNICIPIO(encontrarMunicipio(ubicacionDestino.getDEPARTAMENTO(), ubicacionDestino.getCOBERTURA().getMUNICIPIO()));
 
                     return new ConvertidorXML().respuestaXMLGuia(respuesta, ubicacionOrigen, ubicacionDestino);
+                } else if(respuesta.getCODIGO().equals("204")){
+                    return new ConvertidorXML().NoContent();
                 }
             }
         }
