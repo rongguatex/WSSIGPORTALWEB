@@ -79,21 +79,13 @@ public class WSSIGCLIENTES {
     @WebMethod(operationName = "insertarImpresionData")
     public String insertarImpresionData(@WebParam(name = "datos") String XML) {
         List<E_ImpresionSIG> impresiones = new ConvertidorXML().getObjectImpresion(XML);
-        if (new D_ImpresionSIG().insertaImpresionSIG(impresiones)) {
-            return new ConvertidorXML().OK();
-        } else {
-            return new ConvertidorXML().BadRequest();
-        }
+        return new D_ImpresionSIG().insertaImpresionSIG(impresiones);
     }
 
     @WebMethod(operationName = "insertaReimpresion")
     public String insertaReimpresion(@WebParam(name = "datos") String XML) {
         List<E_ImpresionSIG> impresiones = new ConvertidorXML().getObjectImpresion(XML);
-        if (new D_ImpresionSIG().insertaReimpresion(impresiones)) {
-            return new ConvertidorXML().OK();
-        } else {
-            return new ConvertidorXML().BadRequest();
-        }
+        return new D_ImpresionSIG().insertaReimpresion(impresiones);
     }
 
     /**
