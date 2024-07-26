@@ -143,7 +143,7 @@ public class WSCLIENTESCRUD {
 
     @WebMethod(operationName = "mostrarCliente")
     public String mostrarCliente(@WebParam(name = "datos") String XML) {
-        //System.out.println("entre y tengo de peticion [" + XML + "]");
+//        System.out.println("entre y tengo de peticion [" + XML + "]");
         E_Cliente cliente = new ConvertidorXML().extraerCliente(XML);
         E_respuestaClientes respuesta = new DReporteClientes().ObtenerCliente(cliente);
         return new ConvertidorXML().respuestaXMLDatosCliente(respuesta);
