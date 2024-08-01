@@ -7,7 +7,10 @@ package com.guatex.sig.datos;
 
 import com.guatex.sig.entidades.E_Credenciales;
 import com.guatex.sig.entidades.E_Guia;
+import com.guatex.sig.entidades.E_ImpresionSIG;
+import com.guatex.sig.entidades.E_Servicio;
 import com.guatex.sig.entidadesRespuesta.E_RespuestaGuia;
+import com.guatex.sig.utils.ConvertidorXML;
 import com.guatex.sig.utils.Utils;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -22,6 +25,7 @@ import java.util.Optional;
  * @author RGALICIA
  */
 public class D_Guia {
+
     Utils util = new Utils();
 
     /**
@@ -225,5 +229,63 @@ public class D_Guia {
         }
 
         return false;
+    }
+
+    public List<E_Servicio> obtenerIdServicio(List<E_ImpresionSIG> datos) {
+
+        if (datos.isEmpty()) {
+            return null;
+        }
+
+        List<E_Servicio> resultado = new LinkedList<>();
+
+        try (Connection con = new Conexion().AbrirConexion()) {
+            for (E_ImpresionSIG dato : datos) {
+                if (dato.getNOGUIA() != null || !dato.getNOGUIA().isEmpty()) {
+                    try (PreparedStatement ps = con.prepareStatement("SELECT IDSERVICIO FROM JGUIAS WHERE NOGUIA = ? ")) {
+                        ps.setString(1, dato.getNOGUIA());
+                        try (ResultSet rs = ps.executeQuery()) {
+                            while (rs.next()) {
+                                E_Servicio servicio = new E_Servicio();
+                                servicio.setIDSERVICIO(util.limpiaStr(rs.getString("IDSERVICIO")));
+                                resultado.add(servicio);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return resultado;
+    }
+
+    public String verificaDescarga(List<E_ImpresionSIG> datos) {
+        boolean isPrinted = false;
+
+        try (Connection con = new Conexion().AbrirConexion();
+                PreparedStatement st = con.prepareStatement(" SELECT ISNULL(IMPRESO, 'N') IMPRESO FROM JGUIAS WHERE NOGUIA = ? ")) {
+            for (E_ImpresionSIG dato : datos) {
+                st.setString(1, dato.getNOGUIA());
+
+                try (ResultSet rs = st.executeQuery()) {
+                    while (rs.next()) {
+                        if (util.limpiaStr(rs.getString("IMPRESO")).equalsIgnoreCase("M")) {
+                            isPrinted = true;
+                        }
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace(System.err);
+            return "500";
+        }
+
+        if (isPrinted) {
+            return "998"; 
+        }
+        return "200";
     }
 }

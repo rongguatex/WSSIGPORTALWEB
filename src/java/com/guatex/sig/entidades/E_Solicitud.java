@@ -33,4 +33,11 @@ public class E_Solicitud implements Serializable {
     public void setListadoGuiaImpresion(List<E_ImpresionSIG> listadoGuiaImpresion) {
         this.listadoGuiaImpresion = listadoGuiaImpresion;
     }
+
+    @Override
+    public String toString() {
+        return "E_Solicitud{" + "listadoGuiaImpresion=" + listadoGuiaImpresion + '}';
+    }
+    
+    
 }

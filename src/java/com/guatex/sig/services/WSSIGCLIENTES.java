@@ -15,6 +15,8 @@ import com.guatex.sig.entidades.E_ImpresionSIG;
 import com.guatex.sig.entidades.E_JUsuarioOpcion;
 import com.guatex.sig.entidades.E_Municipio;
 import com.guatex.sig.entidades.E_PuntoCobertura;
+import com.guatex.sig.entidades.E_Servicio;
+import com.guatex.sig.entidades.E_Solicitud;
 import com.guatex.sig.entidades.E_respuestaClientes;
 import com.guatex.sig.entidades.RespuestaGeneral;
 import com.guatex.sig.entidadesRespuesta.E_RespuestaDetalle;
@@ -150,6 +152,51 @@ public class WSSIGCLIENTES {
                     return new ConvertidorXML().NoContent();
                 }
             }
+        }
+        return new ConvertidorXML().BadRequest();
+    }
+
+    @WebMethod(operationName = "descargaRotulador")
+    public String descargaRotulador(@WebParam(name = "datos") String XML) {
+        if (!(XML == null ? "" : XML.trim()).isEmpty()) {
+            EWSSIGCLIENTES<E_Solicitud> parseoXML = (EWSSIGCLIENTES<E_Solicitud>) new ParseadorXML().parseoXML(XML, EWSSIGCLIENTES.class, E_Solicitud.class);
+
+            if (parseoXML.getCredenciales() == null || parseoXML.getDatosEntrada().getListadoGuiaImpresion() == null) {
+                return new ConvertidorXML().BadRequest();
+            }
+
+            if (new ValidacionCredenciales().validar(parseoXML.getCredenciales()).getCodigo().equals("0000")) {
+                List<E_ImpresionSIG> datos = parseoXML.getDatosEntrada().getListadoGuiaImpresion();
+                if (!datos.isEmpty()) {
+
+                    String respuesta = new D_Guia().verificaDescarga(datos);
+
+                    if (respuesta.equals("998")) { //verifica si la guía ha sido impresa anteriormente
+                        return "<WSSIGCLIENTES>" + new ConvertidorXML().isPrinted() + "</WSSIGCLIENTES>";
+                    }
+
+                    List<E_Servicio> serviciosId = new D_Guia().obtenerIdServicio(datos);
+
+                    if (serviciosId == null || serviciosId.size() != datos.size()) {
+                        return new ConvertidorXML().InternalServerError();
+                    }
+
+                    String respuestaXML = new ParseadorXML().parseoObj(new RespuestaGeneral("200", "OK"), RespuestaGeneral.class);
+                    StringBuilder servicioXML = new StringBuilder("<SERVICIOS>");
+
+                    for (E_Servicio servicio : serviciosId) {
+                        servicio.setURLSERVICIO("https://jcl.guatex.gt/WSPGimpresion/GeneraPDF?idservicio=" + servicio.getIDSERVICIO());
+                        servicioXML.append(new ParseadorXML().parseoObj(servicio, E_Servicio.class));
+                    }
+
+                    servicioXML.append("</SERVICIOS>");
+
+//                    return "<WSSIGCLIENTES>" + new ConvertidorXML().isPrinted() + "</WSSIGCLIENTES>";//respuesta de prueba cuando un manifiesto ha sido descargado.
+                    System.out.println("<WSSIGCLIENTES>" + respuestaXML + servicioXML.toString() + "</WSSIGCLIENTES>");
+                    return "<WSSIGCLIENTES>" + respuestaXML + servicioXML.toString() + "</WSSIGCLIENTES>";
+                }
+            }
+            return new ConvertidorXML().Unauthorized();
         }
         return new ConvertidorXML().BadRequest();
     }

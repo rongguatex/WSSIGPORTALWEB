@@ -519,6 +519,13 @@ public class ConvertidorXML {
                 + addTag("MENSAJE", "GUÍA YA HA SIDO IMPRESA.")
                 + "</RESPUESTA>";
     }
+    
+    public String Unauthorized() {
+        return "<RESPUESTA>"
+                + addTag("CODIGO", "401")
+                + addTag("MENSAJE", "NO AUTORIZADO.")
+                + "</RESPUESTA>";
+    }
 
     /**
      *
