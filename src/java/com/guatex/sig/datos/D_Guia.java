@@ -326,6 +326,7 @@ public class D_Guia {
                 PreparedStatement st = con.prepareStatement(" SELECT J.NOGUIA FROM JGUIAS J WHERE J.NOGUIA = ? AND NOT EXISTS(SELECT G.NOGUIA FROM GUIAS G WHERE G.NOGUIA = ? ) ")) {
             for (E_ImpresionSIG dato : datos) {
                 st.setString(1, dato.getNOGUIA());
+                st.setString(2, dato.getNOGUIA());
 
                 try (ResultSet rs = st.executeQuery()) {
                     if (!rs.isBeforeFirst()) {
