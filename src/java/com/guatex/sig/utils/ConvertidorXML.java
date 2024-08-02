@@ -26,6 +26,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
 public class ConvertidorXML {
+    
+    Utils util = new Utils();
 
     public E_Cliente extraerCliente(String xml) {
         E_Cliente cliente = new E_Cliente();
@@ -80,16 +82,16 @@ public class ConvertidorXML {
                         + addTag("SABADO", String.valueOf(cliente.getCOBERTURA().getSABADO()))
                         + "</COBERTURA>"
                         + "<DEPARTAMENTO>"
-                        + addTag("CODDEPTO", String.valueOf(cliente.getDEPARTAMENTO().getCODIGO()))
-                        + addTag("NOMBREDEPTO", cliente.getDEPARTAMENTO().getNOMBRE())
-                        + addTag("PAIS", cliente.getDEPARTAMENTO().getPAIS())
+                        + addTag("CODDEPTO", util.quitaNulo(cliente.getDEPARTAMENTO().getCODIGO()))
+                        + addTag("NOMBREDEPTO", util.quitaNulo(cliente.getDEPARTAMENTO().getNOMBRE()))
+                        + addTag("PAIS", util.quitaNulo(cliente.getDEPARTAMENTO().getPAIS()))
                         //                        + "<MUNICIPIOS_DEPTO>"    //Se verificará su utilidad próximamente :)
                         //                        + municipios(cliente)
                         //                        + "</MUNICIPIOS_DEPTO>"
                         + "</DEPARTAMENTO>"
                         + "<MUNICIPIO>"
-                        + addTag("CODMUNICIPIO", String.valueOf(cliente.getMUNICIPIO().getCODIGO()))
-                        + addTag("NOMBREMUNICIPIO", cliente.getMUNICIPIO().getNOMBRE())
+                        + addTag("CODMUNICIPIO", util.quitaNulo(cliente.getMUNICIPIO().getCODIGO()))
+                        + addTag("NOMBREMUNICIPIO", util.quitaNulo(cliente.getMUNICIPIO().getNOMBRE()))
                         + "</MUNICIPIO>"
                         + "</CLIENTE>";
             }
@@ -98,6 +100,7 @@ public class ConvertidorXML {
         }
         XML += "</LISTADO_CLIENTES>"
                 + "</RESPUESTA>";
+        System.out.println(XML);
         return XML;
     }
 

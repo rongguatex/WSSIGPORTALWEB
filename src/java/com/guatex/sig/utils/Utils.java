@@ -24,8 +24,12 @@ public class Utils {
             return "";
         }
         var = var.replaceAll("null", "").replaceAll("NULL", "");
-        String strLimpio = var.replaceAll("[^a-zA-Z0-9._\\- /,*´#=:;]", "");
+        String strLimpio = var.replaceAll("[^a-zA-Z0-9._\\- /,*´#=:;áéíóúÁÉÍÓÚüÜñÑ\\[\\]()]", "");
         return strLimpio.trim();
+    }
+
+    public String quitaNulo(String var) {
+        return var == null ? "" : var.trim();
     }
 
     /**
