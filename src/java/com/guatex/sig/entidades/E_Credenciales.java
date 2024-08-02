@@ -32,6 +32,9 @@ public class E_Credenciales {
     
     @XmlElement(name = "NOGUIA")
     private String noguia;
+    
+    @XmlElement(name = "TIPO")
+    private String tipo;
 
     public String getPadre() {
         return padre;
@@ -77,12 +80,20 @@ public class E_Credenciales {
         this.noguia = noguia;
     }
 
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
     @Override
     public String toString() {
         if (padre != null && !padre.isEmpty()
                 && codigo != null && !codigo.isEmpty()
                 && password != null && !password.isEmpty()) {
-            return "E_Credenciales{ noguia= "+ noguia + "padre=" + padre + ", codigo=" + codigo + ", password= " + password + '}';
+            return "E_Credenciales{ noguia= "+ noguia + "padre=" + padre + ", codigo=" + codigo + ", password= " + password + ", password= " + tipo + '}';
         }
         return null;
     }

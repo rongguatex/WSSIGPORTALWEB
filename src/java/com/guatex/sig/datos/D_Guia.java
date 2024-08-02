@@ -256,7 +256,7 @@ public class D_Guia {
                 }
             }
 
-            try (PreparedStatement psUpdate = con.prepareStatement("UPDATE JGUIAS SET IMPRESO = 'P' WHERE NOGUIA = ?")) {
+            try (PreparedStatement psUpdate = con.prepareStatement("UPDATE JGUIAS SET IMPRESO = 'S' WHERE NOGUIA = ?")) {
                 for (E_ImpresionSIG dato : datos) {
                     psUpdate.setString(1, dato.getNOGUIA());
                     psUpdate.addBatch();
@@ -302,7 +302,7 @@ public class D_Guia {
 
                 try (ResultSet rs = st.executeQuery()) {
                     while (rs.next()) {
-                        if (util.limpiaStr(rs.getString("IMPRESO")).equalsIgnoreCase("M")) {
+                        if (util.limpiaStr(rs.getString("IMPRESO")).equalsIgnoreCase("S")) {
                             isPrinted = true;
                         }
                     }
@@ -315,6 +315,32 @@ public class D_Guia {
 
         if (isPrinted) {
             return "998";
+        }
+        return "200";
+    }
+
+    public String verificaDescargaReimpresion(List<E_ImpresionSIG> datos) {
+        boolean isDelivered = false;
+
+        try (Connection con = new Conexion().AbrirConexion();
+                PreparedStatement st = con.prepareStatement(" SELECT J.NOGUIA FROM JGUIAS J WHERE J.NOGUIA = ? AND NOT EXISTS(SELECT G.NOGUIA FROM GUIAS G WHERE G.NOGUIA = ? ) ")) {
+            for (E_ImpresionSIG dato : datos) {
+                st.setString(1, dato.getNOGUIA());
+
+                try (ResultSet rs = st.executeQuery()) {
+                    if (!rs.isBeforeFirst()) {
+                        System.out.println(rs.isBeforeFirst());
+                        isDelivered = true;
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace(System.err);
+            return "500";
+        }
+
+        if (isDelivered) {
+            return "999";
         }
         return "200";
     }

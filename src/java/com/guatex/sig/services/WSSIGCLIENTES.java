@@ -168,15 +168,27 @@ public class WSSIGCLIENTES {
             if (new ValidacionCredenciales().validar(parseoXML.getCredenciales()).getCodigo().equals("0000")) {
                 List<E_ImpresionSIG> datos = parseoXML.getDatosEntrada().getListadoGuiaImpresion();
                 if (!datos.isEmpty()) {
+                    System.out.println("tipo [" + parseoXML.getCredenciales().getTipo() + "]");
+                    String respuesta = "";
 
-                    String respuesta = new D_Guia().verificaDescarga(datos);
+                    if (parseoXML.getCredenciales().getTipo().equalsIgnoreCase("S")) {
+                        respuesta = new D_Guia().verificaDescarga(datos);
 
-                    if (respuesta.equals("998")) { //verifica si la guía ha sido impresa anteriormente
-                        return "<WSSIGCLIENTES>" + new ConvertidorXML().isPrinted() + "</WSSIGCLIENTES>";
+                        if (respuesta.equals("998")) { //verifica si la guía ha sido impresa anteriormente
+                            return "<WSSIGCLIENTES>" + new ConvertidorXML().isPrinted()+ "</WSSIGCLIENTES>";
+                        }
+                    }
+
+                    if (parseoXML.getCredenciales().getTipo().equalsIgnoreCase("R")) { //reimpresión de guías
+                        respuesta = new D_Guia().verificaDescargaReimpresion(datos);
+                        
+                        if (respuesta.equals("999")) { //verifica si la guía ha sido entregada anteriormente
+                            return "<WSSIGCLIENTES>" + new ConvertidorXML().IsDerivered() + "</WSSIGCLIENTES>";
+                        }
                     }
 
                     List<E_Servicio> serviciosId = new D_Guia().obtenerIdServicio(datos);
-                    
+
                     if (serviciosId == null || serviciosId.size() != datos.size()) {
                         return new ConvertidorXML().InternalServerError();
                     }
