@@ -240,6 +240,7 @@ public class D_Guia {
         List<E_Servicio> resultado = new LinkedList<>();
 
         try (Connection con = new Conexion().AbrirConexion()) {
+            con.setAutoCommit(false);
             for (E_ImpresionSIG dato : datos) {
                 if (dato.getNOGUIA() != null || !dato.getNOGUIA().isEmpty()) {
                     try (PreparedStatement ps = con.prepareStatement("SELECT IDSERVICIO FROM JGUIAS WHERE NOGUIA = ? ")) {
@@ -254,12 +255,41 @@ public class D_Guia {
                     }
                 }
             }
+
+            try (PreparedStatement psUpdate = con.prepareStatement("UPDATE JGUIAS SET IMPRESO = 'P' WHERE NOGUIA = ?")) {
+                for (E_ImpresionSIG dato : datos) {
+                    psUpdate.setString(1, dato.getNOGUIA());
+                    psUpdate.addBatch();
+                }
+
+                int[] updateResults = psUpdate.executeBatch();
+
+                for (int arr : updateResults) {
+                    if (updateResults[arr - 1] == PreparedStatement.EXECUTE_FAILED || updateResults[arr - 1] <= 0) {
+                        con.rollback();
+                        System.out.println("Error en batch de UPDATE, se realiza rollback");
+                        return null;
+                    }
+                }
+                con.commit();
+                return resultado;
+            } catch (SQLException sqlException) {
+                System.out.println("ocurrio un error e ingreso al sqlException");
+                sqlException.printStackTrace(System.err);
+                if (con != null) {
+                    try {
+                        System.out.println("Se realiza el rollback");
+                        con.rollback();
+                    } catch (SQLException rollbackException) {
+                        System.out.println("ocurrio un error e ingreso al rollbackException");
+                        rollbackException.printStackTrace(System.err);
+                    }
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
-            return null;
         }
-
-        return resultado;
+        return null;
     }
 
     public String verificaDescarga(List<E_ImpresionSIG> datos) {
@@ -284,7 +314,7 @@ public class D_Guia {
         }
 
         if (isPrinted) {
-            return "998"; 
+            return "998";
         }
         return "200";
     }

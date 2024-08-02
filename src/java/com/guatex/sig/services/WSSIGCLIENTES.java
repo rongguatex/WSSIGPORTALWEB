@@ -146,7 +146,7 @@ public class WSSIGCLIENTES {
                         opcionesXML.append(new ParseadorXML().parseoObj(opcion, E_JUsuarioOpcion.class));
                     }
                     opcionesXML.append("</OPCIONES>");
-                    System.out.println("<WSSIGCLIENTES>" + respuestaXML + opcionesXML.toString() + "</WSSIGCLIENTES>");
+//                    System.out.println("<WSSIGCLIENTES>" + respuestaXML + opcionesXML.toString() + "</WSSIGCLIENTES>");
                     return "<WSSIGCLIENTES>" + respuestaXML + opcionesXML.toString() + "</WSSIGCLIENTES>";
                 } else {
                     return new ConvertidorXML().NoContent();
@@ -176,7 +176,7 @@ public class WSSIGCLIENTES {
                     }
 
                     List<E_Servicio> serviciosId = new D_Guia().obtenerIdServicio(datos);
-
+                    
                     if (serviciosId == null || serviciosId.size() != datos.size()) {
                         return new ConvertidorXML().InternalServerError();
                     }
@@ -191,7 +191,6 @@ public class WSSIGCLIENTES {
 
                     servicioXML.append("</SERVICIOS>");
 
-//                    return "<WSSIGCLIENTES>" + new ConvertidorXML().isPrinted() + "</WSSIGCLIENTES>";//respuesta de prueba cuando un manifiesto ha sido descargado.
                     System.out.println("<WSSIGCLIENTES>" + respuestaXML + servicioXML.toString() + "</WSSIGCLIENTES>");
                     return "<WSSIGCLIENTES>" + respuestaXML + servicioXML.toString() + "</WSSIGCLIENTES>";
                 }
