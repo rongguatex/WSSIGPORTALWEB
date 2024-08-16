@@ -197,7 +197,7 @@ public class WSSIGCLIENTES {
                     StringBuilder servicioXML = new StringBuilder("<SERVICIOS>");
 
                     for (E_Servicio servicio : serviciosId) {
-                        servicio.setURLSERVICIO("https://jcl.guatex.gt/WSPGimpresion/GeneraPDF?idservicio=" + servicio.getIDSERVICIO());
+                        servicio.setURLSERVICIO("https://sig.guatex.gt/WSPGimpresion/GeneraPDF?idservicio=" + servicio.getIDSERVICIO());
                         servicioXML.append(new ParseadorXML().parseoObj(servicio, E_Servicio.class));
                     }
 
