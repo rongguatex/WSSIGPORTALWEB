@@ -120,8 +120,8 @@ public class D_Guia {
             String query = " SELECT   "
                     + "    J.IDGUIA, J.NOGUIA, J.CODCOB, J.IDSERVICIO,  "
                     + "    CONVERT(VARCHAR(10), J.FECHA, 103) AS FECHA,  "
-                    + "    J.CODREM, J.NOMREM, J.TELREM, J.DIRREM,  "
-                    + "    J.CODDES, J.NOMDES, J.TELDES, J.DIRDES,  "
+                    + "    J.CODREM, J.NOMREM, J.TELREM, J.DIRREM,  J.COMPLEMENTODIRREM, "
+                    + "    J.CODDES, J.NOMDES, J.TELDES, J.DIRDES,  J.COMPLEMENTODIRDES, "
                     + "    J.PTOORI, J.PTODES, J.MNCPORI, J.MNCPDES,  "
                     + "    J.LLAVECLIENTE, J.DESCRENV, J.CONTACTO, J.EMAIL,  "
                     + "    J.PIEZAS, J.PESO, J.TIPTAR,   "
@@ -162,6 +162,7 @@ public class D_Guia {
                         guia.setNOMREM(util.limpiaStr(rs.getString("NOMREM")));
                         guia.setTELREM(util.limpiaStr(rs.getString("TELREM")));
                         guia.setDIRREM(util.limpiaStr(rs.getString("DIRREM")));
+                        guia.setCOMPLEMENTODIRREM(util.limpiaStr(rs.getString("COMPLEMENTODIRREM")));
                         guia.setCONTACTO(util.limpiaStr(rs.getString("CONTACTO")));
                         guia.setOBSERVACIONES(util.limpiaStr(rs.getString("OBSERVACIONES")));
                         //datos de destinatario
@@ -169,6 +170,7 @@ public class D_Guia {
                         guia.setNOMDES(util.limpiaStr(rs.getString("NOMDES")));
                         guia.setTELDES(util.limpiaStr(rs.getString("TELDES")));
                         guia.setDIRDES(util.limpiaStr(rs.getString("DIRDES")));
+                        guia.setCOMPLEMENTODIRDES(util.limpiaStr(rs.getString("COMPLEMENTODIRDES")));
                         guia.setOBSERVACIONESENTRE(util.limpiaStr(rs.getString("OBSERVACIONESENTRE")));
                         //otros datos
                         guia.setPTOORI(util.limpiaStr(rs.getString("PTOORI")));

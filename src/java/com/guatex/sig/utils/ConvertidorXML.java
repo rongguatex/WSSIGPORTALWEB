@@ -305,11 +305,13 @@ public class ConvertidorXML {
                         + addTag("NOMREM", guia.getNOMREM())
                         + addTag("TELREM", guia.getTELREM())
                         + addTag("DIRREM", guia.getDIRREM())
+                        + addTag("COMPLEMENTODIRREM", guia.getCOMPLEMENTODIRREM())
                         //datos de destinatario
                         + addTag("CODDES", guia.getCODDES())
                         + addTag("NOMDES", guia.getNOMDES())
                         + addTag("TELDES", guia.getTELDES())
                         + addTag("DIRDES", guia.getDIRDES())
+                        + addTag("COMPLEMENTODIRDES", guia.getCOMPLEMENTODIRDES())
                         + addTag("CONTACTO", guia.getCONTACTO())
                         //otros datos
                         + addTag("PTOORI", guia.getPTOORI())
