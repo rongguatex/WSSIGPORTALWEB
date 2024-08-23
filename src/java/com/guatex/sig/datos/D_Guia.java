@@ -6,11 +6,11 @@
 package com.guatex.sig.datos;
 
 import com.guatex.sig.entidades.E_Credenciales;
+import com.guatex.sig.entidades.E_Facusuario;
 import com.guatex.sig.entidades.E_Guia;
 import com.guatex.sig.entidades.E_ImpresionSIG;
 import com.guatex.sig.entidades.E_Servicio;
 import com.guatex.sig.entidadesRespuesta.E_RespuestaGuia;
-import com.guatex.sig.utils.ConvertidorXML;
 import com.guatex.sig.utils.Utils;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,7 +18,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -294,7 +295,7 @@ public class D_Guia {
         return null;
     }
 
-    public String verificaDescarga(List<E_ImpresionSIG> datos) {
+    public String validaImpresion(List<E_ImpresionSIG> datos) {
         boolean isPrinted = false;
 
         try (Connection con = new Conexion().AbrirConexion();
@@ -321,7 +322,7 @@ public class D_Guia {
         return "200";
     }
 
-    public String verificaDescargaReimpresion(List<E_ImpresionSIG> datos) {
+    public String validaRecoleccion(List<E_ImpresionSIG> datos) {
         boolean isDelivered = false;
 
         try (Connection con = new Conexion().AbrirConexion();
@@ -334,6 +335,7 @@ public class D_Guia {
                     if (!rs.isBeforeFirst()) {
                         System.out.println(rs.isBeforeFirst());
                         isDelivered = true;
+                        System.out.println("isDelivered " + isDelivered);
                     }
                 }
             }
@@ -346,5 +348,76 @@ public class D_Guia {
             return "999";
         }
         return "200";
+    }
+
+    public String validaExistencia(Connection con, String noguia) {
+        if (noguia != null || !noguia.isEmpty()) {
+            try (PreparedStatement ps = con.prepareStatement("SELECT NOGUIA FROM JGUIAS WHERE NOGUIA = ? ")) {
+                ps.setString(1, noguia);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return util.quitaNulo(rs.getString("NOGUIA"));
+                    }
+                }
+            } catch (Exception e) {
+                Logger.getLogger(D_Guia.class.getName()).log(Level.SEVERE, "Error al validar existencia de la guía.", e);
+            }
+        }
+        return null;
+    }
+
+    public E_RespuestaGuia obtenerGuiasEliminar(E_Facusuario usuario) {
+
+        try (Connection con = new Conexion().AbrirConexion();
+                PreparedStatement ps = con.prepareStatement(""
+                        + " SELECT  J.NOGUIA, "
+                        + "                 J.FECHA, "
+                        + "                 J.NOMDES, "
+                        + "                 J.DIRDES, "
+                        + "                 J.COMPLEMENTODIRDES, "
+                        + "                 J.DESCRENV, "
+                        + "                 J.CODCOB, "
+                        + "                 J.TELDES, "
+                        + "                 J.CONTACTO, "
+                        + "                 J.MNCPDES "
+                        + " FROM JGUIAS J "
+                        + " WHERE NOGUIA LIKE ? "
+                        + "	AND CAST(J.FECHA AS DATE) "
+                        + "             BETWEEN CAST(GETDATE() -5 AS DATE) AND CAST(GETDATE() AS DATE)  "
+                        + "	AND CODCOB IN ( SELECT  F.CODIGO  "
+                        + "                                       FROM  FACCLIENTES F  "
+                        + "                                       WHERE F.PADRE = ? ) "
+                        + "	AND NOT EXISTS (SELECT NOGUIA "
+                        + "                                      FROM GUIAS GS "
+                        + "                                      WHERE GS.NOGUIA = J.NOGUIA) "
+                        + " ORDER BY J.FECHA DESC ")) {
+            ps.setString(1, usuario.getUEGUIAS() + "%");
+            ps.setString(2, usuario.getPADRE());
+            List<E_Guia> datosGuia = new LinkedList<>();
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    E_Guia guia = new E_Guia();
+                    guia.setNOGUIA(util.quitaNulo(rs.getString("NOGUIA")));
+                    guia.setFECHA(util.quitaNulo(rs.getString("FECHA")));
+                    guia.setNOMDES(util.quitaNulo(rs.getString("NOMDES")));
+                    guia.setDIRDES(util.quitaNulo(rs.getString("DIRDES")));
+                    guia.setCOMPLEMENTODIRDES(util.quitaNulo(rs.getString("COMPLEMENTODIRDES")));
+                    guia.setDESCRENV(util.quitaNulo(rs.getString("DESCRENV")));
+                    guia.setCODCOB(util.quitaNulo(rs.getString("CODCOB")));
+                    guia.setTELDES(util.quitaNulo(rs.getString("TELDES")));
+                    guia.setCONTACTO(util.quitaNulo(rs.getString("CONTACTO")));
+                    guia.setMNCPDES(util.quitaNulo(rs.getString("MNCPDES")));
+                    datosGuia.add(guia);
+                }
+            }
+            if (datosGuia.isEmpty()) {
+                return new E_RespuestaGuia("204");
+            }
+
+            return new E_RespuestaGuia("200", datosGuia);
+        } catch (SQLException e) {
+            Logger.getLogger(D_Guia.class.getName()).log(Level.SEVERE, "Error al obtener datos de guías ", e);
+        }
+        return new E_RespuestaGuia("500");
     }
 }

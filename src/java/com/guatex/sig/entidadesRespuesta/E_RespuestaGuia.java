@@ -3,17 +3,33 @@ package com.guatex.sig.entidadesRespuesta;
 import com.guatex.sig.entidades.E_Guia;
 import java.util.LinkedList;
 import java.util.List;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author RGALICIA
  */
+@XmlRootElement(name = "RESPUESTA")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class E_RespuestaGuia {
 
+    @XmlElement(name = "CODIGO")
     private String _CODIGO;
+
+    @XmlElement(name = "MENSAJE")
     private String _MENSAJE;
+
+    @XmlElementWrapper(name = "LISTADODATOSGUIA")
+    @XmlElement(name = "DATOSGUIA")
     private List<E_Guia> _LISTADO_GUIAS = new LinkedList<>();
-    
+
+    public E_RespuestaGuia() {
+    }
+
     public E_RespuestaGuia(String _CODIGO, List<E_Guia> _LISTADO_GUIAS) {
         this._CODIGO = _CODIGO;
         if (_CODIGO.equals("200")) {
@@ -33,14 +49,13 @@ public class E_RespuestaGuia {
         if (_CODIGO.equals("200")) {
             this._MENSAJE = "OK";
         } else if (_CODIGO.equals("204")) {
-            this._MENSAJE = "No se obtuvo información de la base de datos.";
+            this._MENSAJE = "No se encontraron datos para la fecha solicitada.";
         } else if (_CODIGO.equals("500")) {
             this._MENSAJE = "Ocurrió un error con la base de datos.";
         } else if (_CODIGO.equals("400")) {
             this._MENSAJE = "Ocurrió un error, no encuentra parametros";
         }
     }
-    
 
     public String getCODIGO() {
         return _CODIGO;

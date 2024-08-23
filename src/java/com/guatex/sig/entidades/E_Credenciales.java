@@ -93,7 +93,7 @@ public class E_Credenciales {
         if (padre != null && !padre.isEmpty()
                 && codigo != null && !codigo.isEmpty()
                 && password != null && !password.isEmpty()) {
-            return "E_Credenciales{ noguia= "+ noguia + "padre=" + padre + ", codigo=" + codigo + ", password= " + password + ", password= " + tipo + '}';
+            return "E_Credenciales{ noguia= "+ noguia + "padre=" + padre + ", codigo=" + codigo + ", password= " + password + ", tipo= " + tipo + '}';
         }
         return null;
     }

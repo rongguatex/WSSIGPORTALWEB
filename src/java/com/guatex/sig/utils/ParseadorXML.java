@@ -49,7 +49,7 @@ public class ParseadorXML {
             marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
             StringWriter stringWriter = new StringWriter();
 //            for (Object objetc : objetcs) {
-                marshaller.marshal(objetc, stringWriter);
+            marshaller.marshal(objetc, stringWriter);
 //            }
             return stringWriter.toString();
         } catch (JAXBException e) {

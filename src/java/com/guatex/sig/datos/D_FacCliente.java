@@ -6,18 +6,22 @@
 package com.guatex.sig.datos;
 
 import com.guatex.sig.entidades.E_FacCliente;
+import com.guatex.sig.entidades.E_ImpresionSIG;
 import com.guatex.sig.utils.Utils;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 /**
  *
  * @author RGALICIA
  */
 public class D_FacCliente {
-    
+
     Utils util = new Utils();
 
     public E_FacCliente obtenerFacCliente(String padre, String codcob) {
@@ -56,6 +60,46 @@ public class D_FacCliente {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+        return null;
+    }
+
+    public String consultaCodcob(Connection con, String padre, String noguia) {
+        try (PreparedStatement ps = con.prepareStatement(""
+                + "SELECT F.CODIGO  "
+                + "FROM FACCLIENTES F  "
+                + "WHERE F.PADRE = ?  "
+                + "AND CODIGO IN (SELECT J.CODCOB "
+                + "                             FROM JGUIAS J "
+                + "                             WHERE J.NOGUIA = ? )")) {
+            ps.setString(1, padre);
+            ps.setString(2, noguia);
+            System.out.println("padre: " + padre);
+            System.out.println("noguia: " + noguia);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    System.out.println("ingresa " + util.quitaNulo(rs.getString("CODIGO")));
+                    return util.quitaNulo(rs.getString("CODIGO"));
+                }
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(D_FacCliente.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return null;
+    }
+
+    public String consultaPadre(Connection con, String codcob) {
+        if (con != null) {
+            try (PreparedStatement ps = con.prepareStatement("SELECT PADRE FROM FACCLIENTES WHERE CODIGO = ? ")) {
+                ps.setString(1, codcob);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return util.quitaNulo(rs.getString("PADRE"));
+                    }
+                }
+            } catch (SQLException e) {
+                Logger.getLogger(D_FacCliente.class.getName()).log(Level.SEVERE, null, e);
+            }
         }
         return null;
     }
