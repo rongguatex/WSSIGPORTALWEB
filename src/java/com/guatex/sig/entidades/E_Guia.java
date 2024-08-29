@@ -276,7 +276,7 @@ public class E_Guia {
         if (_DIRREM != null) {
             if (_DIRREM.length() > 100) {
                 this._DIRREM = _DIRREM.substring(0, 100).trim();
-                this._COMPLEMENTODIRREM = _DIRREM.substring(101, _DIRREM.length());
+                this._COMPLEMENTODIRREM = _DIRREM.substring(100, _DIRREM.length());
             } else {
                 this._DIRREM = _DIRREM.trim();
             }
@@ -321,7 +321,7 @@ public class E_Guia {
         if (_DIRDES != null) {
             if (_DIRDES.length() > 100) {
                 this._DIRDES = _DIRDES.substring(0, 100).trim();
-                this._COMPLEMENTODIRDES = _DIRDES.substring(101, _DIRDES.length());
+                this._COMPLEMENTODIRDES = _DIRDES.substring(100, _DIRDES.length());
             } else {
                 this._DIRDES = _DIRDES.trim();
             }

@@ -157,7 +157,6 @@ public class WSSIGCLIENTES {
                         opcionesXML.append(new ParseadorXML().parseoObj(opcion, E_JUsuarioOpcion.class));
                     }
                     opcionesXML.append("</OPCIONES>");
-//                    System.out.println("<WSSIGCLIENTES>" + respuestaXML + opcionesXML.toString() + "</WSSIGCLIENTES>");
                     return "<WSSIGCLIENTES>" + respuestaXML + opcionesXML.toString() + "</WSSIGCLIENTES>";
                 } else {
                     return new ConvertidorXML().NoContent();
@@ -179,7 +178,6 @@ public class WSSIGCLIENTES {
             if (new ValidacionCredenciales().validar(parseoXML.getCredenciales()).getCodigo().equals("0000")) {
                 List<E_ImpresionSIG> datos = parseoXML.getDatosEntrada().getListadoGuiaImpresion();
                 if (!datos.isEmpty()) {
-                    System.out.println("tipo [" + parseoXML.getCredenciales().getTipo() + "]");
                     String respuesta = "";
 
                     if (parseoXML.getCredenciales().getTipo().equalsIgnoreCase("S")) {
@@ -214,7 +212,6 @@ public class WSSIGCLIENTES {
 
                     servicioXML.append("</SERVICIOS>");
 
-                    System.out.println("<WSSIGCLIENTES>" + respuestaXML + servicioXML.toString() + "</WSSIGCLIENTES>");
                     return "<WSSIGCLIENTES>" + respuestaXML + servicioXML.toString() + "</WSSIGCLIENTES>";
                 }
             }
@@ -243,8 +240,9 @@ public class WSSIGCLIENTES {
                                     RespuestaGeneral.class)
                             + "</WSSIGCLIENTES>";
                 }
+
+                E_RespuestaGuia resultado = new D_Guia().obtenerGuiasEliminar(credenciales, datosUsuario);
                 
-                E_RespuestaGuia resultado = new D_Guia().obtenerGuiasEliminar(datosUsuario);
                 if (!resultado.getCODIGO().equals("200")) {
                     return "<WSSIGCLIENTES>"
                             + new ParseadorXML().parseoObj(
@@ -286,7 +284,6 @@ public class WSSIGCLIENTES {
                         con.setAutoCommit(false);
                         for (E_ImpresionSIG dato : datos) {
                             if (dato.getNOGUIA() != null && dato.getNOGUIA().length() > 0) {
-                                System.out.println("dato [" + dato.getNOGUIA() + "]");
                                 if (new D_Guia().validaExistencia(con, dato.getNOGUIA()) == null) {
                                     return "<WSSIGCLIENTES>"
                                             + new ParseadorXML().parseoObj(
@@ -334,9 +331,9 @@ public class WSSIGCLIENTES {
                         if (new D_Eliminacion().eliminacionMultipleGuias(con, datos)) {
                             con.commit();
 
-                            String message = "Guía eliminada exitosamente..";
+                            String message = "Guía eliminada exitosamente.";
                             if (datos.size() > 1) {
-                                message = "Guías eliminadas exitosamente..";
+                                message = "Guías eliminadas exitosamente.";
                             }
 
                             new D_Eliminacion().insertaBitacoraEliminacion(con, credenciales, datos);
@@ -371,6 +368,7 @@ public class WSSIGCLIENTES {
                                 + "</WSSIGCLIENTES>";
                     }
                 }
+                Logger.getLogger(WSSIGCLIENTES.class.getName()).log(Level.SEVERE, "Ocurrió un error al eliminar las guías seleccionadas. Los datos son inompletos,");
                 return "<WSSIGCLIENTES>"
                         + new ParseadorXML().parseoObj(
                                 new RespuestaGeneral("9999", "Ocurrió un error al eliminar las guías seleccionadas. Los datos son inompletos, por favor, intente de nuevo,"),

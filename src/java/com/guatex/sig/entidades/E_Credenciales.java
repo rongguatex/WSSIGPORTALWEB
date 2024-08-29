@@ -29,12 +29,18 @@ public class E_Credenciales {
 
     @XmlElement(name = "CODCOB")
     private String codcob;
-    
+
     @XmlElement(name = "NOGUIA")
     private String noguia;
-    
+
     @XmlElement(name = "TIPO")
     private String tipo;
+
+    @XmlElement(name = "FECHAINICIO")
+    private String fechaInicio;
+
+    @XmlElement(name = "FECHAFINAL")
+    private String fechaFinal;
 
     public String getPadre() {
         return padre;
@@ -88,12 +94,28 @@ public class E_Credenciales {
         this.tipo = tipo;
     }
 
+    public String getFechaInicio() {
+        return fechaInicio;
+    }
+
+    public void setFechaInicio(String fechaInicio) {
+        this.fechaInicio = fechaInicio;
+    }
+
+    public String getFechaFinal() {
+        return fechaFinal;
+    }
+
+    public void setFechaFinal(String fechaFinal) {
+        this.fechaFinal = fechaFinal;
+    }
+
     @Override
     public String toString() {
         if (padre != null && !padre.isEmpty()
                 && codigo != null && !codigo.isEmpty()
                 && password != null && !password.isEmpty()) {
-            return "E_Credenciales{ noguia= "+ noguia + "padre=" + padre + ", codigo=" + codigo + ", password= " + password + ", tipo= " + tipo + '}';
+            return "E_Credenciales{ noguia= " + noguia + "padre=" + padre + ", codigo=" + codigo + ", password= " + password + ", fechaInicio= " + fechaInicio + " fechaFinal= " + fechaFinal + " tipo= " + tipo + '}';
         }
         return null;
     }

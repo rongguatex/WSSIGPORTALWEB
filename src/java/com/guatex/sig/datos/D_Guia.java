@@ -48,6 +48,7 @@ public class D_Guia {
                 + " J.NOMDES,  "
                 + " J.TELDES, "
                 + " J.DIRDES, "
+                + " J.COMPLEMENTODIRDES, "
                 + " J.CODCOB,  "
                 + " J.SEGURO,  "
                 + " J.DECLARADO, "
@@ -84,7 +85,7 @@ public class D_Guia {
                     guia.setCONTACTO(util.limpiaStr(rs.getString("CONTACTO")));
                     guia.setNOMDES(util.limpiaStr(rs.getString("NOMDES")));
                     guia.setTELDES(util.limpiaStr(rs.getString("TELDES")));
-                    guia.setDIRDES(util.limpiaStr(rs.getString("DIRDES")));
+                    guia.setDIRDES(util.quitaNulo(rs.getString("DIRDES")) + util.quitaNulo(rs.getString("COMPLEMENTODIRDES")));
                     guia.setCODCOB(util.limpiaStr(rs.getString("CODCOB")));
                     guia.setSEGURO(util.limpiaStr(rs.getString("SEGURO")));
                     guia.setDECLARADO(util.limpiaStr(rs.getString("DECLARADO")));
@@ -366,9 +367,9 @@ public class D_Guia {
         return null;
     }
 
-    public E_RespuestaGuia obtenerGuiasEliminar(E_Facusuario usuario) {
+    public E_RespuestaGuia obtenerGuiasEliminar(E_Credenciales credenciales, E_Facusuario usuario) {
 
-        try (Connection con = new Conexion().AbrirConexion();
+        try (Connection con = new Conexion().AbrirConexionReportes();
                 PreparedStatement ps = con.prepareStatement(""
                         + " SELECT  J.NOGUIA, "
                         + "                 J.FECHA, "
@@ -381,18 +382,19 @@ public class D_Guia {
                         + "                 J.CONTACTO, "
                         + "                 J.MNCPDES "
                         + " FROM JGUIAS J "
-                        + " WHERE NOGUIA LIKE ? "
-                        + "	AND CAST(J.FECHA AS DATE) "
-                        + "             BETWEEN CAST(GETDATE() -5 AS DATE) AND CAST(GETDATE() AS DATE)  "
-                        + "	AND CODCOB IN ( SELECT  F.CODIGO  "
-                        + "                                       FROM  FACCLIENTES F  "
-                        + "                                       WHERE F.PADRE = ? ) "
-                        + "	AND NOT EXISTS (SELECT NOGUIA "
+                        + " INNER JOIN FACCLIENTES F ON J.CODCOB = F.CODIGO  "
+                        + " WHERE CAST(J.FECHA AS DATE) BETWEEN CAST(? AS DATE) AND CAST(? AS DATE)  "
+                        + "	AND F.PADRE = ? "
+                        + "	AND J.NOGUIA LIKE ? "
+                        + "	AND NOT EXISTS (SELECT GS.NOGUIA "
                         + "                                      FROM GUIAS GS "
                         + "                                      WHERE GS.NOGUIA = J.NOGUIA) "
                         + " ORDER BY J.FECHA DESC ")) {
-            ps.setString(1, usuario.getUEGUIAS() + "%");
-            ps.setString(2, usuario.getPADRE());
+            ps.setString(1, credenciales.getFechaInicio());
+            ps.setString(2, credenciales.getFechaFinal());
+            ps.setString(3, usuario.getPADRE());
+            ps.setString(4, usuario.getUEGUIAS() + "%");
+
             List<E_Guia> datosGuia = new LinkedList<>();
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {

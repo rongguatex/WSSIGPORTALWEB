@@ -16,6 +16,7 @@ import java.sql.SQLException;
 public class Conexion {
 
     private static final String url = "jdbc:sqlserver://serverSIG";
+    private static final String urlReportes = "jdbc:sqlserver://serverSIGReportes";
     private static final String usuario = "operaciones";
     private static final String pswrd = "gtxgtx01";
 
@@ -24,6 +25,18 @@ public class Conexion {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             Connection con = DriverManager.getConnection(url, usuario, pswrd);
+            return con;
+        } catch (ClassNotFoundException | SQLException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+    
+    public Connection AbrirConexionReportes() {
+
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            Connection con = DriverManager.getConnection(urlReportes, usuario, pswrd);
             return con;
         } catch (ClassNotFoundException | SQLException ex) {
             ex.printStackTrace();

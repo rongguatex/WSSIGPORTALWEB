@@ -44,4 +44,9 @@ public class E_Facusuario {
         this.PADRE = PADRE;
     }
 
+    @Override
+    public String toString() {
+        return "E_Facusuario{" + "USUARIO=" + USUARIO + ", UEGUIAS=" + UEGUIAS + ", PADRE=" + PADRE + '}';
+    }
+
 }

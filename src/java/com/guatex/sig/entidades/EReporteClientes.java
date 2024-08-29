@@ -16,6 +16,7 @@ public class EReporteClientes {
     private String NOMBRE = "";
     private String CONTACTO = "";
     private String DIRECCION = "";
+    private String COMPLEMENTODIRECCION = "";
     private String MUNICIPIO = "";
     private String PUNTO = "";
     private String EMAIL = "";
@@ -68,6 +69,14 @@ public class EReporteClientes {
 
     public void setDIRECCION(String DIRECCION) {
         this.DIRECCION = DIRECCION;
+    }
+
+    public String getCOMPLEMENTODIRECCION() {
+        return COMPLEMENTODIRECCION;
+    }
+
+    public void setCOMPLEMENTODIRECCION(String COMPLEMENTODIRECCION) {
+        this.COMPLEMENTODIRECCION = COMPLEMENTODIRECCION;
     }
 
     public String getMUNICIPIO() {

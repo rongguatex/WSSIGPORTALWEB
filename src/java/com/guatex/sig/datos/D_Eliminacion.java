@@ -25,6 +25,7 @@ public class D_Eliminacion {
     Utils util = new Utils();
 
     public boolean eliminacionMultipleGuias(Connection con, List<E_ImpresionSIG> datos) {
+        boolean exito = false;
         if (con != null && datos != null) {
             for (E_ImpresionSIG dato : datos) {
                 if (dato.getNOGUIA() != null && !dato.getNOGUIA().isEmpty()) {
@@ -47,7 +48,7 @@ public class D_Eliminacion {
                             psJGuiasHijas.setString(1, dato.getNOGUIA());
                             psJGuiasHijas.executeUpdate();
                         }
-                        return true;
+                        exito = true;
                     } catch (Exception e) {
                         Logger.getLogger(D_Eliminacion.class.getName()).log(Level.SEVERE, "Error al eliminar guias ", e);
                         if (con != null) {
@@ -60,8 +61,9 @@ public class D_Eliminacion {
                     }
                 }
             }
+            return exito;
         }
-        return false;
+        return exito;
     }
 
     public boolean insertaBitacoraEliminacion(Connection con, E_Credenciales credenciales, List<E_ImpresionSIG> datos) {
@@ -111,11 +113,10 @@ public class D_Eliminacion {
             if (usuario == null && usuario.trim().isEmpty()) {
                 return false;
             }
-            System.out.println(usuario);
+
             ps.setString(1, usuario);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    System.out.println("CODIGOOPCION: " + rs.getString("CODIGOOPCION"));
                     if (util.quitaNulo(rs.getString("CODIGOOPCION")).equalsIgnoreCase("HABILITAROTULADORCL")) {
                         return true;
                     }
