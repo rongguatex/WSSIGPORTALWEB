@@ -369,7 +369,7 @@ public class D_Guia {
 
     public E_RespuestaGuia obtenerGuiasEliminar(E_Credenciales credenciales, E_Facusuario usuario) {
 
-        try (Connection con = new Conexion().AbrirConexionReportes();
+        try (Connection con = new Conexion().AbrirConexion();
                 PreparedStatement ps = con.prepareStatement(""
                         + " SELECT  J.NOGUIA, "
                         + "                 J.FECHA, "
