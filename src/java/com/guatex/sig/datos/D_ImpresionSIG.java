@@ -59,14 +59,28 @@ public class D_ImpresionSIG {
                     return new ConvertidorXML().isPrinted();//Se devuelve respuesta IsDelivered solo para obtener el código 
                 }
 
-                try (PreparedStatement insertPS = con.prepareStatement("INSERT INTO SIG_IMPRESION (NOGUIA,  ESTADO,  CODIGO, USUARIO) VALUES (?,'N',?,?) ");
-                        PreparedStatement updatePS = con.prepareStatement("UPDATE JGUIAS SET IMPRESO = 'S' WHERE NOGUIA = ?")) {
+                try (PreparedStatement insertPS = con.prepareStatement("INSERT INTO SIG_IMPRESION (NOGUIA,  ESTADO,  CODIGO, USUARIO, TGUIAS) VALUES (?,'N',?,?,?) ");
+                        PreparedStatement updatePS = con.prepareStatement("UPDATE JGUIAS SET IMPRESO = 'S' WHERE NOGUIA = ?");
+                        PreparedStatement psSelect = con.prepareStatement(" SELECT SUM(JGD.PIEZAS) AS PIEZAS FROM JGUIASDETALLE JGD WHERE JGD.NOGUIA = ?  ")) {
+
+                    int totalPiezas = 0;
 
                     //ciclo para prepatar batch para inserts
                     for (E_ImpresionSIG dato : datos) {
+                        psSelect.setString(1, dato.getNOGUIA());
+
+                        try (ResultSet rs = psSelect.executeQuery()) {
+                            while (rs.next()) {
+                                totalPiezas = util.convertirAEntero(util.quitaNulo(rs.getString("PIEZAS"))).orElse(0);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
                         insertPS.setString(1, dato.getNOGUIA());
                         insertPS.setString(2, dato.getCODCOB());
                         insertPS.setString(3, dato.getUSUARIO());
+                        insertPS.setInt(4, totalPiezas);
                         insertPS.addBatch();
                     }
 
@@ -143,20 +157,30 @@ public class D_ImpresionSIG {
                         return new ConvertidorXML().InternalServerError();
                     }
                 }
-                System.out.println("IS DERIVERED?? " + isDelivered);
 
                 if (isDelivered) {
                     return new ConvertidorXML().IsDerivered();
                 }
 
-                try (PreparedStatement insertPS
-                        = con.prepareStatement("INSERT INTO SIG_IMPRESION (NOGUIA,  ESTADO,  CODIGO, USUARIO) VALUES (?,'N',?,?) ")) {
+                try (PreparedStatement insertPS = con.prepareStatement("INSERT INTO SIG_IMPRESION (NOGUIA,  ESTADO,  CODIGO, USUARIO, TGUIAS) VALUES (?,'N',?,?,?) ");
+                        PreparedStatement psSelect = con.prepareStatement(" SELECT SUM(JGD.PIEZAS) AS PIEZAS FROM JGUIASDETALLE JGD WHERE JGD.NOGUIA = ?  ")) {
 
+                    int totalPiezas = 0;
                     //ciclo para prepatar batch para inserts
                     for (E_ImpresionSIG dato : datos) {
+                        psSelect.setString(1, dato.getNOGUIA());
+                        try (ResultSet rs = psSelect.executeQuery()) {
+                            while (rs.next()) {
+                                totalPiezas = util.convertirAEntero(util.quitaNulo(rs.getString("PIEZAS"))).orElse(0);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        
                         insertPS.setString(1, dato.getNOGUIA());
                         insertPS.setString(2, dato.getCODCOB());
                         insertPS.setString(3, dato.getUSUARIO());
+                        insertPS.setInt(4, totalPiezas);
                         insertPS.addBatch();
                     }
 
