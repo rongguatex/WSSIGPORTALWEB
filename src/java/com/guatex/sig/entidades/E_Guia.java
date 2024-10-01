@@ -195,7 +195,18 @@ public class E_Guia {
     
     @XmlElement(name = "CODDESTINO")
     private String _CODDESTINO = "";
+    
+    @XmlElement(name = "TIPOGUIA")
+    private String _TIPOGUIA = "";
 
+    public String getTIPOGUIA() {
+        return _TIPOGUIA;
+    }
+
+    public void setTIPOGUIA(String _TIPOGUIA) {
+        this._TIPOGUIA = _TIPOGUIA;
+    }
+    
     public String getCOD_VALORACOBRAR() {
         return _COD_VALORACOBRAR;
     }

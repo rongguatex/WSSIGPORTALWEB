@@ -200,6 +200,7 @@ public class D_Guia {
                         guia.setCAMPO4(util.obtenerCodigo(util.limpiaStr(rs.getString("CAMPO4"))));
                         guia.setCODORIGEN(util.limpiaStr(rs.getString("CODORIGEN")));
                         guia.setCODDESTINO(util.limpiaStr(rs.getString("CODDESTINO")));
+                        guia.setTIPOGUIA(validaTipoGuia(datos.getNoguia().trim(), con));
                         datosGuia.add(guia);
                     }
                 }
@@ -421,5 +422,31 @@ public class D_Guia {
             Logger.getLogger(D_Guia.class.getName()).log(Level.SEVERE, "Error al obtener datos de guías ", e);
         }
         return new E_RespuestaGuia("500");
+    }
+
+    /**
+     * obtiene diferentes tipos de tipo de guía.
+     * vacío = guía guardad.
+     * S = guía impresa.
+     * R = guía normal, solo imprime rotulador.
+     * F = (false) guía de devolución que ha sido guardada, imprime rotulador.
+     * @param noguia
+     * @param con
+     * @return estado de impresión de la guía.
+     */
+    public String validaTipoGuia(String noguia, Connection con ) {
+        if (!(noguia == null || noguia.trim().isEmpty())) {
+            try (PreparedStatement ps = con.prepareStatement(""
+                            + "SELECT ESTADO FROM SIG_IMPRESION WHERE NOGUIA = ? ")) {
+                ps.setString(1, noguia);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        return util.quitaNulo(rs.getString("ESTADO")).isEmpty() ? "G" : util.quitaNulo(rs.getString("ESTADO"));//si viene vacío es porque no se encontró en la tabla y se devuelve estado G = guardada.
+                    }
+                }
+            } catch (SQLException e) {
+            }
+        }
+        return "";
     }
 }

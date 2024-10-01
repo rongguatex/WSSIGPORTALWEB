@@ -46,14 +46,14 @@ public class WSSIGCLIENTES {
     public String busquedaCliente(@WebParam(name = "datos") String datos) {
         E_Cliente cliente = new ConvertidorXML().extraerCliente(datos);
         E_respuestaClientes respuesta = new D_Clientes().ObtenerCliente(cliente);
-        return new ConvertidorXML().respuestaXMLDatosCliente(respuesta);
+        return new ConvertidorXML().respuestaXMLDatosCliente(respuesta).replaceAll("&", "&amp;");
     }
 
     @WebMethod(operationName = "busquedaClientes")
     public String busquedaClientes(@WebParam(name = "datos") String datos) {
         E_Cliente cliente = new ConvertidorXML().extraerCliente(datos);
         E_respuestaClientes respuesta = new D_Clientes().ObtenerListadoClientes(cliente);
-        return new ConvertidorXML().respuestaXMLDatosCliente(respuesta);
+        return new ConvertidorXML().respuestaXMLDatosCliente(respuesta).replaceAll("&", "&amp;");
     }
 
     /**
@@ -71,7 +71,7 @@ public class WSSIGCLIENTES {
                 && !datosSolicitud.getCODCOB().isEmpty()
                 && !datosSolicitud.getIMPRESO().isEmpty()) {
             E_RespuestaGuia respuesta = new D_Guia().BuscarRangoFechaJGuiasNoImpresas(datosSolicitud);
-            return new ConvertidorXML().respuestaXMLDatosGuia(respuesta, new E_Departamento(), new E_Municipio(), new E_PuntoCobertura());
+            return new ConvertidorXML().respuestaXMLDatosGuia(respuesta, new E_Departamento(), new E_Municipio(), new E_PuntoCobertura()).replaceAll("&", "&amp;");
         } else {
             return new ConvertidorXML().BadRequest();
         }
@@ -82,7 +82,7 @@ public class WSSIGCLIENTES {
         noguia = noguia == null ? "" : noguia.trim();
         if (!noguia.isEmpty()) {
             E_RespuestaDetalle respuesta = new D_Detalle().buscarDetalleGuia(noguia);
-            return new ConvertidorXML().respuestaXMLDetalleGuia(respuesta);
+            return new ConvertidorXML().respuestaXMLDetalleGuia(respuesta).replaceAll("&", "&amp;");
         } else {
             return new ConvertidorXML().BadRequest();
         }
@@ -91,13 +91,13 @@ public class WSSIGCLIENTES {
     @WebMethod(operationName = "insertarImpresionData")
     public String insertarImpresionData(@WebParam(name = "datos") String XML) {
         List<E_ImpresionSIG> impresiones = new ConvertidorXML().getObjectImpresion(XML);
-        return new D_ImpresionSIG().insertaImpresionSIG(impresiones);
+        return new D_ImpresionSIG().insertaImpresionSIG(impresiones).replaceAll("&", "&amp;");
     }
 
     @WebMethod(operationName = "insertaReimpresion")
     public String insertaReimpresion(@WebParam(name = "datos") String XML) {
         List<E_ImpresionSIG> impresiones = new ConvertidorXML().getObjectImpresion(XML);
-        return new D_ImpresionSIG().insertaReimpresion(impresiones);
+        return new D_ImpresionSIG().insertaReimpresion(impresiones).replaceAll("&", "&amp;");
     }
 
     /**
@@ -111,7 +111,7 @@ public class WSSIGCLIENTES {
     @WebMethod(operationName = "obtenerDatosxGuiaNoImpresa")
     public String obtenerDatosxGuiaNoImpresa(@WebParam(name = "datos") String XML) {
         if (!(XML == null ? "" : XML.trim()).isEmpty()) {
-            return new ModificarGuiaController().obtenerDatosGuia(XML);
+            return new ModificarGuiaController().obtenerDatosGuia(XML).replaceAll("&", "&amp;");
         }
         return new ConvertidorXML().BadRequest();
     }
@@ -119,7 +119,7 @@ public class WSSIGCLIENTES {
     @WebMethod(operationName = "creacionGuiasMasivas")
     public String creacionGuiasMasivas(@WebParam(name = "datos") String XML) {
         if (!(XML == null ? "" : XML.trim()).isEmpty()) {
-            return new C_GuiasMasivas().creacionGuiasMasivas(XML.trim());
+            return new C_GuiasMasivas().creacionGuiasMasivas(XML.trim()).replaceAll("&", "&amp;");
         }
         return new ConvertidorXML().BadRequest();
     }
@@ -127,7 +127,7 @@ public class WSSIGCLIENTES {
     @WebMethod(operationName = "modificaGuia")
     public String modificaGuia(@WebParam(name = "datos") String XML) {
         if (!(XML == null ? "" : XML.trim()).isEmpty()) {
-            return new ModificarGuiaController().modificaGuia(XML.trim());
+            return new ModificarGuiaController().modificaGuia(XML.trim()).replaceAll("&", "&amp;");
         }
         return new ConvertidorXML().BadRequest();
     }

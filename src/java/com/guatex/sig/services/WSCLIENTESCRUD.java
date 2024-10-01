@@ -146,7 +146,7 @@ public class WSCLIENTESCRUD {
 //        System.out.println("entre y tengo de peticion [" + XML + "]");
         E_Cliente cliente = new ConvertidorXML().extraerCliente(XML);
         E_respuestaClientes respuesta = new DReporteClientes().ObtenerCliente(cliente);
-        return new ConvertidorXML().respuestaXMLDatosCliente(respuesta);
+        return new ConvertidorXML().respuestaXMLDatosCliente(respuesta).replaceAll("&", "&amp;");
     }
 
     @WebMethod(operationName = "listadoClientes")
