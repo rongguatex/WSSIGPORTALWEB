@@ -146,7 +146,7 @@ public class WSCLIENTESCRUD {
 //        System.out.println("entre y tengo de peticion [" + XML + "]");
         E_Cliente cliente = new ConvertidorXML().extraerCliente(XML);
         E_respuestaClientes respuesta = new DReporteClientes().ObtenerCliente(cliente);
-        return new ConvertidorXML().respuestaXMLDatosCliente(respuesta);
+        return new ConvertidorXML().respuestaXMLDatosCliente(respuesta).replaceAll("&", "&amp;");
     }
 
     @WebMethod(operationName = "listadoClientes")
@@ -158,7 +158,7 @@ public class WSCLIENTESCRUD {
 
         List<EReporteClientes> listadoClientes = new DReporteClientes().obtengoListadoClientes(PADRE, CODCOB);
         System.out.println("PESO LISTA " + listadoClientes.size());
-        String RespXML = c.respuestaXMLListadoClientes(listadoClientes);
+        String RespXML = c.respuestaXMLListadoClientes(listadoClientes).replaceAll("&", "&amp;");
         return RespXML;
     }
 
@@ -254,7 +254,7 @@ public class WSCLIENTESCRUD {
                 }
             }
 
-            return respXML;
+            return respXML.replaceAll("&", "&amp;");
 
         } catch (Exception e) {
             e.printStackTrace();
