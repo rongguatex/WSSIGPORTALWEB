@@ -119,31 +119,32 @@ public class D_Guia {
         datos.setNoguia(util.limpiaStr(datos.getNoguia()));
         if (!datos.getNoguia().isEmpty()) {
             List<E_Guia> datosGuia = new LinkedList<>();
-            String query = " SELECT   "
-                    + "    J.IDGUIA, J.NOGUIA, J.CODCOB, J.IDSERVICIO,  "
-                    + "    CONVERT(VARCHAR(10), J.FECHA, 103) AS FECHA,  "
-                    + "    J.CODREM, J.NOMREM, J.TELREM, J.DIRREM,  J.COMPLEMENTODIRREM, "
-                    + "    J.CODDES, J.NOMDES, J.TELDES, J.DIRDES,  J.COMPLEMENTODIRDES, "
-                    + "    J.PTOORI, J.PTODES, J.MNCPORI, J.MNCPDES,  "
-                    + "    J.LLAVECLIENTE, J.DESCRENV, J.CONTACTO, J.EMAIL,  "
-                    + "    J.PIEZAS, J.PESO, J.TIPTAR,   "
-                    + "    J.COBEX, J.SEGURO, J.DECLARADO, J.COD_VALORACOBRAR,  "
-                    + "    ISNULL(J.SEABREPAQUETE,'N') SEABREPAQUETE,  "
-                    + "    J.CONTSEG, J.FECOPE, J.HORAOPE,  J.RECOGEOFICINA,  "
-                    + "    J.CAMPO1, J.CAMPO2, J.CAMPO3, J.CAMPO4,  "
-                    + "    J.CODORIGEN, J.CODDESTINO,   "
-                    + "    J.OBSERVACIONES, J.OBSERVACIONESENTRE  "
-                    + "FROM JGUIAS J   "
-                    + "INNER JOIN FACCLIENTES FC ON J.CODCOB = FC.CODIGO  "
-                    + "WHERE NOGUIA = ? "
-                    + "AND FC.PADRE = ? "
-                    + "AND ISNULL(J.IMPRESO, 'N') != 'S' "
-                    + "AND NOT EXISTS ( "
-                    + "    SELECT "
-                    + "        NOGUIA "
-                    + "    FROM GUIAS G "
-                    + "    WHERE G.NOGUIA = J.NOGUIA  "
-                    + ") ";
+            String query = " SELECT    "
+                    + "    J.IDGUIA, J.NOGUIA, J.CODCOB, J.IDSERVICIO,   "
+                    + "    CONVERT(VARCHAR(10), J.FECHA, 103) AS FECHA,   "
+                    + "    J.CODREM, J.NOMREM, J.TELREM, J.DIRREM,  J.COMPLEMENTODIRREM,  "
+                    + "    J.CODDES, J.NOMDES, J.TELDES, J.DIRDES,  J.COMPLEMENTODIRDES,  "
+                    + "    J.PTOORI, J.PTODES, J.MNCPORI, J.MNCPDES,   "
+                    + "    J.LLAVECLIENTE, J.DESCRENV, J.CONTACTO, J.EMAIL,   "
+                    + "    J.PIEZAS, J.PESO, J.TIPTAR,    "
+                    + "    J.COBEX, J.SEGURO, J.DECLARADO, J.COD_VALORACOBRAR,   "
+                    + "    ISNULL(J.SEABREPAQUETE,'N') SEABREPAQUETE,   "
+                    + "    J.CONTSEG, J.FECOPE, J.HORAOPE,  J.RECOGEOFICINA,   "
+                    + "    J.CAMPO1, J.CAMPO2, J.CAMPO3, J.CAMPO4,   "
+                    + "    J.CODORIGEN, J.CODDESTINO,  "
+                    + "    J.OBSERVACIONES, J.OBSERVACIONESENTRE   "
+                    + " FROM JGUIAS J    "
+                    + " INNER JOIN FACCLIENTES FC ON J.CODCOB = FC.CODIGO   "
+                    + " LEFT JOIN SIG_IMPRESION SI ON J.NOGUIA = SI.NOGUIA  "
+                    + " WHERE J.NOGUIA = ?  "
+                    + " AND FC.PADRE = ?  "
+                    + " AND ISNULL(J.IMPRESO, 'N') = 'G'  "
+                    + " AND NOT EXISTS (  "
+                    + "    SELECT  "
+                    + "        NOGUIA  "
+                    + "    FROM GUIAS G  "
+                    + "    WHERE G.NOGUIA = J.NOGUIA   "
+                    + " )";
 
             try (Connection con = new Conexion().AbrirConexion();
                     PreparedStatement ps = con.prepareStatement(query)) {
@@ -200,7 +201,6 @@ public class D_Guia {
                         guia.setCAMPO4(util.obtenerCodigo(util.limpiaStr(rs.getString("CAMPO4"))));
                         guia.setCODORIGEN(util.limpiaStr(rs.getString("CODORIGEN")));
                         guia.setCODDESTINO(util.limpiaStr(rs.getString("CODDESTINO")));
-                        guia.setTIPOGUIA(validaTipoGuia(datos.getNoguia().trim(), con));
                         datosGuia.add(guia);
                     }
                 }
@@ -422,31 +422,5 @@ public class D_Guia {
             Logger.getLogger(D_Guia.class.getName()).log(Level.SEVERE, "Error al obtener datos de guías ", e);
         }
         return new E_RespuestaGuia("500");
-    }
-
-    /**
-     * obtiene diferentes tipos de tipo de guía.
-     * vacío = guía guardad.
-     * S = guía impresa.
-     * R = guía normal, solo imprime rotulador.
-     * F = (false) guía de devolución que ha sido guardada, imprime rotulador.
-     * @param noguia
-     * @param con
-     * @return estado de impresión de la guía.
-     */
-    public String validaTipoGuia(String noguia, Connection con ) {
-        if (!(noguia == null || noguia.trim().isEmpty())) {
-            try (PreparedStatement ps = con.prepareStatement(""
-                            + "SELECT ESTADO FROM SIG_IMPRESION WHERE NOGUIA = ? ")) {
-                ps.setString(1, noguia);
-                try (ResultSet rs = ps.executeQuery()) {
-                    while (rs.next()) {
-                        return util.quitaNulo(rs.getString("ESTADO")).isEmpty() ? "G" : util.quitaNulo(rs.getString("ESTADO"));//si viene vacío es porque no se encontró en la tabla y se devuelve estado G = guardada.
-                    }
-                }
-            } catch (SQLException e) {
-            }
-        }
-        return "";
     }
 }
