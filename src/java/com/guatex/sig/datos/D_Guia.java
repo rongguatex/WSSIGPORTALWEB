@@ -119,7 +119,7 @@ public class D_Guia {
         datos.setNoguia(util.limpiaStr(datos.getNoguia()));
         if (!datos.getNoguia().isEmpty()) {
             List<E_Guia> datosGuia = new LinkedList<>();
-            String query = " SELECT    "
+            String query = " SELECT  SI.ESTADO AS TIPOGUIA, "
                     + "    J.IDGUIA, J.NOGUIA, J.CODCOB, J.IDSERVICIO,   "
                     + "    CONVERT(VARCHAR(10), J.FECHA, 103) AS FECHA,   "
                     + "    J.CODREM, J.NOMREM, J.TELREM, J.DIRREM,  J.COMPLEMENTODIRREM,  "
@@ -155,6 +155,7 @@ public class D_Guia {
                     while (rs.next()) {
                         E_Guia guia = new E_Guia();
                         //datos generales de guía
+                        guia.setTIPOGUIA(util.limpiaStr(rs.getString("TIPOGUIA")));
                         guia.setIDGUIA(util.limpiaStr(rs.getString("IDGUIA")));
                         guia.setNOGUIA(util.limpiaStr(rs.getString("NOGUIA")));
                         guia.setCODCOB(util.limpiaStr(rs.getString("CODCOB")));
