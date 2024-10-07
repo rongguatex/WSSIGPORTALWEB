@@ -1,6 +1,9 @@
 package com.guatex.sig.entidades;
 
+import com.guatex.sig.utils.Utils;
+
 public class E_Cliente {
+    Utils util = new Utils();
 
     private boolean _SELECCIONADO = false;
     private String _CODCOB = "";
@@ -93,51 +96,51 @@ public class E_Cliente {
     }
 
     public String getCODIGO() {
-        return _CODIGO;
+        return util.validarLogitud(_CODIGO, 15);
     }
 
     public void setCODIGO(String _CODIGO) {
-        this._CODIGO = _CODIGO;
+            this._CODIGO = util.validarLogitud(_CODIGO, 15);
     }
 
     public String getNIT() {
-        return _NIT;
+        return util.validarLogitud(_NIT, 25);
     }
 
     public void setNIT(String _NIT) {
-        this._NIT = _NIT;
+        this._NIT = util.validarLogitud(_NIT, 25);
     }
 
     public String getTELEFONO() {
-        return _TELEFONO;
+        return util.validarLogitud(_TELEFONO, 20);
     }
 
     public void setTELEFONO(String _TELEFONO) {
-        this._TELEFONO = _TELEFONO;
+        this._TELEFONO = util.validarLogitud(_TELEFONO, 20);
     }
 
     public String getNOMBRE() {
-        return _NOMBRE;
+        return util.validarLogitud(_NOMBRE, 100);
     }
 
     public void setNOMBRE(String _NOMBRE) {
-        this._NOMBRE = _NOMBRE;
+        this._NOMBRE = util.validarLogitud(_NOMBRE, 100);
     }
 
     public String getDIRECCION() {
-        return _DIRECCION;
+        return util.validarLogitud(_DIRECCION, 100);
     }
 
     public void setDIRECCION(String _DIRECCION) {
-        this._DIRECCION = _DIRECCION;
+        this._DIRECCION = util.validarLogitud(_DIRECCION, 100);
     }
 
     public String getCONTACTO() {
-        return _CONTACTO;
+        return util.validarLogitud(_CONTACTO, 200);
     }
 
     public void setCONTACTO(String _CONTACTO) {
-        this._CONTACTO = _CONTACTO;
+        this._CONTACTO = util.validarLogitud(_CONTACTO, 200);
     }
 
     public String getUBICACION() {
@@ -157,43 +160,43 @@ public class E_Cliente {
     }
 
     public String getCORREO() {
-        return _CORREO;
+        return util.validarLogitud(_CORREO, 200);
     }
 
     public void setCORREO(String _CORREO) {
-        this._CORREO = _CORREO;
+        this._CORREO = util.validarLogitud(_CORREO, 200);
     }
 
     public String getCAMPO1() {
-        return _CAMPO1;
+        return util.validarLogitud(_CAMPO1, 200);
     }
 
     public void setCAMPO1(String _CAMPO1) {
-        this._CAMPO1 = _CAMPO1;
+        this._CAMPO1 = util.validarLogitud(_CAMPO1, 200);
     }
 
     public String getCAMPO2() {
-        return _CAMPO2;
+        return util.validarLogitud(_CAMPO2, 200);
     }
 
     public void setCAMPO2(String _CAMPO2) {
-        this._CAMPO2 = _CAMPO2;
+        this._CAMPO2 = util.validarLogitud(_CAMPO2, 200);
     }
 
     public String getCAMPO3() {
-        return _CAMPO3;
+        return util.validarLogitud(_CAMPO3, 200);
     }
 
     public void setCAMPO3(String _CAMPO3) {
-        this._CAMPO3 = _CAMPO3;
+        this._CAMPO3 = util.validarLogitud(_CAMPO3, 200);
     }
 
     public String getCAMPO4() {
-        return _CAMPO4;
+        return util.validarLogitud(_CAMPO4, 200);
     }
 
     public void setCAMPO4(String _CAMPO4) {
-        this._CAMPO4 = _CAMPO4;
+        this._CAMPO4 = util.validarLogitud(_CAMPO4, 200);
     }
 
     public String getPADRE() {
@@ -203,7 +206,7 @@ public class E_Cliente {
     public void setPADRE(String _PADRE) {
         this._PADRE = _PADRE;
     }
-
+    
     @Override
     public String toString() {
         return "\n\nE_Cliente{" + "_SELECCIONADO=" + _SELECCIONADO + ", _CODCOB=" + _CODCOB + ", _CODIGO=" + _CODIGO + ", _NIT=" + _NIT + ", \n"

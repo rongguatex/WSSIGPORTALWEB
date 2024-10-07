@@ -64,4 +64,18 @@ public class Utils {
                     }
                 });
     }
+    
+    /**
+     * Este métod valida la longitud de caracteres permitidos por campo.
+     * @param valor
+     * @param longitudMaxima
+     * @return 
+     */
+    public String validarLogitud(String valor, int longitudMaxima) {
+        System.out.println("hello " + valor + " - " + longitudMaxima);
+        if(valor != null && valor.length() > longitudMaxima) {
+            return  valor.substring(0, longitudMaxima);
+        }
+        return valor;
+    }
 }
