@@ -25,6 +25,7 @@ public class WSCLIENTESCRUD {
 
     @WebMethod(operationName = "insertarClientes")
     public String insertarClientes(@WebParam(name = "datos") String datos) {
+        System.out.println("datos [" + datos + "]");
         String respXML = "";
 
         DReporteClientes reporte = new DReporteClientes();
@@ -40,10 +41,10 @@ public class WSCLIENTESCRUD {
         cliente.setEMAIL(c.getTag("CORREOCLIENTE", datos));
         cliente.setTELEFONO(c.getTag("TELEFONOCLIENTE", datos));
         cliente.setDIRECCION(c.getTag("DIRECCIONCLIENTE", datos));
-        cliente.setCAMPO1(c.getTag("CAMPO1", datos));
-        cliente.setCAMPO2(c.getTag("CAMPO2", datos));
-        cliente.setCAMPO3(c.getTag("CAMPO3", datos));
-        cliente.setCAMPO4(c.getTag("CAMPO4", datos));
+        cliente.setCAMPO1(c.getTag("PADRE", datos) + "/" + c.getTag("CAMPO1", datos));
+        cliente.setCAMPO2(c.getTag("PADRE", datos) + "/" + c.getTag("CAMPO2", datos));
+        cliente.setCAMPO3(c.getTag("PADRE", datos) + "/" + c.getTag("CAMPO3", datos));
+        cliente.setCAMPO4(c.getTag("PADRE", datos) + "/" + c.getTag("CAMPO4", datos));
         cliente.setDEPTODES(c.getTag("DEPTODES", datos));
         cliente.setMUNICIPIO(c.getTag("MNCPDES", datos));
         cliente.setPUNTO(c.getTag("PTODES", datos));
