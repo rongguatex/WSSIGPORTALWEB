@@ -5,6 +5,7 @@
  */
 package com.guatex.sig.entidades;
 
+import com.guatex.sig.utils.Utils;
 import java.util.LinkedList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -20,6 +21,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "DATOSGUIA")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class E_Guia {
+
+    Utils util = new Utils();
 
     @XmlElement(name = "CODCOB")
     private String _CODCOB;
@@ -131,71 +134,71 @@ public class E_Guia {
 
     @XmlElement(name = "COBEX")
     private String _COBEX;
-    
+
     @XmlElement(name = "TIPTAR")
     private String _TIPTAR;
-    
+
     @XmlElement(name = "RUTAZONA")
     private String _RUTAZONA;
-    
+
     @XmlElement(name = "EMAILENVIADO")
     private String _EMAILENVIADO;
-    
+
     @XmlElement(name = "IMPOPER")
     private String _IMPOPER;
-    
+
     @XmlElement(name = "TIPOENVIOS")
     private String _TIPOENVIOS;
-    
+
     @XmlElement(name = "PIEZAS")
     private int _PIEZAS;
-    
+
     @XmlElement(name = "NUMERO_PIEZA")
     private int _NUMERO_PIEZA;
-    
+
     @XmlElement(name = "PESO")
     private String _PESO;
-    
+
     @XmlElementWrapper(name = "LISTADODETALLEGUIA")
     @XmlElement(name = "LINEADETALLE")
     private List<E_DetalleLinea> _DETALLE = new LinkedList<>();
-    
+
     @XmlElement(name = "SELECCIONADO")
     private boolean _SELECCIONADO;
-    
+
     @XmlElement(name = "IMPRIMECOD")
     private String _IMPRIMECOD;
-    
+
     @XmlElement(name = "PRECIOCOD")
     private String _PRECIOCOD;
-    
+
     @XmlElement(name = "SEABREPAQUETE")
     private String _SEABREPAQUETE = "";
-    
+
     @XmlElement(name = "FECHA_INICIAL")
     private String _FECHA_INICIAL = "";
-    
+
     @XmlElement(name = "FECHA_FINAL")
     private String _FECHA_FINAL = "";
-    
+
     @XmlElement(name = "TABLA")
     private String _TABLA = "";
-    
+
     @XmlElement(name = "COD_VALORACOBRAR")
     private String _COD_VALORACOBRAR = "";
-    
+
     @XmlElement(name = "OBSERVACIONES")
     private String _OBSERVACIONES = "";
-    
+
     @XmlElement(name = "OBSERVACIONESENTRE")
     private String _OBSERVACIONESENTRE = "";
-    
+
     @XmlElement(name = "CODORIGEN")
     private String _CODORIGEN = "";
-    
+
     @XmlElement(name = "CODDESTINO")
     private String _CODDESTINO = "";
-    
+
     @XmlElement(name = "TIPOGUIA")
     private String _TIPOGUIA = "";
 
@@ -206,7 +209,7 @@ public class E_Guia {
     public void setTIPOGUIA(String _TIPOGUIA) {
         this._TIPOGUIA = _TIPOGUIA;
     }
-    
+
     public String getCOD_VALORACOBRAR() {
         return _COD_VALORACOBRAR;
     }
@@ -250,37 +253,31 @@ public class E_Guia {
     }
 
     public String getCODREM() {
-        return _CODREM;
+        return util.validarLogitud(_CODREM, 15);
     }
 
     public void setCODREM(String _CODREM) {
-        if (_CODREM != null) {
-            this._CODREM = _CODREM.trim();
-        }
+        this._CODREM = util.validarLogitud(_CODREM, 15);
     }
 
     public String getNOMREM() {
-        return _NOMREM;
+        return util.validarLogitud(_NOMREM, 100);
     }
 
     public void setNOMREM(String _NOMREM) {
-        if (_NOMREM != null) {
-            this._NOMREM = _NOMREM.trim();
-        }
+        this._NOMREM = util.validarLogitud(_NOMREM, 100);
     }
 
     public String getTELREM() {
-        return _TELREM;
+        return util.validarLogitud(_TELREM, 20);
     }
 
     public void setTELREM(String _TELREM) {
-        if (_TELREM != null) {
-            this._TELREM = _TELREM.trim();
-        }
+        this._TELREM = util.validarLogitud(_TELREM, 20);
     }
 
     public String getDIRREM() {
-        return _DIRREM;
+        return util.validarLogitud(_DIRREM, 100);
     }
 
     public void setDIRREM(String _DIRREM) {
@@ -295,37 +292,35 @@ public class E_Guia {
     }
 
     public String getCODDES() {
-        return _CODDES;
+        return util.validarLogitud(_CODDES, 15);
     }
 
     public void setCODDES(String _CODDES) {
-        if (_CODDES != null) {
-            this._CODDES = _CODDES.trim();
-        }
+        this._CODDES = util.validarLogitud(_CODDES, 15);
     }
 
     public String getNOMDES() {
-        return _NOMDES;
+        return util.validarLogitud(_NOMDES, 100);
     }
 
     public void setNOMDES(String _NOMDES) {
         if (_NOMDES != null) {
-            this._NOMDES = _NOMDES.trim();
+            this._NOMDES = util.validarLogitud(_NOMDES, 100);
         }
     }
 
     public String getTELDES() {
-        return _TELDES;
+        return util.validarLogitud(_TELDES, 20);
     }
 
     public void setTELDES(String _TELDES) {
         if (_TELDES != null) {
-            this._TELDES = _TELDES.trim();
+            this._TELDES = util.validarLogitud(_TELDES, 20);
         }
     }
 
     public String getDIRDES() {
-        return _DIRDES;
+        return util.validarLogitud(_DIRDES, 100);
     }
 
     public void setDIRDES(String _DIRDES) {
@@ -401,12 +396,12 @@ public class E_Guia {
     }
 
     public String getDESCRENV() {
-        return _DESCRENV;
+        return util.validarLogitud(_DESCRENV, 100);
     }
 
     public void setDESCRENV(String _DESCRENV) {
         if (_DESCRENV != null) {
-            this._DESCRENV = _DESCRENV.trim();
+            this._DESCRENV = util.validarLogitud(_DESCRENV, 100);
         }
     }
 
@@ -441,52 +436,52 @@ public class E_Guia {
     }
 
     public String getCOMPLEMENTODIRREM() {
-        return _COMPLEMENTODIRREM;
+        return util.validarLogitud(_COMPLEMENTODIRREM, 100);
     }
 
     public void setCOMPLEMENTODIRREM(String _COMPLEMENTODIRREM) {
         if (_COMPLEMENTODIRREM != null) {
-            this._COMPLEMENTODIRREM = _COMPLEMENTODIRREM.trim();
+            this._COMPLEMENTODIRREM = util.validarLogitud(_COMPLEMENTODIRREM, 100);
         }
     }
 
     public String getCOMPLEMENTODIRDES() {
-        return _COMPLEMENTODIRDES;
+        return util.validarLogitud(_COMPLEMENTODIRDES, 100);
     }
 
     public void setCOMPLEMENTODIRDES(String _COMPLEMENTODIRDES) {
         if (_COMPLEMENTODIRDES != null) {
-            this._COMPLEMENTODIRDES = _COMPLEMENTODIRDES.trim();
+            this._COMPLEMENTODIRDES = util.validarLogitud(_COMPLEMENTODIRDES, 100);
         }
     }
 
     public String getCONTACTO() {
-        return _CONTACTO;
+        return util.validarLogitud(_CONTACTO, 200);
     }
 
     public void setCONTACTO(String _CONTACTO) {
         if (_CONTACTO != null) {
-            this._CONTACTO = _CONTACTO.trim();
+            this._CONTACTO = util.validarLogitud(_CONTACTO, 200);
         }
     }
 
     public String getLLAVECLIENTE() {
-        return _LLAVECLIENTE;
+        return util.validarLogitud(_LLAVECLIENTE, 200);
     }
 
     public void setLLAVECLIENTE(String _LLAVECLIENTE) {
         if (_LLAVECLIENTE != null) {
-            this._LLAVECLIENTE = _LLAVECLIENTE.trim();
+            this._LLAVECLIENTE = util.validarLogitud(_LLAVECLIENTE, 200);
         }
     }
 
     public String getEMAIL() {
-        return _EMAIL;
+        return util.validarLogitud(_EMAIL, 200);
     }
 
     public void setEMAIL(String _EMAIL) {
         if (_EMAIL != null) {
-            this._EMAIL = _EMAIL.trim();
+            this._EMAIL = util.validarLogitud(_EMAIL, 200);
         }
     }
 
@@ -739,19 +734,19 @@ public class E_Guia {
     }
 
     public String getOBSERVACIONES() {
-        return _OBSERVACIONES;
+        return util.validarLogitud(_OBSERVACIONES, 100);
     }
 
     public void setOBSERVACIONES(String _OBSERVACIONES) {
-        this._OBSERVACIONES = _OBSERVACIONES;
+        this._OBSERVACIONES = util.validarLogitud(_OBSERVACIONES, 100);
     }
 
     public String getOBSERVACIONESENTRE() {
-        return _OBSERVACIONESENTRE;
+        return util.validarLogitud(_OBSERVACIONESENTRE, 100);
     }
 
     public void setOBSERVACIONESENTRE(String _OBSERVACIONESENTRE) {
-        this._OBSERVACIONESENTRE = _OBSERVACIONESENTRE;
+        this._OBSERVACIONESENTRE = util.validarLogitud(_OBSERVACIONESENTRE, 100);
     }
 
     public String getCODORIGEN() {

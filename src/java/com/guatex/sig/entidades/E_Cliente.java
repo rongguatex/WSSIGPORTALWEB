@@ -128,11 +128,11 @@ public class E_Cliente {
     }
 
     public String getDIRECCION() {
-        return util.validarLogitud(_DIRECCION, 100);
+        return util.validarLogitud(_DIRECCION, 200);
     }
 
     public void setDIRECCION(String _DIRECCION) {
-        this._DIRECCION = util.validarLogitud(_DIRECCION, 100);
+        this._DIRECCION = util.validarLogitud(_DIRECCION, 200);
     }
 
     public String getCONTACTO() {
