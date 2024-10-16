@@ -43,6 +43,7 @@ public class D_Guia {
         List<E_Guia> listadoGuias = new LinkedList<>();
 
         String query = " SELECT "
+                + " SI.ESTADO AS TIPOGUIA, "
                 + " J.NOGUIA AS NOGUIA,  "
                 + " J.CONTACTO,  "
                 + " J.NOMDES,  "
@@ -59,7 +60,7 @@ public class D_Guia {
                 + " J.CONTSEG, "
                 + " J.COD_VALORACOBRAR "
                 + " FROM JGUIAS J "
-                + " LEFT JOIN GUIAS G ON J.NOGUIA = G.NOGUIA "
+                + " LEFT JOIN SIG_IMPRESION SI ON J.NOGUIA = SI.NOGUIA  "
                 + " WHERE J.CODCOB = ? "
                 + " AND CAST(J.FECHA AS DATE) BETWEEN CAST(? AS DATE) AND CAST(?  AS DATE) "
                 + " AND ISNULL(J.IMPRESO, 'N') = ? "
@@ -81,6 +82,7 @@ public class D_Guia {
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     E_Guia guia = new E_Guia();
+                    guia.setTIPOGUIA(util.limpiaStr(rs.getString("TIPOGUIA")));
                     guia.setNOGUIA(util.limpiaStr(rs.getString("NOGUIA")));
                     guia.setCONTACTO(util.limpiaStr(rs.getString("CONTACTO")));
                     guia.setNOMDES(util.limpiaStr(rs.getString("NOMDES")));

@@ -211,6 +211,7 @@ public class ConvertidorXML {
             for (E_Guia guia : data.getLISTADO_GUIAS()) {
                 XML += "<DATOS_GUIA>"
                         //datos generales de guía
+                        + addTag("TIPOGUIA", guia.getTIPOGUIA())
                         + addTag("IDGUIA", guia.getIDGUIA())
                         + addTag("NOGUIA", guia.getNOGUIA())
                         + addTag("CODCOB", guia.getCODCOB())
