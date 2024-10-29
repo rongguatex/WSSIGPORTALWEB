@@ -74,29 +74,29 @@ public class D_Guia {
 
         try (Connection con = new Conexion().AbrirConexion();
                 PreparedStatement ps = con.prepareStatement(query)) {
-            ps.setString(1, util.limpiaStr(datos.getCODCOB()));
-            ps.setString(2, util.limpiaStr(datos.getFECHA_INICIAL()));
-            ps.setString(3, util.limpiaStr(datos.getFECHA_FINAL()));
-            ps.setString(4, util.limpiaStr(datos.getIMPRESO()));
+            ps.setString(1, util.quitaNulo(datos.getCODCOB()));
+            ps.setString(2, util.quitaNulo(datos.getFECHA_INICIAL()));
+            ps.setString(3, util.quitaNulo(datos.getFECHA_FINAL()));
+            ps.setString(4, util.quitaNulo(datos.getIMPRESO()));
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     E_Guia guia = new E_Guia();
-                    guia.setTIPOGUIA(util.limpiaStr(rs.getString("TIPOGUIA")));
-                    guia.setNOGUIA(util.limpiaStr(rs.getString("NOGUIA")));
-                    guia.setCONTACTO(util.limpiaStr(rs.getString("CONTACTO")));
-                    guia.setNOMDES(util.limpiaStr(rs.getString("NOMDES")));
-                    guia.setTELDES(util.limpiaStr(rs.getString("TELDES")));
+                    guia.setTIPOGUIA(util.quitaNulo(rs.getString("TIPOGUIA")));
+                    guia.setNOGUIA(util.quitaNulo(rs.getString("NOGUIA")));
+                    guia.setCONTACTO(util.quitaNulo(rs.getString("CONTACTO")));
+                    guia.setNOMDES(util.quitaNulo(rs.getString("NOMDES")));
+                    guia.setTELDES(util.quitaNulo(rs.getString("TELDES")));
                     guia.setDIRDES(util.quitaNulo(rs.getString("DIRDES")) + util.quitaNulo(rs.getString("COMPLEMENTODIRDES")));
-                    guia.setCODCOB(util.limpiaStr(rs.getString("CODCOB")));
-                    guia.setSEGURO(util.limpiaStr(rs.getString("SEGURO")));
-                    guia.setDECLARADO(util.limpiaStr(rs.getString("DECLARADO")));
-                    guia.setMNCPDES(util.limpiaStr(rs.getString("MNCPDES")));
-                    guia.setFECHA(util.limpiaStr(rs.getString("FECHA")));
-                    guia.setDESCRENV(util.limpiaStr(rs.getString("DESCRENV")));
-                    guia.setSEABREPAQUETE(util.limpiaStr(rs.getString("SEABREPAQUETE")));
-                    guia.setCONTSEG(util.limpiaStr(rs.getString("CONTSEG")));
-                    guia.setCOD_VALORACOBRAR(util.limpiaStr(rs.getString("COD_VALORACOBRAR")));
+                    guia.setCODCOB(util.quitaNulo(rs.getString("CODCOB")));
+                    guia.setSEGURO(util.quitaNulo(rs.getString("SEGURO")));
+                    guia.setDECLARADO(util.quitaNulo(rs.getString("DECLARADO")));
+                    guia.setMNCPDES(util.quitaNulo(rs.getString("MNCPDES")));
+                    guia.setFECHA(util.quitaNulo(rs.getString("FECHA")));
+                    guia.setDESCRENV(util.quitaNulo(rs.getString("DESCRENV")));
+                    guia.setSEABREPAQUETE(util.quitaNulo(rs.getString("SEABREPAQUETE")));
+                    guia.setCONTSEG(util.quitaNulo(rs.getString("CONTSEG")));
+                    guia.setCOD_VALORACOBRAR(util.quitaNulo(rs.getString("COD_VALORACOBRAR")));
                     listadoGuias.add(guia);
                 }
                 if (!listadoGuias.isEmpty()) {
@@ -118,7 +118,7 @@ public class D_Guia {
      * @return - objeto con código de respuesta y datos de la guía.
      */
     public E_RespuestaGuia obtenerDatosxGuiaNoImpresa(E_Credenciales datos) {
-        datos.setNoguia(util.limpiaStr(datos.getNoguia()));
+        datos.setNoguia(util.quitaNulo(datos.getNoguia()));
         if (!datos.getNoguia().isEmpty()) {
             List<E_Guia> datosGuia = new LinkedList<>();
             String query = " SELECT  SI.ESTADO AS TIPOGUIA, "
@@ -157,53 +157,53 @@ public class D_Guia {
                     while (rs.next()) {
                         E_Guia guia = new E_Guia();
                         //datos generales de guía
-                        guia.setTIPOGUIA(util.limpiaStr(rs.getString("TIPOGUIA")));
-                        guia.setIDGUIA(util.limpiaStr(rs.getString("IDGUIA")));
-                        guia.setNOGUIA(util.limpiaStr(rs.getString("NOGUIA")));
-                        guia.setCODCOB(util.limpiaStr(rs.getString("CODCOB")));
-                        guia.setIDSERVICIO(util.limpiaStr(rs.getString("IDSERVICIO")));
-                        guia.setFECHA(util.limpiaStr(rs.getString("FECHA")));
+                        guia.setTIPOGUIA(util.quitaNulo(rs.getString("TIPOGUIA")));
+                        guia.setIDGUIA(util.quitaNulo(rs.getString("IDGUIA")));
+                        guia.setNOGUIA(util.quitaNulo(rs.getString("NOGUIA")));
+                        guia.setCODCOB(util.quitaNulo(rs.getString("CODCOB")));
+                        guia.setIDSERVICIO(util.quitaNulo(rs.getString("IDSERVICIO")));
+                        guia.setFECHA(util.quitaNulo(rs.getString("FECHA")));
                         //datos de remitente
-                        guia.setCODREM(util.limpiaStr(rs.getString("CODREM")));
-                        guia.setNOMREM(util.limpiaStr(rs.getString("NOMREM")));
-                        guia.setTELREM(util.limpiaStr(rs.getString("TELREM")));
-                        guia.setDIRREM(util.limpiaStr(rs.getString("DIRREM")));
-                        guia.setCOMPLEMENTODIRREM(util.limpiaStr(rs.getString("COMPLEMENTODIRREM")));
-                        guia.setCONTACTO(util.limpiaStr(rs.getString("CONTACTO")));
-                        guia.setOBSERVACIONES(util.limpiaStr(rs.getString("OBSERVACIONES")));
+                        guia.setCODREM(util.quitaNulo(rs.getString("CODREM")));
+                        guia.setNOMREM(util.quitaNulo(rs.getString("NOMREM")));
+                        guia.setTELREM(util.quitaNulo(rs.getString("TELREM")));
+                        guia.setDIRREM(util.quitaNulo(rs.getString("DIRREM")));
+                        guia.setCOMPLEMENTODIRREM(util.quitaNulo(rs.getString("COMPLEMENTODIRREM")));
+                        guia.setCONTACTO(util.quitaNulo(rs.getString("CONTACTO")));
+                        guia.setOBSERVACIONES(util.quitaNulo(rs.getString("OBSERVACIONES")));
                         //datos de destinatario
-                        guia.setCODDES(util.limpiaStr(rs.getString("CODDES")));
-                        guia.setNOMDES(util.limpiaStr(rs.getString("NOMDES")));
-                        guia.setTELDES(util.limpiaStr(rs.getString("TELDES")));
-                        guia.setDIRDES(util.limpiaStr(rs.getString("DIRDES")));
-                        guia.setCOMPLEMENTODIRDES(util.limpiaStr(rs.getString("COMPLEMENTODIRDES")));
-                        guia.setOBSERVACIONESENTRE(util.limpiaStr(rs.getString("OBSERVACIONESENTRE")));
+                        guia.setCODDES(util.quitaNulo(rs.getString("CODDES")));
+                        guia.setNOMDES(util.quitaNulo(rs.getString("NOMDES")));
+                        guia.setTELDES(util.quitaNulo(rs.getString("TELDES")));
+                        guia.setDIRDES(util.quitaNulo(rs.getString("DIRDES")));
+                        guia.setCOMPLEMENTODIRDES(util.quitaNulo(rs.getString("COMPLEMENTODIRDES")));
+                        guia.setOBSERVACIONESENTRE(util.quitaNulo(rs.getString("OBSERVACIONESENTRE")));
                         //otros datos
-                        guia.setPTOORI(util.limpiaStr(rs.getString("PTOORI")));
-                        guia.setPTODES(util.limpiaStr(rs.getString("PTODES")));
-                        guia.setMNCPORI(util.limpiaStr(rs.getString("MNCPORI")));
-                        guia.setMNCPDES(util.limpiaStr(rs.getString("MNCPDES")));
-                        guia.setLLAVECLIENTE(util.limpiaStr(rs.getString("LLAVECLIENTE")));
-                        guia.setDESCRENV(util.limpiaStr(rs.getString("DESCRENV")));
-                        guia.setEMAIL(util.limpiaStr(rs.getString("EMAIL")));
-                        guia.setPIEZAS(util.convertirAEntero(util.limpiaStr(rs.getString("PIEZAS"))).orElse(0));
-                        guia.setPESO(util.limpiaStr(rs.getString("PESO")));
-                        guia.setTIPTAR(util.limpiaStr(rs.getString("TIPTAR")));
-                        guia.setCOBEX(util.limpiaStr(rs.getString("COBEX")));
-                        guia.setSEGURO(util.limpiaStr(rs.getString("SEGURO")));
-                        guia.setDECLARADO(util.limpiaStr(rs.getString("DECLARADO")));
-                        guia.setCOD_VALORACOBRAR(util.limpiaStr(rs.getString("COD_VALORACOBRAR")));
-                        guia.setSEABREPAQUETE(util.limpiaStr(rs.getString("SEABREPAQUETE")));
-                        guia.setCONTSEG(util.limpiaStr(rs.getString("CONTSEG")));
-                        guia.setFECOPE(util.limpiaStr(rs.getString("FECOPE")));
-                        guia.setHORAOPE(util.limpiaStr(rs.getString("HORAOPE")));
-                        guia.setRECOGEOFICINA(util.limpiaStr(rs.getString("RECOGEOFICINA")));
-                        guia.setCAMPO1(util.obtenerCodigo(util.limpiaStr(rs.getString("CAMPO1"))));
-                        guia.setCAMPO2(util.obtenerCodigo(util.limpiaStr(rs.getString("CAMPO2"))));
-                        guia.setCAMPO3(util.obtenerCodigo(util.limpiaStr(rs.getString("CAMPO3"))));
-                        guia.setCAMPO4(util.obtenerCodigo(util.limpiaStr(rs.getString("CAMPO4"))));
-                        guia.setCODORIGEN(util.limpiaStr(rs.getString("CODORIGEN")));
-                        guia.setCODDESTINO(util.limpiaStr(rs.getString("CODDESTINO")));
+                        guia.setPTOORI(util.quitaNulo(rs.getString("PTOORI")));
+                        guia.setPTODES(util.quitaNulo(rs.getString("PTODES")));
+                        guia.setMNCPORI(util.quitaNulo(rs.getString("MNCPORI")));
+                        guia.setMNCPDES(util.quitaNulo(rs.getString("MNCPDES")));
+                        guia.setLLAVECLIENTE(util.quitaNulo(rs.getString("LLAVECLIENTE")));
+                        guia.setDESCRENV(util.quitaNulo(rs.getString("DESCRENV")));
+                        guia.setEMAIL(util.quitaNulo(rs.getString("EMAIL")));
+                        guia.setPIEZAS(util.convertirAEntero(util.quitaNulo(rs.getString("PIEZAS"))).orElse(0));
+                        guia.setPESO(util.quitaNulo(rs.getString("PESO")));
+                        guia.setTIPTAR(util.quitaNulo(rs.getString("TIPTAR")));
+                        guia.setCOBEX(util.quitaNulo(rs.getString("COBEX")));
+                        guia.setSEGURO(util.quitaNulo(rs.getString("SEGURO")));
+                        guia.setDECLARADO(util.quitaNulo(rs.getString("DECLARADO")));
+                        guia.setCOD_VALORACOBRAR(util.quitaNulo(rs.getString("COD_VALORACOBRAR")));
+                        guia.setSEABREPAQUETE(util.quitaNulo(rs.getString("SEABREPAQUETE")));
+                        guia.setCONTSEG(util.quitaNulo(rs.getString("CONTSEG")));
+                        guia.setFECOPE(util.quitaNulo(rs.getString("FECOPE")));
+                        guia.setHORAOPE(util.quitaNulo(rs.getString("HORAOPE")));
+                        guia.setRECOGEOFICINA(util.quitaNulo(rs.getString("RECOGEOFICINA")));
+                        guia.setCAMPO1(util.obtenerCodigo(util.quitaNulo(rs.getString("CAMPO1"))));
+                        guia.setCAMPO2(util.obtenerCodigo(util.quitaNulo(rs.getString("CAMPO2"))));
+                        guia.setCAMPO3(util.obtenerCodigo(util.quitaNulo(rs.getString("CAMPO3"))));
+                        guia.setCAMPO4(util.obtenerCodigo(util.quitaNulo(rs.getString("CAMPO4"))));
+                        guia.setCODORIGEN(util.quitaNulo(rs.getString("CODORIGEN")));
+                        guia.setCODDESTINO(util.quitaNulo(rs.getString("CODDESTINO")));
                         datosGuia.add(guia);
                     }
                 }
@@ -221,7 +221,7 @@ public class D_Guia {
     }
 
     public boolean eliminaGuia(String noguia) {
-        noguia = util.limpiaStr(noguia);
+        noguia = util.quitaNulo(noguia);
         if (noguia.isEmpty()) {
             return false;
         }
@@ -256,7 +256,7 @@ public class D_Guia {
                         try (ResultSet rs = ps.executeQuery()) {
                             while (rs.next()) {
                                 E_Servicio servicio = new E_Servicio();
-                                servicio.setIDSERVICIO(util.limpiaStr(rs.getString("IDSERVICIO")));
+                                servicio.setIDSERVICIO(util.quitaNulo(rs.getString("IDSERVICIO")));
                                 resultado.add(servicio);
                             }
                         }
@@ -310,7 +310,7 @@ public class D_Guia {
 
                 try (ResultSet rs = st.executeQuery()) {
                     while (rs.next()) {
-                        if (util.limpiaStr(rs.getString("IMPRESO")).equalsIgnoreCase("S")) {
+                        if (util.quitaNulo(rs.getString("IMPRESO")).equalsIgnoreCase("S")) {
                             isPrinted = true;
                         }
                     }
