@@ -5,11 +5,15 @@
  */
 package com.guatex.sig.entidades;
 
+import com.guatex.sig.utils.Utils;
+
 /**
  *
  * @author PJUNIOR-3
  */
 public class EReporteClientes {
+
+    Utils util = new Utils();
 
     private String CODIGO = "";
     private String CODCOB = "";
@@ -48,35 +52,43 @@ public class EReporteClientes {
     }
 
     public String getNOMBRE() {
-        return NOMBRE;
+        return util.validarLogitud(NOMBRE, 100);
     }
 
     public void setNOMBRE(String NOMBRE) {
-        this.NOMBRE = NOMBRE;
+        this.NOMBRE = util.validarLogitud(NOMBRE, 100);
     }
 
     public String getCONTACTO() {
-        return CONTACTO;
+        return util.validarLogitud(CONTACTO, 200);
     }
 
     public void setCONTACTO(String CONTACTO) {
-        this.CONTACTO = CONTACTO;
+        this.CONTACTO = util.validarLogitud(CONTACTO, 200);
     }
 
     public String getDIRECCION() {
-        return DIRECCION;
+        return util.validarLogitud(DIRECCION, 200);
     }
 
     public void setDIRECCION(String DIRECCION) {
-        this.DIRECCION = DIRECCION;
+        this.DIRECCION = util.validarLogitud(DIRECCION, 200);
+//        if (DIRECCION != null) {
+//            if (DIRECCION.length() > 100) {
+//                this.DIRECCION = DIRECCION.trim().substring(0, 100);
+//                this.COMPLEMENTODIRECCION = DIRECCION.trim().substring(100, DIRECCION.length());
+//            } else {
+//                this.DIRECCION = DIRECCION.trim();
+//            }
+//        }
     }
 
     public String getCOMPLEMENTODIRECCION() {
-        return COMPLEMENTODIRECCION;
+        return util.validarLogitud(COMPLEMENTODIRECCION, 100);
     }
 
     public void setCOMPLEMENTODIRECCION(String COMPLEMENTODIRECCION) {
-        this.COMPLEMENTODIRECCION = COMPLEMENTODIRECCION;
+        this.COMPLEMENTODIRECCION = util.validarLogitud(COMPLEMENTODIRECCION, 100);
     }
 
     public String getMUNICIPIO() {
@@ -96,59 +108,59 @@ public class EReporteClientes {
     }
 
     public String getEMAIL() {
-        return EMAIL;
+        return util.validarLogitud(EMAIL, 200);
     }
 
     public void setEMAIL(String EMAIL) {
-        this.EMAIL = EMAIL;
+        this.EMAIL = util.validarLogitud(EMAIL, 200);
     }
 
     public String getTELEFONO() {
-        return TELEFONO;
+        return util.validarLogitud(TELEFONO, 20);
     }
 
     public void setTELEFONO(String TELEFONO) {
-        this.TELEFONO = TELEFONO;
+        this.TELEFONO = util.validarLogitud(TELEFONO, 20);
     }
 
     public String getNIT() {
-        return NIT;
+        return util.validarLogitud(NIT, 25);
     }
 
     public void setNIT(String NIT) {
-        this.NIT = NIT;
+        this.NIT = util.validarLogitud(NIT, 25);
     }
 
     public String getCAMPO1() {
-        return CAMPO1;
+        return util.validarLogitud(CAMPO1, 200);
     }
 
     public void setCAMPO1(String CAMPO1) {
-        this.CAMPO1 = CAMPO1;
+        this.CAMPO1 = util.validarLogitud(CAMPO1, 200);
     }
 
     public String getCAMPO2() {
-        return CAMPO2;
+        return util.validarLogitud(CAMPO2, 200);
     }
 
     public void setCAMPO2(String CAMPO2) {
-        this.CAMPO2 = CAMPO2;
+        this.CAMPO2 = util.validarLogitud(CAMPO2, 200);
     }
 
     public String getCAMPO3() {
-        return CAMPO3;
+        return util.validarLogitud(CAMPO3, 200);
     }
 
     public void setCAMPO3(String CAMPO3) {
-        this.CAMPO3 = CAMPO3;
+        this.CAMPO3 = util.validarLogitud(CAMPO3, 200);
     }
 
     public String getCAMPO4() {
-        return CAMPO4;
+        return util.validarLogitud(CAMPO4, 200);
     }
 
     public void setCAMPO4(String CAMPO4) {
-        this.CAMPO4 = CAMPO4;
+        this.CAMPO4 = util.validarLogitud(CAMPO4, 200);
     }
 
     public String getRECOGEOFICINA() {
