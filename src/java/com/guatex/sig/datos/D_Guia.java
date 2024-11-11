@@ -42,7 +42,7 @@ public class D_Guia {
     public E_RespuestaGuia BuscarRangoFechaJGuiasNoImpresas(E_Guia datos) {
         List<E_Guia> listadoGuias = new LinkedList<>();
 
-        String query = " SELECT "
+        String query = " SELECT distinct"
                 + " SI.ESTADO AS TIPOGUIA, "
                 + " J.NOGUIA AS NOGUIA,  "
                 + " J.CONTACTO,  "
