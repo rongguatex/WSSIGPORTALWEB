@@ -5,12 +5,8 @@
  */
 package com.guatex.sig.utils;
 
-import com.guatex.sig.entidades.E_DatosGuiaMasiva;
-import com.guatex.sig.entidades.RespuestaGeneral;
-import com.guatex.sig.entidadesRespuesta.E_RespuestaGuiasMasivas;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.List;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -51,6 +47,7 @@ public class ParseadorXML {
 //            for (Object objetc : objetcs) {
             marshaller.marshal(objetc, stringWriter);
 //            }
+//            System.out.println(stringWriter.toString());
             return stringWriter.toString();
         } catch (JAXBException e) {
             e.printStackTrace();

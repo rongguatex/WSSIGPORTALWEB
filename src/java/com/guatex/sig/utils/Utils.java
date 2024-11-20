@@ -13,21 +13,6 @@ import java.util.Optional;
  */
 public class Utils {
 
-    /**
-     * Quita el valor nulo y caracteres especiales.
-     *
-     * @param var
-     * @return
-     */
-    public String limpiaStr(String var) {
-        if (var == null) {
-            return "";
-        }
-        var = var.replaceAll("null", "").replaceAll("NULL", "");
-        String strLimpio = var.replaceAll("[^a-zA-Z0-9._\\- /,*´#=:;áéíóúÁÉÍÓÚüÜñÑ\\[\\]()]", "");
-        return strLimpio.trim();
-    }
-
     public String quitaNulo(String var) {
         return var == null ? "" : var.trim();
     }
@@ -52,7 +37,7 @@ public class Utils {
      * @return valor convertido en tipo entero ó un Opcional vacío de no ser un
      * valor válido.
      */
-    public Optional<Integer> convertirAEntero(String valor) {
+    public static Optional<Integer> convertirAEntero(String valor) {
         return Optional.ofNullable(valor)
                 .map(String::trim)
                 .filter(s -> !s.isEmpty())
@@ -63,5 +48,28 @@ public class Utils {
                         return 0;
                     }
                 });
+    }
+
+    public static Optional<Double> convertirADouble(String valor) {
+        return Optional.ofNullable(valor)
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .map(s -> {
+                    try {
+                        return Double.parseDouble(s);
+                    } catch (NumberFormatException e) {
+                        return 0.0;
+                    }
+                });
+    }
+
+    /**
+     * Retorna el valor N si el valor ingresado está vacio.
+     *
+     * @param valor
+     * @return
+     */
+    public static String validaCampo(String valor) {
+        return valor.isEmpty() ? "N" : valor.trim();
     }
 }

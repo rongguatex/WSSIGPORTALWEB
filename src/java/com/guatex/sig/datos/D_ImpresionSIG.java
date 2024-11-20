@@ -6,7 +6,6 @@
 package com.guatex.sig.datos;
 
 import com.guatex.sig.entidades.E_ImpresionSIG;
-import com.guatex.sig.entidades.RespuestaGeneral;
 import com.guatex.sig.utils.ConvertidorXML;
 import com.guatex.sig.utils.Utils;
 import java.sql.Connection;
@@ -44,7 +43,7 @@ public class D_ImpresionSIG {
 
                         try (ResultSet rs = st.executeQuery()) {
                             while (rs.next()) {
-                                if (util.limpiaStr(rs.getString("IMPRESO")).equalsIgnoreCase("S")) {
+                                if (util.quitaNulo(rs.getString("IMPRESO")).equalsIgnoreCase("S")) {
                                     isPrinted = true;
                                 }
                             }

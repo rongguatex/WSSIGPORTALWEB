@@ -206,22 +206,22 @@ public class DReporteClientes {
                 EReporteClientes cliente = new EReporteClientes();
 
                 cliente = new EReporteClientes();
-                cliente.setNOMBRE(util.limpiaStr(rs.getString("C_NOMBRE")));
-                cliente.setCONTACTO(util.limpiaStr(rs.getString("C_CONTACTO")));
-                cliente.setDIRECCION(util.limpiaStr(rs.getString("C_DIRECC")));
-                cliente.setEMAIL(util.limpiaStr(rs.getString("C_EMAIL")));
-                cliente.setTELEFONO(util.limpiaStr(rs.getString("C_TEL")));
-                cliente.setNIT(util.limpiaStr(rs.getString("C_NIT")));
-                cliente.setCAMPO1(util.limpiaStr(rs.getString("CAMPO1")).replaceAll("/", ""));
-                cliente.setCAMPO2(util.limpiaStr(rs.getString("CAMPO2")).replaceAll("/", ""));
-                cliente.setCAMPO3(util.limpiaStr(rs.getString("CAMPO3")).replaceAll("/", ""));
-                cliente.setCAMPO4(util.limpiaStr(rs.getString("CAMPO4")).replaceAll("/", ""));
-                cliente.setRECOGEOFICINA(util.limpiaStr(rs.getString("RECOGEOFICINA")));
-                cliente.setMUNICIPIO(util.limpiaStr(rs.getString("C_MNCP")));
-                cliente.setPUNTO(util.limpiaStr(rs.getString("C_PTO")));
+                cliente.setNOMBRE(util.quitaNulo(rs.getString("C_NOMBRE")));
+                cliente.setCONTACTO(util.quitaNulo(rs.getString("C_CONTACTO")));
+                cliente.setDIRECCION(util.quitaNulo(rs.getString("C_DIRECC")));
+                cliente.setEMAIL(util.quitaNulo(rs.getString("C_EMAIL")));
+                cliente.setTELEFONO(util.quitaNulo(rs.getString("C_TEL")));
+                cliente.setNIT(util.quitaNulo(rs.getString("C_NIT")));
+                cliente.setCAMPO1(util.quitaNulo(rs.getString("CAMPO1")).replaceAll("/", ""));
+                cliente.setCAMPO2(util.quitaNulo(rs.getString("CAMPO2")).replaceAll("/", ""));
+                cliente.setCAMPO3(util.quitaNulo(rs.getString("CAMPO3")).replaceAll("/", ""));
+                cliente.setCAMPO4(util.quitaNulo(rs.getString("CAMPO4")).replaceAll("/", ""));
+                cliente.setRECOGEOFICINA(util.quitaNulo(rs.getString("RECOGEOFICINA")));
+                cliente.setMUNICIPIO(util.quitaNulo(rs.getString("C_MNCP")));
+                cliente.setPUNTO(util.quitaNulo(rs.getString("C_PTO")));
                 cliente.setPADRE(PADRE);
                 cliente.setCODCOB(CODCOB);
-                cliente.setCODIGO(util.limpiaStr(rs.getString("CODIGO")));
+                cliente.setCODIGO(util.quitaNulo(rs.getString("CODIGO")));
                 clientes.add(cliente);
             }
 
@@ -263,8 +263,8 @@ public class DReporteClientes {
             rs = ps.executeQuery();
 
             while (rs.next()) {
-                reporte.setPADRE(util.limpiaStr(rs.getString("PADRE")));
-                reporte.setUNIFICA(util.limpiaStr(rs.getString("UNIFICACLI")));
+                reporte.setPADRE(util.quitaNulo(rs.getString("PADRE")));
+                reporte.setUNIFICA(util.quitaNulo(rs.getString("UNIFICACLI")));
             }
 
         } catch (Exception ex) {

@@ -32,7 +32,7 @@ public class D_Detalle {
      */
     public E_RespuestaDetalle buscarDetalleGuia(String noguia) {
         List<E_DetalleLinea> detalle = new LinkedList<>();
-        if (!util.limpiaStr(noguia).isEmpty()) {
+        if (!util.quitaNulo(noguia).isEmpty()) {
             String query = "SELECT "
                     + "	JGD.LINEA AS LINEA, "
                     + "	JGD.PIEZAS AS PIEZAS,"
@@ -44,16 +44,16 @@ public class D_Detalle {
                     + " WHERE JGD.NOGUIA = ? ";
             try (Connection con = new Conexion().AbrirConexion();
                     PreparedStatement ps = con.prepareStatement(query)) {
-                ps.setString(1, util.limpiaStr(noguia));
+                ps.setString(1, util.quitaNulo(noguia));
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
                         E_DetalleLinea linea = new E_DetalleLinea();
-                        linea.setLINEA(util.limpiaStr(rs.getString("LINEA")));
-                        linea.setPIEZAS(convertirAEntero(util.limpiaStr(rs.getString("PIEZAS"))).orElse(0));
-                        linea.setTIPOENVIO(util.limpiaStr(rs.getString("TIPOENVIO")));
-                        linea.setDESCRIPCIONENVIO(util.limpiaStr(rs.getString("DESCRIPCIONENVIO")));
-                        linea.setPESO(util.limpiaStr(rs.getString("PESO")));
-                        linea.setTARIFA(util.limpiaStr(rs.getString("TARIFA")));
+                        linea.setLINEA(util.quitaNulo(rs.getString("LINEA")));
+                        linea.setPIEZAS(convertirAEntero(util.quitaNulo(rs.getString("PIEZAS"))).orElse(0));
+                        linea.setTIPOENVIO(util.quitaNulo(rs.getString("TIPOENVIO")));
+                        linea.setDESCRIPCIONENVIO(util.quitaNulo(rs.getString("DESCRIPCIONENVIO")));
+                        linea.setPESO(util.quitaNulo(rs.getString("PESO")));
+                        linea.setTARIFA(util.quitaNulo(rs.getString("TARIFA")));
                         detalle.add(linea);
                     }
 
@@ -94,7 +94,7 @@ public class D_Detalle {
     }
 
     public boolean EliminarGuiasDetalle(String noguia) {
-        noguia = util.limpiaStr(noguia);
+        noguia = util.quitaNulo(noguia);
         String query = "DELETE FROM JGUIASDETALLE WHERE NOGUIA = ?";
         try (Connection con = new Conexion().AbrirConexion();
                 PreparedStatement ps = con.prepareStatement(query)) {

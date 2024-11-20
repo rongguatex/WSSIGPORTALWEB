@@ -44,7 +44,8 @@ public class WSSIGCLIENTES {
 
     @WebMethod(operationName = "busquedaCliente")
     public String busquedaCliente(@WebParam(name = "datos") String datos) {
-        E_Cliente cliente = new ConvertidorXML().extraerCliente(datos);
+        E_Credenciales credenciales = (E_Credenciales) new ParseadorXML().parseoXML(datos, E_Credenciales.class);
+        E_Cliente cliente = new E_Cliente(credenciales);
         E_respuestaClientes respuesta = new D_Clientes().ObtenerCliente(cliente);
         return new ConvertidorXML().respuestaXMLDatosCliente(respuesta).replaceAll("&", "&amp;");
     }
@@ -106,7 +107,6 @@ public class WSSIGCLIENTES {
      * Busca los datos de una guía que no haya sido impresa y tampoco entregada.
      *
      * @param XML
-     * @param noguia - número de guía a buscar.
      * @return - xml con datos de la guía encontrada, en caso de error xml con
      * código de respuesta 400
      */

@@ -22,7 +22,7 @@ public class D_GuiasHijas {
         String query = "DELETE JGUIASHIJAS WHERE HNOGUIA = ? ";
         try (Connection con = new Conexion().AbrirConexion();
                 PreparedStatement ps = con.prepareStatement(query)) {
-            ps.setString(1, util.limpiaStr(noguia));
+            ps.setString(1, util.quitaNulo(noguia));
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             System.err.println("Ocurrio un error " + e.getLocalizedMessage());

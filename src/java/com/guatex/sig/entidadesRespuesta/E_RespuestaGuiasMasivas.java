@@ -33,19 +33,19 @@ public class E_RespuestaGuiasMasivas {
 
     @XmlElementWrapper(name = "LISTADOSERVICIOS")
     @XmlElement(name = "SERVICIO")
-    private List<RespuestaTomaServicio> resupuestaTomaServicio;
+    private List<RespuestaTomaServicio> resTomaServicio;
 
     public E_RespuestaGuiasMasivas(RespuestaGeneral respuesta, List<E_DatosGuiaMasiva> listaDatosGuia) {
         this.listaDatosGuia = listaDatosGuia;
         this.respuesta = respuesta;
     }
 
-    public E_RespuestaGuiasMasivas(RespuestaGeneral respuesta, List<E_DatosGuiaMasiva> listaDatosGuia, List<RespuestaTomaServicio> resupuestaTomaServicio) {
+    public E_RespuestaGuiasMasivas(RespuestaGeneral respuesta, List<E_DatosGuiaMasiva> listaDatosGuia, List<RespuestaTomaServicio> resTM) {
         this.respuesta = respuesta;
         this.listaDatosGuia = listaDatosGuia;
-        this.resupuestaTomaServicio = resupuestaTomaServicio;
+        this.resTomaServicio = resTM;
     }
-
+    
     public E_RespuestaGuiasMasivas() {
     }
 
@@ -65,16 +65,16 @@ public class E_RespuestaGuiasMasivas {
         this.listaDatosGuia = listaDatosGuia;
     }
 
-    public List<RespuestaTomaServicio> getResupuestaTomaServicio() {
-        return resupuestaTomaServicio;
+    public List<RespuestaTomaServicio> getResTomaServicio() {
+        return resTomaServicio;
     }
 
-    public void setResupuestaTomaServicio(List<RespuestaTomaServicio> resupuestaTomaServicio) {
-        this.resupuestaTomaServicio = resupuestaTomaServicio;
+    public void setResTomaServicio(List<RespuestaTomaServicio> resTomaServicio) {
+        this.resTomaServicio = resTomaServicio;
     }
 
     @Override
     public String toString() {
-        return "E_RespuestaGuiasMasivas{" + "respuesta=" + respuesta + ", listaDatosGuia=" + listaDatosGuia + ", resupuestaTomaServicio=" + resupuestaTomaServicio + '}';
+        return "E_RespuestaGuiasMasivas{" + "respuesta=" + respuesta + ", listaDatosGuia=" + listaDatosGuia + ", resTomaServicio=" + resTomaServicio + '}';
     }
 }

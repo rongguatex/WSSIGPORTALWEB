@@ -9,6 +9,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -21,10 +22,14 @@ public class RespuestaGeneral {
 
     @XmlElement(name = "CODIGO")
     private String codigo = "";
-    
+
     @XmlElement(name = "MENSAJE")
     private String mensaje = "";
-    
+
+    @XmlElementWrapper(name = "DETALLESERVICIOS")
+    @XmlElement(name = "SERVICIO")
+    private List<RespuestaTomaServicio> detalles;
+
     private List<String> errores;
 
     public RespuestaGeneral(String codigo, String mensaje) {
@@ -57,6 +62,14 @@ public class RespuestaGeneral {
         this.mensaje = mensaje;
     }
 
+    public List<RespuestaTomaServicio> getDetalles() {
+        return detalles;
+    }
+
+    public void setDetalles(List<RespuestaTomaServicio> detalles) {
+        this.detalles = detalles;
+    }
+
     public List<String> getErrores() {
         return errores;
     }
@@ -67,7 +80,7 @@ public class RespuestaGeneral {
 
     @Override
     public String toString() {
-        return "RespuestaCodigoMensaje{" + "codigo=" + codigo + ", mensaje=" + mensaje + ", errores=" + errores + '}';
+        return "RespuestaGeneral{" + "codigo=" + codigo + ", mensaje=" + mensaje + ", detalles=" + detalles + ", errores=" + errores + '}';
     }
 
 }

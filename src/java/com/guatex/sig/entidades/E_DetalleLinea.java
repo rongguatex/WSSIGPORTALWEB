@@ -5,7 +5,6 @@
  */
 package com.guatex.sig.entidades;
 
-import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -211,12 +210,7 @@ public class E_DetalleLinea {
 
     @Override
     public String toString() {
-        return "E_DetalleLinea{" + "    _IDGUIA=" + _IDGUIA + ", _NOGUIA=" + _NOGUIA + " _LINEA, " + _LINEA + " \n"
-                + "     _TIPOENVIO= " + _TIPOENVIO + ", _PIEZAS= " + _PIEZAS + ", _PESO= " + _PESO + "\n"
-                + "     _ABVENVIO=" + _ABVENVIO + ", _DESCRIPCIONENVIO=" + _DESCRIPCIONENVIO + ", \n"
-                + ",    _PESOTOTAL=" + _PESOTOTAL + ", _COSTOTARIFA=" + _COSTOTARIFA + ", \n"
-                + "     _TARIFA=" + _TARIFA + ", _MANUAL=" + _MANUAL + ", _PBULTOS=" + _PBULTOS + ", \n"
-                + "     _TABLAZONA=" + _TABLAZONA + ", _CODTARIFA=" + _CODTARIFA + ", _ESTADO=" + _ESTADO + "\n" + '}' + "\n";
+        return "E_DetalleLinea{" + "_LINEA=" + _LINEA + ", _PIEZAS=" + _PIEZAS + ", _TIPOENVIO=" + _TIPOENVIO + ", _PESO=" + _PESO + ", _TARIFA=" + _TARIFA + '}';
     }
 
 }

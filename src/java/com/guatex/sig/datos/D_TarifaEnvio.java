@@ -5,51 +5,52 @@
  */
 package com.guatex.sig.datos;
 
-import com.guatex.sig.entidades.E_TarifaEnvio;
+import com.guatex.sig.entidades.E_FacCliente;
 import com.guatex.sig.utils.Utils;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.LinkedList;
+import java.util.List;
+import com.guatex.sig.utils.Pair;
 
 /**
  *
  * @author RGALICIA
  */
 public class D_TarifaEnvio {
-    
-     Utils util = new Utils();
 
-    public E_TarifaEnvio BuscarTipoEnvio(String CodigoTarifa, String CodigoEnvio) {
-        if (util.limpiaStr(CodigoTarifa).isEmpty() || util.limpiaStr(CodigoEnvio).isEmpty()) {
-             return null;
-        }
-        //ESTE PROCESO SE PUEDE MEJORAR
-        System.out.println("codtarifa " + CodigoTarifa + " codigo envio " + CodigoEnvio);
-        String query = "SELECT CODIGO, NOMBRE, ISNULL(PESOFIJO,0) PESOFIJO, ABREVIATURA FROM TRFENVIOS "
-                + "WHERE CODIGO IN (SELECT CODIGOENVIO FROM TRFTARIFARIO "
-                + "WHERE CODIGOTARIFA = ? AND CODIGO = ? "
-                + "GROUP BY CODIGOENVIO)";
+    Utils util = new Utils();
 
+    public List<Pair<String, String>> obtenerTiposEnvio(E_FacCliente faccliente) {
         try (Connection con = new Conexion().AbrirConexion();
-                PreparedStatement ps = con.prepareStatement(query)) {
-            ps.setString(1, CodigoTarifa);
-            ps.setString(2, CodigoEnvio);
-
+                PreparedStatement ps = con.prepareStatement(""
+                        + " SELECT  "
+                        + "    TE.CODIGO, "
+                        + "    ISNULL(TE.PESOFIJO, 0) AS PESOFIJO "
+                        + "FROM  "
+                        + "    TRFENVIOS TE "
+                        + "WHERE  "
+                        + "    TE.CODIGO IN ( "
+                        + "        SELECT DISTINCT TF.CODIGOENVIO  "
+                        + "        FROM TRFTARIFARIO TF "
+                        + "        WHERE TF.CODIGOTARIFA IN (?, ?, ?) "
+                        + "    ) "
+                        + "ORDER BY CODIGO ASC; ")) { //1. tarifa normal, 2. tarifa extra, 3. tarifa única.
+            ps.setString(1, faccliente.getTARIFANORMAL());
+            ps.setString(2, faccliente.getTARIFAEXTRA());
+            ps.setString(3, faccliente.getTARIFAUNICA());
+            List<Pair<String, String>> resultado = new LinkedList<>();
             try (ResultSet rs = ps.executeQuery()) {
-                E_TarifaEnvio tipoenvio = null;
                 while (rs.next()) {
-                    tipoenvio = new E_TarifaEnvio();
-                    tipoenvio.setCODIGO(util.limpiaStr(rs.getString("CODIGO")));
-                    tipoenvio.setNOMBRE(util.limpiaStr(rs.getString("NOMBRE")));
-                    tipoenvio.setPESOFIJO(util.limpiaStr(rs.getString("PESOFIJO")));
-                    tipoenvio.setABREVIATURA(util.limpiaStr(rs.getString("ABREVIATURA")));
+                    Pair<String, String> pair = new Pair<>(util.quitaNulo(rs.getString("CODIGO")), util.quitaNulo(rs.getString("PESOFIJO")));
+                    resultado.add(pair);
                 }
-                return tipoenvio;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+            return resultado;
+        } catch (Exception e) {
+            System.err.println("Ocurrió un error al obtener listado de tipos de envío - " + e.getMessage());
         }
+        return null;
     }
 }

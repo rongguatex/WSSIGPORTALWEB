@@ -26,7 +26,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
 public class ConvertidorXML {
-    
+
     Utils util = new Utils();
 
     public E_Cliente extraerCliente(String xml) {
@@ -425,7 +425,8 @@ public class ConvertidorXML {
             }
         }
         XML += "</DETALLE_GUIA>"
-                + "</RESPUESTA>";System.out.println(XML);
+                + "</RESPUESTA>";
+        System.out.println(XML);
         return XML;
     }
 
@@ -467,8 +468,7 @@ public class ConvertidorXML {
 
     public RespuestaGeneral parseoRespuestaTomaServicio(String xml) {
         if (xml.contains("ERROR")) {
-            System.out.println("ERROR: " + getTag("DESCIPCION", xml));
-            return new RespuestaGeneral("9999", getTag("DESCRIPCION", xml));
+            return new RespuestaGeneral("400", getTag("DESCRIPCION", xml));
         }
         return new RespuestaGeneral("0000", "Guía insertada correctamente.");
     }
@@ -526,7 +526,7 @@ public class ConvertidorXML {
                 + addTag("MENSAJE", "GUÍA YA HA SIDO IMPRESA.")
                 + "</RESPUESTA>";
     }
-    
+
     public String Unauthorized() {
         return "<RESPUESTA>"
                 + addTag("CODIGO", "401")

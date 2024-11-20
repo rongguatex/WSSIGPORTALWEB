@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class D_Depto_Municipios {
+
     Utils util = new Utils();
 
     public List<E_Departamento> ObtenerDeptosMunicipios() {
@@ -47,7 +48,7 @@ public class D_Depto_Municipios {
                                 NuevoMunicipio.setCODIGO(util.quitaNulo(rs.getString("COD_MUN")));
                                 NuevoMunicipio.setNOMBRE(util.quitaNulo(rs.getString("NOM_MUN")));
                                 departamento.getMUNICIPIOS().add(NuevoMunicipio);
-                               
+
                             }
                         }
                     } else {
@@ -67,5 +68,28 @@ public class D_Depto_Municipios {
             e.printStackTrace(System.err);
             return null;
         }
+    }
+
+    public boolean validaExistenciaCodigoMunicipio(String ptoCobertura, String municipioCobertura) {
+        if (util.quitaNulo(ptoCobertura).isEmpty() && util.quitaNulo(municipioCobertura).isEmpty()) {
+            return false;
+        }
+
+        try (Connection con = new Conexion().AbrirConexion();
+                PreparedStatement ps = con.prepareStatement(""
+                        + " SELECT m.NOMBRE, m.PUNTODECOBERTURA "
+                        + " FROM TRFMUNICIPIOS as m "
+                        + " WHERE m.PUNTODECOBERTURA = ? AND m.NOMBRE = ? ")) {
+            ps.setString(1, ptoCobertura);
+            ps.setString(2, municipioCobertura);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Ocurrió un error al validar existencia de codigo y municipio - " + e);
+        }
+        return false;
     }
 }

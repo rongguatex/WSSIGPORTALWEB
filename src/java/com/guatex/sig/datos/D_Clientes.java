@@ -26,29 +26,11 @@ public class D_Clientes {
      */
     public E_respuestaClientes ObtenerListadoClientes(E_Cliente cliente) {
         List<E_Cliente> clientes = new LinkedList<>();
-        String Query = "";
-
-        if (cliente.getUNIFICACLI().equalsIgnoreCase("S")) {
-//            if (cliente.getCODCOB().equalsIgnoreCase(cliente.getPADRE())) {
-                Query = "SELECT  CODIGO, CODCOB, PADRE, C_NOMBRE AS NOMBRE, C_CONTACTO AS CONTACTO, C_DIRECC AS DIRECCION, "
-                        + "C_MNCP AS UBICACION, C_PTO AS PUNTO, C_EMAIL AS CORREO, C_TEL AS TELEFONO, C_NIT AS NIT, RECOGEOFICINA, "
-                        + "CAMPO1, CAMPO2, CAMPO3, CAMPO4 FROM FACCLICLIENTES "
-                        + "WHERE ISNULL(CODIGO,'') LIKE ? AND ISNULL(C_NOMBRE,'') LIKE ? AND ISNULL(C_CONTACTO,'') LIKE ? AND ISNULL(C_TEL,'') LIKE ? "
-                        + "AND PADRE = ? ";
-//            } else {
-//                Query = "SELECT  CODIGO, CODCOB, PADRE, C_NOMBRE AS NOMBRE, C_CONTACTO AS CONTACTO, C_DIRECC AS DIRECCION, "
-//                        + "C_MNCP AS UBICACION, C_PTO AS PUNTO, C_EMAIL AS CORREO, C_TEL AS TELEFONO, C_NIT AS NIT, RECOGEOFICINA,"
-//                        + "CAMPO1, CAMPO2, CAMPO3, CAMPO4 FROM FACCLICLIENTES "
-//                        + "WHERE ISNULL(CODIGO,'') LIKE ? AND ISNULL(C_NOMBRE,'') LIKE ? AND ISNULL(C_CONTACTO,'') LIKE ? AND ISNULL(C_TEL,'') LIKE ? "
-//                        + "AND PADRE = ? AND CODCOB = ? ";
-//            }
-        } else {
-            Query = "SELECT  CODIGO, CODCOB, PADRE, C_NOMBRE AS NOMBRE, C_CONTACTO AS CONTACTO, C_DIRECC AS DIRECCION, "
-                    + "C_MNCP AS UBICACION, C_PTO AS PUNTO, C_EMAIL AS CORREO, C_TEL AS TELEFONO, C_NIT AS NIT, RECOGEOFICINA,"
-                    + "CAMPO1, CAMPO2, CAMPO3, CAMPO4 FROM FACCLICLIENTES "
-                    + "WHERE ISNULL(CODIGO,'') LIKE ? AND ISNULL(C_NOMBRE,'') LIKE ? AND ISNULL(C_CONTACTO,'') LIKE ? AND ISNULL(C_TEL,'') LIKE ? "
-                    + "AND CODCOB = ? ";
-        }
+        String Query = "SELECT  CODIGO, CODCOB, PADRE, C_NOMBRE AS NOMBRE, C_CONTACTO AS CONTACTO, C_DIRECC AS DIRECCION, "
+                + "C_MNCP AS UBICACION, C_PTO AS PUNTO, C_EMAIL AS CORREO, C_TEL AS TELEFONO, C_NIT AS NIT, RECOGEOFICINA, "
+                + "CAMPO1, CAMPO2, CAMPO3, CAMPO4 FROM FACCLICLIENTES "
+                + "WHERE ISNULL(CODIGO,'') LIKE ? AND ISNULL(C_NOMBRE,'') LIKE ? AND ISNULL(C_CONTACTO,'') LIKE ? AND ISNULL(C_TEL,'') LIKE ? "
+                + "AND PADRE = ? ";
 
         try (Connection con = new Conexion().AbrirConexion();
                 PreparedStatement ps = con.prepareStatement(Query)) {
@@ -56,17 +38,7 @@ public class D_Clientes {
             ps.setString(2, "%" + util.quitaNulo(cliente.getNOMBRE()) + "%");
             ps.setString(3, "%" + util.quitaNulo(cliente.getCONTACTO()) + "%");
             ps.setString(4, "%" + util.quitaNulo(cliente.getTELEFONO()) + "%");
-
-            if (cliente.getUNIFICACLI().equalsIgnoreCase("S")) {
-//                if (cliente.getCODCOB().equalsIgnoreCase(cliente.getPADRE())) {
-                    ps.setString(5, util.quitaNulo(cliente.getPADRE()));
-//                } else {
-//                    ps.setString(5, util.quitaNulo(cliente.getPADRE()));
-//                    ps.setString(6, util.quitaNulo(cliente.getCODCOB()));
-//                }
-            } else {
-                ps.setString(5, util.quitaNulo(cliente.getCODCOB()));
-            }
+            ps.setString(5, util.quitaNulo(cliente.getPADRE()));
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -153,44 +125,16 @@ public class D_Clientes {
      */
     public E_respuestaClientes ObtenerCliente(E_Cliente cliente) {
         List<E_Cliente> datosCliente = new LinkedList<>();
-        String Query = "";
-        
-        if (cliente.getUNIFICACLI().equalsIgnoreCase("S")) {
-//            if (cliente.getCODCOB().equalsIgnoreCase(cliente.getPADRE())) {
-                Query = "SELECT  CODIGO, CODCOB, PADRE, C_NOMBRE AS NOMBRE, C_CONTACTO AS CONTACTO, C_DIRECC AS DIRECCION, "
-                        + "C_MNCP AS UBICACION, C_PTO AS PUNTO, C_EMAIL AS CORREO, C_TEL AS TELEFONO, C_NIT AS NIT, RECOGEOFICINA, "
-                        + "CAMPO1, CAMPO2, CAMPO3, CAMPO4 FROM FACCLICLIENTES "
-                        + "WHERE ISNULL(CODIGO,'') = ? "
-                        + "AND PADRE = ? ";
-//            } else {
-//                Query = "SELECT  CODIGO, CODCOB, PADRE, C_NOMBRE AS NOMBRE, C_CONTACTO AS CONTACTO, C_DIRECC AS DIRECCION, "
-//                        + "C_MNCP AS UBICACION, C_PTO AS PUNTO, C_EMAIL AS CORREO, C_TEL AS TELEFONO, C_NIT AS NIT, RECOGEOFICINA,"
-//                        + "CAMPO1, CAMPO2, CAMPO3, CAMPO4 FROM FACCLICLIENTES "
-//                        + "WHERE ISNULL(CODIGO,'') = ? "
-//                        + "AND PADRE = ? AND CODCOB = ? ";
-//            }
-        } else {
-            Query = "SELECT  CODIGO, CODCOB, PADRE, C_NOMBRE AS NOMBRE, C_CONTACTO AS CONTACTO, C_DIRECC AS DIRECCION, "
-                    + "C_MNCP AS UBICACION, C_PTO AS PUNTO, C_EMAIL AS CORREO, C_TEL AS TELEFONO, C_NIT AS NIT, RECOGEOFICINA,"
-                    + "CAMPO1, CAMPO2, CAMPO3, CAMPO4 FROM FACCLICLIENTES "
-                    + "WHERE ISNULL(CODIGO,'') = ?  "
-                    + "AND CODCOB = ? ";
-        }
-        
+        String Query = "SELECT  CODIGO, CODCOB, PADRE, C_NOMBRE AS NOMBRE, C_CONTACTO AS CONTACTO, C_DIRECC AS DIRECCION, "
+                + "C_MNCP AS UBICACION, C_PTO AS PUNTO, C_EMAIL AS CORREO, C_TEL AS TELEFONO, C_NIT AS NIT, RECOGEOFICINA, "
+                + "CAMPO1, CAMPO2, CAMPO3, CAMPO4 FROM FACCLICLIENTES "
+                + "WHERE ISNULL(CODIGO,'') = ? "
+                + "AND PADRE = ? ";
+
         try (Connection con = new Conexion().AbrirConexion();
                 PreparedStatement ps = con.prepareStatement(Query)) {
             ps.setString(1, util.quitaNulo(cliente.getCODIGO()));
-
-            if (cliente.getUNIFICACLI().equalsIgnoreCase("S")) {
-//                if (cliente.getCODCOB().equalsIgnoreCase(util.quitaNulo(cliente.getPADRE()))) {
-                    ps.setString(2, util.quitaNulo(cliente.getPADRE()));
-//                } else {  
-//                    ps.setString(2, util.quitaNulo(cliente.getPADRE()));
-//                    ps.setString(3, util.quitaNulo(cliente.getCODCOB()));
-//                }
-            } else {
-                ps.setString(2, util.quitaNulo(cliente.getCODCOB()));
-            }
+            ps.setString(2, util.quitaNulo(cliente.getPADRE()));
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -207,9 +151,6 @@ public class D_Clientes {
                     NuevoCliente.setNIT(util.quitaNulo(rs.getString("NIT")));
                     NuevoCliente.setTELEFONO(util.quitaNulo(rs.getString("TELEFONO")));
                     NuevoCliente.setRECOGEOFICINA(util.quitaNulo(rs.getString("RECOGEOFICINA")));
-
-                    System.out.println("punto [" + NuevoCliente.getPUNTO() + "]");
-                    System.out.println("ubicación [" + NuevoCliente.getUBICACION() + "]");
 
                     if (rs.getString("CAMPO1") != null) {
                         if (util.quitaNulo(rs.getString("CAMPO1")).contains("/")) {

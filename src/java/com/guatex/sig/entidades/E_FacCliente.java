@@ -33,9 +33,9 @@ public class E_FacCliente {
     private String _TARIFAUNICA;
     private String _TARIFAESPECIAL;
     private String _UNIFICACLI;
-    private String _IMPRIMEGUIAS;
-    private String _MUESTRASEGURO;
-    private String _MUESTRARECOOFI;
+    private double _MAXPESO = 0.0;
+    private double _COD_MINMONTO = 0.0;
+    private double _COD_MAXMONTO = 0.0;
 
     public String getTARIFANORMAL() {
         return _TARIFANORMAL;
@@ -75,30 +75,6 @@ public class E_FacCliente {
 
     public void setUNIFICACLI(String _UNIFICACLI) {
         this._UNIFICACLI = _UNIFICACLI;
-    }
-
-    public String getIMPRIMEGUIAS() {
-        return _IMPRIMEGUIAS;
-    }
-
-    public void setIMPRIMEGUIAS(String _IMPRIMEGUIAS) {
-        this._IMPRIMEGUIAS = _IMPRIMEGUIAS;
-    }
-
-    public String getMUESTRASEGURO() {
-        return _MUESTRASEGURO;
-    }
-
-    public void setMUESTRASEGURO(String _MUESTRASEGURO) {
-        this._MUESTRASEGURO = _MUESTRASEGURO;
-    }
-
-    public String getMUESTRARECOOFI() {
-        return _MUESTRARECOOFI;
-    }
-
-    public void setMUESTRARECOOFI(String _MUESTRARECOOFI) {
-        this._MUESTRARECOOFI = _MUESTRARECOOFI;
     }
 
     public String getLCOD() {
@@ -288,18 +264,33 @@ public class E_FacCliente {
         }
     }
 
+    public double getCOD_MINMONTO() {
+        return _COD_MINMONTO;
+    }
+
+    public void setCOD_MINMONTO(double _COD_MINMONTO) {
+        this._COD_MINMONTO = _COD_MINMONTO;
+    }
+
+    public double getCOD_MAXMONTO() {
+        return _COD_MAXMONTO;
+    }
+
+    public void setCOD_MAXMONTO(double _COD_MAXMONTO) {
+        this._COD_MAXMONTO = _COD_MAXMONTO;
+    }
+
+    public double getMAXPESO() {
+        return _MAXPESO;
+    }
+
+    public void setMAXPESO(double _MAXPESO) {
+        this._MAXPESO = _MAXPESO;
+    }
+
     @Override
     public String toString() {
-        return "\n\nE_FacCliente{" + "_CODIGO=" + _CODIGO + ", _NOMBRE=" + _NOMBRE + ",  \n"
-                + "_CLIENTE=" + _CLIENTE + ", _TELEFONO=" + _TELEFONO + ", _CORREO=" + _CORREO + ", \n "
-                + "_MUNICIPIO=" + _MUNICIPIO + ", _LOCALIDAD=" + _LOCALIDAD + ", _NIT=" + _NIT + ", \n "
-                + "_PUNTO=" + _PUNTO + ", _PADRE=" + _PADRE + ", _DIRECCION=" + _DIRECCION + ", \n "
-                + "_LXCOBRAR=" + _LXCOBRAR + ", _LCREDITO=" + _LCREDITO + ", _LCONTADO=" + _LCONTADO + ", \n "
-                + "_LCOD=" + _LCOD + ", _LPREPAGO=" + _LPREPAGO + ", _SEABREPAQUETE=" + _SEABREPAQUETE + ", \n "
-                + "_TARIFANORMAL=" + _TARIFANORMAL + ", _TARIFAEXTRA=" + _TARIFAEXTRA + ", \n "
-                + "_TARIFAUNICA=" + _TARIFAUNICA + ", _TARIFAESPECIAL=" + _TARIFAESPECIAL + ", \n "
-                + "_UNIFICACLI=" + _UNIFICACLI + ", _IMPRIMEGUIAS=" + _IMPRIMEGUIAS + ", \n "
-                + "_MUESTRASEGURO=" + _MUESTRASEGURO + ", _MUESTRARECOOFI=" + _MUESTRARECOOFI + '}';
+        return "E_FacCliente{" + "_CODIGO=" + _CODIGO + ", _NOMBRE=" + _NOMBRE + ", _CLIENTE=" + _CLIENTE + ", _TELEFONO=" + _TELEFONO + ", _MUNICIPIO=" + _MUNICIPIO + ", _PUNTO=" + _PUNTO + ", _PADRE=" + _PADRE + ", _LCOD=" + _LCOD + ", _TARIFANORMAL=" + _TARIFANORMAL + ", _TARIFAEXTRA=" + _TARIFAEXTRA + ", _TARIFAUNICA=" + _TARIFAUNICA + ", _UNIFICACLI=" + _UNIFICACLI + ", _COD_MINMONTO=" + _COD_MINMONTO + ", _COD_MAXMONTO=" + _COD_MAXMONTO + '}';
     }
 
 }

@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 public class D_PuntoCobertura {
 
     Utils util = new Utils();
-    
+
     public E_PuntoCobertura BuscarUbicacionEspecifica(String Punto, String Ubicacion) {
         E_PuntoCobertura PuntoCobertura = new E_PuntoCobertura();
         String Query = "SELECT "
@@ -32,7 +32,7 @@ public class D_PuntoCobertura {
                 + "WHERE TRFMUNI.PUNTODECOBERTURA = ? AND TRFMUNI.NOMBRE = ?";
 
         try (Connection con = new Conexion().AbrirConexion();
-            PreparedStatement ps = con.prepareStatement(Query)) {
+                PreparedStatement ps = con.prepareStatement(Query)) {
             ps.setString(1, Punto);
             ps.setString(2, Ubicacion);
 
@@ -63,7 +63,9 @@ public class D_PuntoCobertura {
                     }
                     if ("1".equals(util.quitaNulo(rs.getString("RECOGEOFICINA")))) {
                         PuntoCobertura.setRECOGEOFICINA(true);
-                    }else{ PuntoCobertura.setRECOGEOFICINA(false);}
+                    } else {
+                        PuntoCobertura.setRECOGEOFICINA(false);
+                    }
                     String frecuencia = new ConvertirDiasAFrecuencia().Convertir(1, "", PuntoCobertura);
                     PuntoCobertura.setFRECUENCIA(frecuencia);
                 }
@@ -71,8 +73,7 @@ public class D_PuntoCobertura {
             }
         } catch (Exception e) {
             e.printStackTrace(System.err);
-            return null;
         }
-
+        return null;
     }
 }

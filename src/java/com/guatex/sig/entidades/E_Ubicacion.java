@@ -41,7 +41,7 @@ public class E_Ubicacion {
 
     @Override
     public String toString() {
-        return "-->\nE_Ubicacion{" + "\n_DEPARTAMENTO=" + _DEPARTAMENTO + ", \n_MUNICIPIO=" + _MUNICIPIO + ", \n_COBERTURA=" + _COBERTURA + "\n" + '}';
+        return "E_Ubicacion{" + "_DEPARTAMENTO=" + _DEPARTAMENTO + ", _MUNICIPIO=" + _MUNICIPIO + ", _COBERTURA=" + _COBERTURA + '}';
     }
 
 }

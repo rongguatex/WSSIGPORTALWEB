@@ -32,6 +32,18 @@ public class E_Cliente {
 
     public E_Cliente() {
     }
+    
+    public E_Cliente(E_Credenciales credenciales) {
+        this._PADRE = credenciales.getPadre();
+        this._CODCOB = credenciales.getCodcob();
+        this._CODIGO = credenciales.getCodigo();
+    }
+
+    public E_Cliente(String padre, String codcob, String codigo) {
+        this._PADRE = padre;
+        this._CODCOB = codcob;
+        this._CODIGO = codigo;
+    }
 
     public boolean isSELECCIONADO() {
         return _SELECCIONADO;
@@ -206,13 +218,6 @@ public class E_Cliente {
 
     @Override
     public String toString() {
-        return "\n\nE_Cliente{" + "_SELECCIONADO=" + _SELECCIONADO + ", _CODCOB=" + _CODCOB + ", _CODIGO=" + _CODIGO + ", _NIT=" + _NIT + ", \n"
-                + "_TELEFONO=" + _TELEFONO + ", _NOMBRE=" + _NOMBRE + ", _DIRECCION=" + _DIRECCION + ", _CONTACTO=" + _CONTACTO + ", \n"
-                + "_UBICACION=" + _UBICACION + ", _PUNTO=" + _PUNTO + ", _CORREO=" + _CORREO + ", \n"
-                + "_CAMPO1=" + _CAMPO1 + ", _CAMPO2=" + _CAMPO2 + ", _CAMPO3=" + _CAMPO3 + ", _CAMPO4=" + _CAMPO4 + ", \n"
-                + "_PADRE=" + _PADRE + ", _UNIFICACLI=" + _UNIFICACLI + ", _RECOGEOFICINA=" + _RECOGEOFICINA + ", \n"
-                + "__COBERTURA=" + __COBERTURA + ", \n"
-                + "_DEPARTAMENTO=" + _DEPARTAMENTO + ",\n"
-                + " _MUNICIPIO=" + _MUNICIPIO + '}';
+        return "E_Cliente{" + "_CODCOB=" + _CODCOB + ", _CODIGO=" + _CODIGO + ", _NOMBRE=" + _NOMBRE + ", _UBICACION=" + _UBICACION + ", _PUNTO=" + _PUNTO + ", _PADRE=" + _PADRE + ", _UNIFICACLI=" + _UNIFICACLI + ", __COBERTURA=" + __COBERTURA + ", _DEPARTAMENTO=" + _DEPARTAMENTO + ", _MUNICIPIO=" + _MUNICIPIO + '}';
     }
 }

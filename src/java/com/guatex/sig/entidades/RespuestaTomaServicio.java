@@ -17,12 +17,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "SERVICIO")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RespuestaTomaServicio {
-
-    @XmlElement(name = "NOFILA")
-    private int nofila;
     
-    @XmlElement(name = "LINEADETALLE")
-    private int lineaDetalle;
+    @XmlElement(name = "FILA")
+    private int nofila;
     
     @XmlElement(name = "RESPUESTA")
     private RespuestaGeneral general;
@@ -30,9 +27,12 @@ public class RespuestaTomaServicio {
     public RespuestaTomaServicio() {
     }
     
-    public RespuestaTomaServicio(int nofila, int lineaDetalle, RespuestaGeneral general) {
+    public RespuestaTomaServicio(RespuestaGeneral respuesta) {
+        this.general = respuesta;
+    }
+    
+    public RespuestaTomaServicio(int nofila, RespuestaGeneral general) {
         this.nofila = nofila;
-        this.lineaDetalle = lineaDetalle;
         this.general = general;
     }
 
@@ -42,14 +42,6 @@ public class RespuestaTomaServicio {
 
     public void setNofila(int nofila) {
         this.nofila = nofila;
-    }
-
-    public int getLineaDetalle() {
-        return lineaDetalle;
-    }
-
-    public void setLineaDetalle(int lineaDetalle) {
-        this.lineaDetalle = lineaDetalle;
     }
 
     public RespuestaGeneral getGeneral() {
@@ -62,6 +54,7 @@ public class RespuestaTomaServicio {
 
     @Override
     public String toString() {
-        return "RespuestaTomaServicio {" + "nofila= " + nofila + ", lineaDetalle= " + lineaDetalle + ", general= " + general + '}';
+        return "RespuestaTomaServicio{" + "nofila=" + nofila + ", general=" + general + '}';
     }
+
 }
