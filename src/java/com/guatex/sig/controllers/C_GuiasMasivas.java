@@ -10,6 +10,7 @@ import com.guatex.sig.datos.D_FacCliente;
 import com.guatex.sig.datos.D_PuntoCobertura;
 import com.guatex.sig.datos.D_TarifaEnvio;
 import com.guatex.sig.datos.D_UsuarioOpcion;
+import com.guatex.sig.entidades.ETomaServicio;
 import com.guatex.sig.entidades.E_Cliente;
 import com.guatex.sig.entidades.E_Credenciales;
 import com.guatex.sig.entidades.E_DatosGuiaMasiva;
@@ -142,8 +143,13 @@ public class C_GuiasMasivas {
                                     for (Pair<String, String> pair : codigosTipoPieza) {
                                         if (detalle.getTIPOENVIO().equals(pair.getKey())) {
                                             Double pesofijo = Utils.convertirADouble(pair.getValue()).orElse((double) 0);
-                                            if (pesofijo > 0 && pesofijo < parametrosRemitente.getMAXPESO()) {
+                                            if (pesofijo > 0) {
                                                 detalle.setPESO(pesofijo + "");
+                                            } else {
+                                                Double peso = Utils.convertirADouble(detalle.getPESO()).orElse((double) 0);
+                                                if (peso > parametrosRemitente.getMAXPESO()) {
+                                                    dato.AddStateLastPosition("Campo TIPO-PIEZA-PESO: El peso máximo permitido es " + parametrosRemitente.getMAXPESO());
+                                                }
                                             }
                                         }
                                     }
@@ -199,9 +205,8 @@ public class C_GuiasMasivas {
     }
 
     public RespuestaGeneral tomadeServicio(E_Credenciales credenciales, E_FacCliente paramsrem, E_Cliente remitente, List<E_DatosGuiaMasiva> datos) {
-        List<RespuestaTomaServicio> listadoRespuestas = new ArrayList<>();
+        List<RespuestaTomaServicio> listadoErrores = new ArrayList<>();
         int nofila = 1;
-        boolean existeError = false;
 
         for (E_DatosGuiaMasiva dato : datos) {
             String XML
@@ -248,7 +253,7 @@ public class C_GuiasMasivas {
                     + "			<LLAVE_CLIENTE>" + dato.getLLAVE() + "</LLAVE_CLIENTE>"
                     + "			" + valorCOD
                     + "			" + seabrepaquete
-                    + "			<CODIGO_COBRO_GUIA>" + remitente.getCODCOB() + "</CODIGO_COBRO_GUIA>"
+                    + "			<CODIGO_COBRO_GUIA>" + credenciales.getCodcob() + "</CODIGO_COBRO_GUIA>"
                     + "			<NOMBRE_DESTINATARIO>" + dato.getNOMBRE() + "</NOMBRE_DESTINATARIO>"
                     + "			<TELEFONO_DESTINATARIO>" + dato.getTELEFONO() + "</TELEFONO_DESTINATARIO>"
                     + "                                                " + dirdestinatario
@@ -282,26 +287,33 @@ public class C_GuiasMasivas {
 
             XML += "</TOMA_SERVICIO>";
 
-            RespuestaGeneral resp = new ConvertidorXML().parseoRespuestaTomaServicio(tomaServicio(XML));
-            listadoRespuestas.add(new RespuestaTomaServicio(nofila, resp));
-            if (resp.getCodigo().equals("400")) {
-                existeError = true;
+            String tomaservicio = tomaServicio(XML);
+
+            ETomaServicio restomaservicio = (ETomaServicio) new ParseadorXML().parseoXML(tomaservicio, ETomaServicio.class);
+
+            if (restomaservicio.getERROR() != null) {
+                ETomaServicio.Error error = restomaservicio.getERROR();
+                listadoErrores.add(new RespuestaTomaServicio(nofila, new RespuestaGeneral(error.getCODIGO(), error.getDESCRIPCION())));
+            }
+
+            if (restomaservicio.getSERVICIO() != null) {
+                ETomaServicio.EServicio servicio = restomaservicio.getSERVICIO();
+                if (quitaNulo(servicio.getCODIGO()).isEmpty()) {
+                    List<ETomaServicio.ErrorGuia> error = servicio.getCORRELATIVOERROR();
+                    for (ETomaServicio.ErrorGuia e : error) {
+                        listadoErrores.add(new RespuestaTomaServicio(new RespuestaGeneral(e.getCODIGO(), e.getDESCRIPCION())));
+                    }
+                }
             }
             nofila++;
         }
 
         RespuestaGeneral respuesta = new RespuestaGeneral();
-        respuesta.setDetalles(listadoRespuestas);
+        respuesta.setDetalles(listadoErrores);
 
-        if (listadoRespuestas.isEmpty()) {
-            respuesta.setCodigo("404");
-            respuesta.setMensaje("Ocurrió un error al genera guías, por favor, comuniquese con Guatex.");
-            return respuesta;
-        }
-
-        if (existeError) {
-            respuesta.setCodigo("400");
-            respuesta.setMensaje("Ocurrió algún error en la generación de guías.");
+        if (!listadoErrores.isEmpty()) {
+            respuesta.setCodigo("201");
+            respuesta.setMensaje("Algunas guías no han sido creadas, por favor revise el listado de errores.");
         } else {
             respuesta.setCodigo("200");
             respuesta.setMensaje("Guías creadas correctamente.");

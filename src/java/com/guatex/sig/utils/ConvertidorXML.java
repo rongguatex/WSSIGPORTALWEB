@@ -100,7 +100,6 @@ public class ConvertidorXML {
         }
         XML += "</LISTADO_CLIENTES>"
                 + "</RESPUESTA>";
-        System.out.println(XML);
         return XML;
     }
 
@@ -464,13 +463,6 @@ public class ConvertidorXML {
             tarificador.setTARIFAENVIO(getTag("TARIFAENVIO", xml));
         }
         return tarificador;
-    }
-
-    public RespuestaGeneral parseoRespuestaTomaServicio(String xml) {
-        if (xml.contains("ERROR")) {
-            return new RespuestaGeneral("400", getTag("DESCRIPCION", xml));
-        }
-        return new RespuestaGeneral("0000", "Guía insertada correctamente.");
     }
 
     /**

@@ -19,7 +19,8 @@ import javax.xml.bind.Unmarshaller;
 public class ParseadorXML {
 
     /**
-     * Deserializa la cadena XML y la combierte en un objeto..
+     * Deserializa la cadena XML y la convierte en el objeto u objetos que se
+     * declaren.
      *
      * @param xml
      * @param classesToBeBound
@@ -37,6 +38,14 @@ public class ParseadorXML {
         return null;
     }
 
+    /**
+     * Serializa el objeto u objetos enviardos convirtiendolos en una cadena
+     * XML.
+     *
+     * @param objetc
+     * @param classesToBeBound
+     * @return
+     */
     public String parseoObj(Object objetc, Class... classesToBeBound) {//List<Object> objects
         try {
             JAXBContext contexto = JAXBContext.newInstance(classesToBeBound);
