@@ -75,7 +75,6 @@ public class WSCLIENTESCRUD {
     @WebMethod(operationName = "actualizarCliente")
     public String actualizaCliente(@WebParam(name = "datos") String datos) {
         String respXML = "";
-        System.out.println(datos);
         DReporteClientes reporte = new DReporteClientes();
 
         EReporteClientes cliente = new EReporteClientes();

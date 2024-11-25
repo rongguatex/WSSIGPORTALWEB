@@ -36,7 +36,7 @@ public class E_Cliente {
     public E_Cliente(E_Credenciales credenciales) {
         this._PADRE = credenciales.getPadre();
         this._CODCOB = credenciales.getCodcob();
-        this._CODIGO = credenciales.getCodigo();
+        this._CODIGO = credenciales.getCodcob(); //Es el mismo codcob para buscar en faccliclientes el cliente local.
     }
 
     public E_Cliente(String padre, String codcob, String codigo) {

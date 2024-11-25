@@ -498,7 +498,7 @@ public class DReporteClientes {
             Query = "UPDATE FACCLICLIENTES SET C_NOMBRE = ?, C_CONTACTO = ?, C_DIRECC = ?, C_EMAIL = ?, "
                     + "C_TEL = ?, C_NIT = ?, CAMPO1 = ?, CAMPO2 = ?, CAMPO3 = ?, CAMPO4 = ?, "
                     + "RECOGEOFICINA = ?, C_MNCP = ?, C_PTO = ? "
-                    + "WHERE PADRE = ? AND CODCOB = ? AND CODIGO = ?";
+                    + "WHERE PADRE = ? AND CODIGO = ?";
 
             con = new Conexion().AbrirConexion();
             ps = con.prepareStatement(Query);
@@ -517,8 +517,8 @@ public class DReporteClientes {
             ps.setString(12, clientes.getMUNICIPIO());
             ps.setString(13, clientes.getPUNTO());
             ps.setString(14, clientes.getPADRE());
-            ps.setString(15, clientes.getCODCOB());
-            ps.setString(16, clientes.getCODIGO());
+//            ps.setString(15, clientes.getCODCOB());
+            ps.setString(15, clientes.getCODIGO());
 
             rowsAffected = ps.executeUpdate();
 

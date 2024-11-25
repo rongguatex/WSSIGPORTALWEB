@@ -244,7 +244,7 @@ public class WSSIGCLIENTES {
                 }
 
                 E_RespuestaGuia resultado = new D_Guia().obtenerGuiasEliminar(credenciales, datosUsuario);
-                
+
                 if (!resultado.getCODIGO().equals("200")) {
                     return "<WSSIGCLIENTES>"
                             + new ParseadorXML().parseoObj(
@@ -253,8 +253,8 @@ public class WSSIGCLIENTES {
                             + "</WSSIGCLIENTES>";
                 }
 
-                return "<WSSIGCLIENTES>" + 
-                        new ParseadorXML().parseoObj(resultado, E_RespuestaGuia.class).replaceAll("&", "&amp;") 
+                return "<WSSIGCLIENTES>"
+                        + new ParseadorXML().parseoObj(resultado, E_RespuestaGuia.class).replaceAll("&", "&amp;")
                         + "</WSSIGCLIENTES>";
             }
         }

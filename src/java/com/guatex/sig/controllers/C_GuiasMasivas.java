@@ -81,41 +81,6 @@ public class C_GuiasMasivas {
                 datos.setListaDatosGuia(validarClientexCodigo(datos.getListaDatosGuia(), credenciales.getCodcob(), credenciales.getPadre()));
 
                 for (E_DatosGuiaMasiva dato : datos.getListaDatosGuia()) {
-                    boolean errUbicacion = false;
-                    dato.getESTADO().clear();
-
-                    if (dato.getCODIGO().isEmpty()) {
-                        if (dato.getCODIGO_DESTINATARIO().isEmpty()) {
-                            dato.AddStateLastPosition("Campo CÓDIGO DESTINATARIO vacío.");
-                            errUbicacion = true;
-                        }
-
-                        if (dato.getMUNICIPIO_DESTINATARIO().isEmpty()) {
-                            dato.AddStateLastPosition("Campo MUNICIPIO DESTINATARIO vacío. ");
-                            errUbicacion = true;
-                        }
-                    }
-
-                    if (!errUbicacion) {
-                        if (!dato.getCODIGO().isEmpty()) {
-                            E_PuntoCobertura ubicacion = new D_Clientes().obtenerUbicacionCliCliente(datos.getCredenciales().getPadre(), dato.getCODIGO());
-                            if (ubicacion.getPUNTO() != null && ubicacion.getUBICACION() != null) {
-                                dato.setCODIGO_DESTINATARIO(ubicacion.getPUNTO());
-                                dato.setMUNICIPIO_DESTINATARIO(ubicacion.getUBICACION());
-                            } else {
-                                dato.AddStateLastPosition("Campos CÓDIGO Y MUNICIPIO DESTINATARIO inválidos.");
-                            }
-                        } else {
-                            E_PuntoCobertura puntoCobertura = new D_PuntoCobertura().BuscarUbicacionEspecifica(dato.getCODIGO_DESTINATARIO(), dato.getMUNICIPIO_DESTINATARIO().trim());
-//                            boolean existePuntoCobertura = new D_Depto_Municipios().validaExistenciaCodigoMunicipio(dato.getCODIGO_DESTINATARIO(), dato.getMUNICIPIO_DESTINATARIO());
-                            if (puntoCobertura == null) {
-                                dato.AddStateLastPosition("Campos CÓDIGO Y MUNICIPIO DESTINATARIO inválidos.");
-                            } else {
-                                dato.setCODIGODESTINO(puntoCobertura.getCODIGOPUNTO());
-                            }
-                        }
-                    }
-
                     /**
                      * Validación de TIPO PIEZA y PESO. parsea el valor tipo
                      * pieza y peso que viene en formato 1-1-1, 1-1-1... n
@@ -196,7 +161,8 @@ public class C_GuiasMasivas {
                     String respuestaFinal = "<WSSIGCLIENTES>" + new ParseadorXML().parseoObj(resTomaServicio, RespuestaGeneral.class) + "</WSSIGCLIENTES>";
                     return respuestaFinal;
                 } else {
-                    return parseoRespuestaXML(new RespuestaGeneral("202", "Existen errores en el archivo excel."), datos.getListaDatosGuia());
+                    String xmlrespuesta = parseoRespuestaXML(new RespuestaGeneral("202", "Existen errores en el archivo excel."), datos.getListaDatosGuia());
+                    return xmlrespuesta;
                 }
             }
         }
@@ -382,6 +348,7 @@ public class C_GuiasMasivas {
      */
     public List<E_DatosGuiaMasiva> validarClientexCodigo(List<E_DatosGuiaMasiva> datos, String codcob, String padre) {
         for (E_DatosGuiaMasiva datoFila : datos) {
+            datoFila.getESTADO().clear();
             if (!quitaNulo(datoFila.getCODIGO()).isEmpty()) {
                 E_Cliente cliente = new E_Cliente(padre, codcob, datoFila.getCODIGO());
                 E_respuestaClientes respuestaCliente = new D_Clientes().ObtenerCliente(cliente);
@@ -399,6 +366,15 @@ public class C_GuiasMasivas {
                         datoFila.setCAMPO2(quitaNulo(cliCliente.getCAMPO2()));
                         datoFila.setCAMPO3(quitaNulo(cliCliente.getCAMPO3()));
                         datoFila.setCAMPO4(quitaNulo(cliCliente.getCAMPO4()));
+
+                        validaDatosCliente(datoFila);
+
+                        E_PuntoCobertura puntoCobertura = new D_PuntoCobertura().BuscarUbicacionEspecifica(datoFila.getCODIGO_DESTINATARIO(), datoFila.getMUNICIPIO_DESTINATARIO().trim());
+                        if (puntoCobertura == null) {
+                            datoFila.AddStateLastPosition("Campos CÓDIGO Y MUNICIPIO DESTINATARIO inválidos.");
+                        } else {
+                            datoFila.setCODIGODESTINO(puntoCobertura.getCODIGOPUNTO());
+                        }
                     }
                 } else {
                     datoFila.AddStateFirstPosition("Campo CÓDIGO: Código de cliente no existe o es inválido");
@@ -413,9 +389,33 @@ public class C_GuiasMasivas {
                 if (datoFila.getDIRECCION().isEmpty()) {
                     datoFila.AddStateLastPosition("Campo DIRECCIÓN vacío.");
                 }
+                if (datoFila.getCODIGO_DESTINATARIO().isEmpty()) {
+                    datoFila.AddStateLastPosition("Campo CÓDIGO DESTINATARIO vacío.");
+                }
+                if (datoFila.getMUNICIPIO_DESTINATARIO().isEmpty()) {
+                    datoFila.AddStateLastPosition("Campo MUNICIPIO DESTINATARIO vacío. ");
+                }
             }
         }
         return datos;
+    }
+
+    private void validaDatosCliente(E_DatosGuiaMasiva dato) {
+        if (quitaNulo(dato.getNOMBRE()).isEmpty()) {
+            dato.AddStateLastPosition("Cliente no tiene asignado un nombre, Favor actualizar en la pantalla de mantenimiento de clientes.");
+        }
+        if (quitaNulo(dato.getDIRECCION()).isEmpty()) {
+            dato.AddStateLastPosition("Cliente no tiene asignada una dirección, Favor actualizar en la pantalla de mantenimiento de clientes.");
+        }
+        if (quitaNulo(dato.getCODIGO_DESTINATARIO()).isEmpty()) {
+            dato.AddStateLastPosition("Cliente no tiene asignado punto de cobertura, Favor actualizar en la pantalla de mantenimiento de clientes.");
+        }
+        if (quitaNulo(dato.getMUNICIPIO_DESTINATARIO()).isEmpty()) {
+            dato.AddStateLastPosition("Cliente no tiene asignado municipio de destino, Favor actualizar en la pantalla de mantenimiento de clientes.");
+        }
+        if (quitaNulo(dato.getCODIGODESTINO()).isEmpty()) {
+            dato.AddStateLastPosition("Cliente no tiene asignado código de destino, Favor verificar punto de destino en la pantalla de mantenimiento de clientes.");
+        }
     }
 
     /**
