@@ -61,15 +61,15 @@ public class C_GuiasMasivas {
 
             RespuestaGeneral respuestaValidaCredenciales = new ValidacionCredenciales().validar(datos.getCredenciales());
             if ("0000".equals(respuestaValidaCredenciales.getCodigo())) {
+
                 E_Credenciales credenciales = datos.getCredenciales();
+
                 //obtiene los datos del REMITENTE
                 E_Cliente remitente = new E_Cliente(credenciales);
                 E_FacCliente parametrosRemitente = new D_FacCliente().obtenerFacCliente(remitente.getPADRE(), remitente.getCODCOB());
-                parametrosRemitente.setMAXPESO(new D_UsuarioOpcion().obtenerPesoMaximo());
-                E_respuestaClientes obtieneDatosRemitente = new D_Clientes().ObtenerCliente(remitente);
-                if (obtieneDatosRemitente.getCODIGO().equals("200")) {
-                    remitente = obtieneDatosRemitente.getDATOS_CLIENTES().get(0);
-                }
+
+                //asigna datos adicionales del remitente
+                remitente = asignarDatosRemitente(remitente);
 
                 List<Pair<String, String>> codigosTipoPieza = new D_TarifaEnvio().obtenerTiposEnvio(parametrosRemitente);
 
@@ -170,6 +170,32 @@ public class C_GuiasMasivas {
         return "<WSSIGCLIENTES>" + new ParseadorXML().parseoObj(new RespuestaGeneral("500", "Existe un problema con los datos obtenidos, por favor verifique que la información esté correcta."), RespuestaGeneral.class) + "</WSSIGCLIENTES>";
     }
 
+    private E_Cliente asignarDatosRemitente(E_Cliente remitente) {
+        E_respuestaClientes obtieneDatosRemitente = new D_Clientes().ObtenerCliente(remitente);
+
+        if (obtieneDatosRemitente.getCODIGO().equals("200")) {
+            E_Cliente c = obtieneDatosRemitente.getDATOS_CLIENTES().get(0);
+            remitente.setNOMBRE(c.getNOMBRE());
+            remitente.setTELEFONO(c.getTELEFONO());
+            remitente.setDIRECCION(c.getDIRECCION());
+            remitente.setCONTACTO(c.getCONTACTO());
+            remitente.setNIT(c.getNIT());
+            remitente.setCORREO(c.getCORREO());
+            remitente.setCAMPO1(c.getCAMPO1());
+            remitente.setCAMPO2(c.getCAMPO2());
+            remitente.setCAMPO3(c.getCAMPO3());
+            remitente.setCAMPO4(c.getCAMPO4());
+            remitente.setUBICACION(c.getUBICACION());
+            remitente.setPUNTO(c.getPUNTO());
+            remitente.setDEPARTAMENTO(c.getDEPARTAMENTO());
+            remitente.setMUNICIPIO(c.getMUNICIPIO());
+            remitente.setCOBERTURA(c.getCOBERTURA());
+
+            return remitente;
+        }
+        return null;
+    }
+
     public RespuestaGeneral tomadeServicio(E_Credenciales credenciales, E_FacCliente paramsrem, E_Cliente remitente, List<E_DatosGuiaMasiva> datos) {
         List<RespuestaTomaServicio> listadoErrores = new ArrayList<>();
         int nofila = 1;
@@ -179,7 +205,7 @@ public class C_GuiasMasivas {
                     = "<TOMA_SERVICIO>"
                     + "	<USUARIO>" + credenciales.getUsuario() + "</USUARIO>"
                     + "	<PASSWORD>" + credenciales.getPassword() + "</PASSWORD>"
-                    + "	<CODIGO_COBRO>" + credenciales.getCodigo() + "</CODIGO_COBRO>";
+                    + "	<CODIGO_COBRO>" + credenciales.getPadre() + "</CODIGO_COBRO>";
             String valorCOD = "<COD_VALORACOBRAR />";
             String seabrepaquete = "<SEABREPAQUETE />";
             String dirremitente = "";
@@ -254,8 +280,8 @@ public class C_GuiasMasivas {
             XML += "</TOMA_SERVICIO>";
 
             String tomaservicio = tomaServicio(XML);
-
             ETomaServicio restomaservicio = (ETomaServicio) new ParseadorXML().parseoXML(tomaservicio, ETomaServicio.class);
+            nofila++;
 
             if (restomaservicio.getERROR() != null) {
                 ETomaServicio.Error error = restomaservicio.getERROR();
@@ -271,7 +297,6 @@ public class C_GuiasMasivas {
                     }
                 }
             }
-            nofila++;
         }
 
         RespuestaGeneral respuesta = new RespuestaGeneral();

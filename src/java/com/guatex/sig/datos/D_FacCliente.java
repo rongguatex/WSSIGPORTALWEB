@@ -53,11 +53,7 @@ public class D_FacCliente {
                     cliente.setCOD_MAXMONTO(rs.getDouble("COD_MAXMONTO"));
                     cliente.setSEABREPAQUETE(Utils.validaCampo(util.quitaNulo(rs.getString("SEABREPAQUETE"))));
                     cliente.setUNIFICACLI(Utils.validaCampo(util.quitaNulo(rs.getString("UNIFICACLI"))));
-
-//                    if (codcob.equals(padre)) {
-//                    } else {
-//                        cliente.setUNIFICACLI("N");
-//                    }
+                    cliente.setMAXPESO(new D_UsuarioOpcion().obtenerPesoMaximo());
                 }
                 return cliente;
             }

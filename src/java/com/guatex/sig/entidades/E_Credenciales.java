@@ -21,14 +21,17 @@ public class E_Credenciales {
     @XmlElement(name = "PADRE")
     private String padre;
 
-    @XmlElement(name = "CODIGO")
-    private String codigo;
+    @XmlElement(name = "USUARIO")
+    private String usuario;
 
     @XmlElement(name = "PASSWORD")
     private String password;
 
     @XmlElement(name = "CODCOB")
     private String codcob;
+
+    @XmlElement(name = "CODIGO")
+    private String codigo;
 
     @XmlElement(name = "NOGUIA")
     private String noguia;
@@ -64,10 +67,6 @@ public class E_Credenciales {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getUsuario() {
-        return padre + "/" + codigo;
     }
 
     public String getCodcob() {
@@ -110,13 +109,23 @@ public class E_Credenciales {
         this.fechaFinal = fechaFinal;
     }
 
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
+    }
+
+    public String getUsuario() {
+        return usuario;
+    }
+
+    public String getUsuarioCompuesto() {
+        return padre + "/" + usuario;
+    }
+
     @Override
     public String toString() {
-        if (padre != null && !padre.isEmpty()
-                && codigo != null && !codigo.isEmpty()
-                && password != null && !password.isEmpty()) {
-            return "E_Credenciales{ noguia= " + noguia + "padre=" + padre + ", codigo=" + codigo + ", password= " + password + ", fechaInicio= " + fechaInicio + " fechaFinal= " + fechaFinal + " tipo= " + tipo + '}';
-        }
-        return null;
+        return "E_Credenciales{" + "padre=" + padre + ", usuario=" + usuario + ", password=" + password
+                + ", codcob=" + codcob + ", codigo=" + codigo + ", noguia=" + noguia + ", tipo=" + tipo
+                + ", fechaInicio=" + fechaInicio + ", fechaFinal=" + fechaFinal + ", usuarioCompuesto " + getUsuarioCompuesto() + '}';
     }
+
 }

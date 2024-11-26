@@ -144,7 +144,7 @@ public class WSSIGCLIENTES {
             }
 
             if (new ValidacionCredenciales().validar(parseoXML.getCredenciales()).getCodigo().equals("0000")) {
-                List<E_JUsuarioOpcion> opciones = new D_UsuarioOpcion().obtenerOpciones(parseoXML.getCredenciales().getUsuario());
+                List<E_JUsuarioOpcion> opciones = new D_UsuarioOpcion().obtenerOpciones(parseoXML.getCredenciales().getUsuarioCompuesto());
                 if (opciones == null) {
                     return new ConvertidorXML().InternalServerError();
                 }
@@ -232,7 +232,7 @@ public class WSSIGCLIENTES {
 
             if (parseoXML.getCredenciales() != null) {
                 E_Credenciales credenciales = parseoXML.getCredenciales();
-                E_Facusuario datosUsuario = new D_Facusuarios().obtenerDatosUsuario(credenciales.getUsuario());
+                E_Facusuario datosUsuario = new D_Facusuarios().obtenerDatosUsuario(credenciales.getUsuarioCompuesto());
 
                 if (datosUsuario == null || datosUsuario.getUEGUIAS().isEmpty() || datosUsuario.getPADRE().isEmpty()) {
                     Logger.getLogger(WSSIGCLIENTES.class.getName()).log(Level.SEVERE, "Error al obtener datos del usuario.");
@@ -313,7 +313,7 @@ public class WSSIGCLIENTES {
                                 } else {
                                     dato.setCODCOB(codcob);
                                     if (!new D_Facusuarios().validaUsuario(con, credenciales, dato)) {
-                                        Logger.getLogger(WSSIGCLIENTES.class.getName()).log(Level.INFO, "guía " + dato.getNOGUIA() + " no pertenece al usuario " + credenciales.getUsuario());
+                                        Logger.getLogger(WSSIGCLIENTES.class.getName()).log(Level.INFO, "guía " + dato.getNOGUIA() + " no pertenece al usuario " + credenciales.getUsuarioCompuesto());
                                         return "<WSSIGCLIENTES>"
                                                 + new ParseadorXML().parseoObj(
                                                         new RespuestaGeneral("9999", "Alguna de las guías seleccionadas no pertenece a sus credenciales de acceso."),
