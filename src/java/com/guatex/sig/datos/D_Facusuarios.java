@@ -42,7 +42,7 @@ public class D_Facusuarios {
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return util.quitaNulo(rs.getString("USUARIO")).equalsIgnoreCase(credenciales.getUsuario());
+                    return util.quitaNulo(rs.getString("USUARIO")).equalsIgnoreCase(credenciales.getUsuarioCompuesto());
                 }
             }
         } catch (SQLException e) {

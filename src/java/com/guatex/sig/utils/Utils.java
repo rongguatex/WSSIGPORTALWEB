@@ -13,7 +13,7 @@ import java.util.Optional;
  */
 public class Utils {
 
-    public String quitaNulo(String var) {
+    public static String quitaNulo(String var) {
         return var == null ? "" : var.trim();
     }
 
@@ -72,4 +72,25 @@ public class Utils {
     public static String validaCampo(String valor) {
         return valor.isEmpty() ? "N" : valor.trim();
     }
+
+    public static String codificaCaracteres(String input) {
+        if (input == null) {
+            return null;
+        }
+        return input
+                .replace("&", "&amp;")
+                .replace("\"", "&quot;")
+                .replace("\'", "&apos;");
+    }
+
+    public static String decodificaCaracteres(String input) {
+        if (input == null) {
+            return null;
+        }
+        return input
+                .replace("&amp;", "&")
+                .replace("&quot;", "\"")
+                .replace("&apos;", "\'");
+    }
+
 }

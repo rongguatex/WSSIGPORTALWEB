@@ -11,6 +11,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
@@ -101,5 +103,22 @@ public class D_FacCliente {
             }
         }
         return null;
+    }
+
+    public List<String> consultaListadoCodcobs(String padre) {
+        List<String> respuesta = new LinkedList<>();
+        try (Connection con = new Conexion().AbrirConexion();
+                PreparedStatement ps = con.prepareStatement("SELECT F.CODIGO FROM FACCLIENTES F WHERE F.PADRE = ? ")) {
+            ps.setString(1, padre);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    respuesta.add(util.quitaNulo(rs.getString("CODIGO")));
+                }
+                return respuesta;
+            }
+        } catch (Exception e) {
+            Logger.getLogger(D_FacCliente.class.getName()).log(Level.SEVERE, "Error al obtener listado de codcobs.");
+        }
+        return respuesta;
     }
 }

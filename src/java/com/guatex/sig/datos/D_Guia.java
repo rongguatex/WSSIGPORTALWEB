@@ -351,17 +351,54 @@ public class D_Guia {
         return "200";
     }
 
-    public String validaExistencia(Connection con, String noguia) {
-        if (noguia != null || !noguia.isEmpty()) {
-            try (PreparedStatement ps = con.prepareStatement("SELECT NOGUIA FROM JGUIAS WHERE NOGUIA = ? ")) {
-                ps.setString(1, noguia);
-                try (ResultSet rs = ps.executeQuery()) {
-                    if (rs.next()) {
-                        return util.quitaNulo(rs.getString("NOGUIA"));
+    public String validaRecoleccion(Connection con, List<E_ImpresionSIG> datos) {
+        boolean isDelivered = false;
+
+        try (PreparedStatement st = con.prepareStatement(" "
+                + " SELECT J.NOGUIA "
+                + " FROM JGUIAS J "
+                + " WHERE J.NOGUIA = ? "
+                + " AND NOT EXISTS("
+                + "     SELECT G.NOGUIA "
+                + "     FROM GUIAS G "
+                + "     WHERE G.NOGUIA = ? ) ")) {
+            for (E_ImpresionSIG dato : datos) {
+                st.setString(1, dato.getNOGUIA());
+                st.setString(2, dato.getNOGUIA());
+
+                try (ResultSet rs = st.executeQuery()) {
+                    if (!rs.isBeforeFirst()) {
+                        System.out.println(rs.isBeforeFirst());
+                        isDelivered = true;
+                        System.out.println("isDelivered " + isDelivered);
                     }
                 }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace(System.err);
+            return "500";
+        }
+
+        if (isDelivered) {
+            return "999";
+        }
+        return "200";
+    }
+
+    public E_Guia obtieneDatosGuia(Connection con, String noguia) {
+        if (!util.quitaNulo(noguia).isEmpty()) {
+            try (PreparedStatement ps = con.prepareStatement("SELECT NOGUIA, CODCOB FROM JGUIAS WHERE NOGUIA = ? ")) {
+                ps.setString(1, noguia);
+                try (ResultSet rs = ps.executeQuery()) {
+                    E_Guia guia = new E_Guia();
+                    while (rs.next()) {
+                        guia.setNOGUIA(util.quitaNulo(rs.getString("NOGUIA")));
+                        guia.setCODCOB(util.quitaNulo(rs.getString("CODCOB")));
+                    }
+                    return guia;
+                }
             } catch (Exception e) {
-                Logger.getLogger(D_Guia.class.getName()).log(Level.SEVERE, "Error al validar existencia de la guía.", e);
+                Logger.getLogger(D_Guia.class.getName()).log(Level.SEVERE, "Error al obtener datos de la guía.", e);
             }
         }
         return null;

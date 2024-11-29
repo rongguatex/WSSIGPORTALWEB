@@ -1,12 +1,10 @@
 package com.guatex.sig.services;
 
 import com.guatex.sig.controllers.C_GuiasMasivas;
+import com.guatex.sig.controllers.EliminacionControler;
 import com.guatex.sig.controllers.ModificarGuiaController;
-import com.guatex.sig.datos.Conexion;
 import com.guatex.sig.datos.D_Clientes;
 import com.guatex.sig.datos.D_Detalle;
-import com.guatex.sig.datos.D_Eliminacion;
-import com.guatex.sig.datos.D_FacCliente;
 import com.guatex.sig.datos.D_Facusuarios;
 import com.guatex.sig.datos.D_Guia;
 import com.guatex.sig.datos.D_ImpresionSIG;
@@ -29,9 +27,8 @@ import com.guatex.sig.entidadesRespuesta.E_RespuestaDetalle;
 import com.guatex.sig.entidadesRespuesta.E_RespuestaGuia;
 import com.guatex.sig.utils.ConvertidorXML;
 import com.guatex.sig.utils.ParseadorXML;
+import com.guatex.sig.utils.Utils;
 import com.guatex.sig.utils.ValidacionCredenciales;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -269,129 +266,12 @@ public class WSSIGCLIENTES {
 
     @WebMethod(operationName = "eliminacionMultiple")
     public String eliminacionMultiple(@WebParam(name = "datos") String XML) {
-        if (!(XML == null ? "" : XML.trim()).isEmpty()) {
-            XML = XML.replace("&", "&amp;");
-            XML = XML.replace("\"", "&quot;");
-            XML = XML.replace("\'", "&apos;");
-
-            EWSSIGCLIENTES<E_Solicitud> parseoXML = (EWSSIGCLIENTES<E_Solicitud>) new ParseadorXML().parseoXML(XML, EWSSIGCLIENTES.class, E_Solicitud.class);
-
-            if (parseoXML.getCredenciales() == null || parseoXML.getDatosEntrada().getListadoGuiaImpresion() == null) {
-                return new ConvertidorXML().BadRequest();
-            }
-
-            if (new ValidacionCredenciales().validar(parseoXML.getCredenciales()).getCodigo().equals("0000")) {
-                E_Credenciales credenciales = parseoXML.getCredenciales();
-                List<E_ImpresionSIG> datos = parseoXML.getDatosEntrada().getListadoGuiaImpresion();
-                if (!datos.isEmpty()) {
-                    try (Connection con = new Conexion().AbrirConexion()) {
-                        con.setAutoCommit(false);
-                        for (E_ImpresionSIG dato : datos) {
-                            if (dato.getNOGUIA() != null && dato.getNOGUIA().length() > 0) {
-                                if (new D_Guia().validaExistencia(con, dato.getNOGUIA()) == null) {
-                                    return "<WSSIGCLIENTES>"
-                                            + new ParseadorXML().parseoObj(
-                                                    new RespuestaGeneral("9999", "Alguna de las guías seleccionadas ya ha sido eliminada o no es válida."),
-                                                    RespuestaGeneral.class)
-                                            + "</WSSIGCLIENTES>";
-                                }
-
-                                if (!new D_Guia().validaRecoleccion(datos).equals("200")) {
-                                    return new ParseadorXML().parseoObj(
-                                            new RespuestaGeneral("9999", "Alguna de las guías seleccionadas ya ha sido recolectada, por favor, vuelva a intentarlo."),
-                                            RespuestaGeneral.class);
-                                }
-
-                                String codcob = new D_FacCliente().consultaCodcob(con, credenciales.getPadre(), dato.getNOGUIA());
-                                if (codcob == null || codcob.isEmpty()) {
-                                    Logger.getLogger(WSSIGCLIENTES.class.getName()).log(Level.INFO, "guía " + dato.getNOGUIA() + " no pertenece al padre " + credenciales.getPadre());
-                                    return "<WSSIGCLIENTES>"
-                                            + new ParseadorXML().parseoObj(
-                                                    new RespuestaGeneral("9999", "Alguna de las guías seleccionadas no pertenece a sus credenciales de acceso."),
-                                                    RespuestaGeneral.class)
-                                            + "</WSSIGCLIENTES>";
-                                } else {
-                                    dato.setCODCOB(codcob);
-                                    if (!new D_Facusuarios().validaUsuario(con, credenciales, dato)) {
-                                        Logger.getLogger(WSSIGCLIENTES.class.getName()).log(Level.INFO, "guía " + dato.getNOGUIA() + " no pertenece al usuario " + credenciales.getUsuarioCompuesto());
-                                        return "<WSSIGCLIENTES>"
-                                                + new ParseadorXML().parseoObj(
-                                                        new RespuestaGeneral("9999", "Alguna de las guías seleccionadas no pertenece a sus credenciales de acceso."),
-                                                        RespuestaGeneral.class)
-                                                + "</WSSIGCLIENTES>";
-                                    }
-                                }
-
-                            } else {
-                                Logger.getLogger(WSSIGCLIENTES.class.getName()).log(Level.INFO, "Ocurrió un error en la eliminación de guías, no viene el número de guía.");
-                                return "<WSSIGCLIENTES>"
-                                        + new ParseadorXML().parseoObj(
-                                                new RespuestaGeneral("9999", "Ocurrió un error al eliminar guías. Los datos están incompletos, por favor,  intente de nuevo.,"),
-                                                RespuestaGeneral.class)
-                                        + "</WSSIGCLIENTES>";
-                            }
-                        }
-
-                        if (new D_Eliminacion().eliminacionMultipleGuias(con, datos)) {
-                            con.commit();
-
-                            String message = "Guía eliminada exitosamente.";
-                            if (datos.size() > 1) {
-                                message = "Guías eliminadas exitosamente.";
-                            }
-
-                            new D_Eliminacion().insertaBitacoraEliminacion(con, credenciales, datos);
-
-                            Logger.getLogger(WSSIGCLIENTES.class.getName()).log(Level.INFO, "Eliminación exitosa.");
-                            return "<WSSIGCLIENTES>"
-                                    + new ParseadorXML().parseoObj(
-                                            new RespuestaGeneral("200", message),
-                                            RespuestaGeneral.class)
-                                    + "</WSSIGCLIENTES>";
-                        } else {
-                            if (con != null) {
-                                try {
-                                    Logger.getLogger(WSSIGCLIENTES.class.getName()).log(Level.WARNING, "Ocurrió un error en la eliminación de guías se procede a realizar rollback.");
-                                    con.rollback();
-                                } catch (SQLException exrollback) {
-                                    Logger.getLogger(WSSIGCLIENTES.class.getName()).log(Level.SEVERE, "Error al realizar rollback.", exrollback);
-                                }
-                            }
-                            return "<WSSIGCLIENTES>"
-                                    + new ParseadorXML().parseoObj(
-                                            new RespuestaGeneral("9999", "Ocurrió un error al eliminar las guías seleccionadas, por favor, intente de nuevo,"),
-                                            RespuestaGeneral.class)
-                                    + "</WSSIGCLIENTES>";
-                        }
-                    } catch (SQLException e) {
-                        Logger.getLogger(WSSIGCLIENTES.class.getName()).log(Level.SEVERE, null, e);
-                        return "<WSSIGCLIENTES>"
-                                + new ParseadorXML().parseoObj(
-                                        new RespuestaGeneral("9999", "Ocurrió una excepción al eliminar las guías, por favor, intente de nuevo,"),
-                                        RespuestaGeneral.class)
-                                + "</WSSIGCLIENTES>";
-                    }
-                }
-                Logger.getLogger(WSSIGCLIENTES.class.getName()).log(Level.SEVERE, "Ocurrió un error al eliminar las guías seleccionadas. Los datos son inompletos,");
-                return "<WSSIGCLIENTES>"
-                        + new ParseadorXML().parseoObj(
-                                new RespuestaGeneral("9999", "Ocurrió un error al eliminar las guías seleccionadas. Los datos son inompletos, por favor, intente de nuevo,"),
-                                RespuestaGeneral.class)
-                        + "</WSSIGCLIENTES>";
-
-            }
-            Logger.getLogger(WSSIGCLIENTES.class.getName()).log(Level.INFO, "Credenciales inválidas.");
-            return "<WSSIGCLIENTES>"
-                    + new ParseadorXML().parseoObj(
-                            new RespuestaGeneral("9999", "Credenciales inválidas."),
-                            RespuestaGeneral.class)
-                    + "</WSSIGCLIENTES>";
+        if (Utils.quitaNulo(XML).isEmpty()) {
+            Logger.getLogger(WSSIGCLIENTES.class.getName()).log(Level.SEVERE, "Error en el envío de datos al ws.");
+            return new ConvertidorXML().RespuestaGeneralSIG("500", "Error en el envío de datos, por favor, intente de nuevo");
         }
-        Logger.getLogger(WSSIGCLIENTES.class.getName()).log(Level.SEVERE, "Error en el envío de datos al ws.");
-        return "<WSSIGCLIENTES>"
-                + new ParseadorXML().parseoObj(
-                        new RespuestaGeneral("9999", "Error en el envío de datos, por favor, intente de nuevo,"),
-                        RespuestaGeneral.class)
-                + "</WSSIGCLIENTES>";
+
+        XML = Utils.codificaCaracteres(XML);
+        return new EliminacionControler().EliminacionDeGuias(XML);
     }
 }
