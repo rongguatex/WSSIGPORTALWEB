@@ -49,19 +49,19 @@ public class D_Eliminacion {
                             psJGuiasHijas.executeUpdate();
                         }
                         exito = true;
+                        Logger.getLogger(D_Eliminacion.class.getName()).log(Level.INFO, "Eliminaci\u00f3n exitosa gu\u00eda: {0}", dato.getNOGUIA());
                     } catch (Exception e) {
                         Logger.getLogger(D_Eliminacion.class.getName()).log(Level.SEVERE, "Error al eliminar guias ", e);
-                        if (con != null) {
-                            try {
-                                con.rollback();
-                            } catch (SQLException exrollback) {
-                                Logger.getLogger(D_Eliminacion.class.getName()).log(Level.SEVERE, "Error al realizar rollback.", exrollback);
-                            }
-                        }
+//                        if (con != null) {
+//                            try {
+//                                con.rollback();
+//                            } catch (SQLException exrollback) {
+//                                Logger.getLogger(D_Eliminacion.class.getName()).log(Level.SEVERE, "Error al realizar rollback.", exrollback);
+//                            }
+//                        }
                     }
                 }
             }
-            return exito;
         }
         return exito;
     }

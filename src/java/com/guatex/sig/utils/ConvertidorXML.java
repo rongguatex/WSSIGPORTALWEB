@@ -526,6 +526,14 @@ public class ConvertidorXML {
                 + "</RESPUESTA>";
     }
 
+    public String RespuestaGeneralSIG(String codigo, String mensaje) {
+        return "<WSSIGCLIENTES>"
+                + new ParseadorXML().parseoObj(
+                        new RespuestaGeneral(codigo, mensaje),
+                        RespuestaGeneral.class)
+                + "</WSSIGCLIENTES>";
+    }
+
     /**
      *
      * @param tag
