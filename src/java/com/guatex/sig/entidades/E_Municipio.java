@@ -1,9 +1,21 @@
 package com.guatex.sig.entidades;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement(name = "MUNICIPIO")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class E_Municipio {
 
+    @XmlElement(name = "CODIGO")
     private String _CODIGO;
+    
+    @XmlElement(name = "NOMBRE")
     private String _NOMBRE;
+    
+    @XmlElement(name = "TIPO")
     private String _TIPO;
 
     public String getCODIGO() {

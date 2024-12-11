@@ -368,66 +368,6 @@ public class DReporteClientes {
         return existe;
     }
 
-    public int insertarClientes(EReporteClientes clientes) {
-
-        int rowsAffected = 0;
-        Connection con = null;
-        PreparedStatement ps = null;
-
-        String Query = "";
-
-        try {
-
-            Query = "INSERT INTO FACCLICLIENTES ("
-                    + "CODIGO, CODCOB, C_NOMBRE, C_CONTACTO, C_DIRECC , C_EMAIL, C_TEL, C_NIT,"
-                    + "  CAMPO1, CAMPO2, CAMPO3, CAMPO4, RECOGEOFICINA, PADRE, C_MNCP, C_PTO  )"
-                    + "  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
-
-            con = new Conexion().AbrirConexion();
-            ps = con.prepareStatement(Query);
-
-            ps.setString(1, clientes.getCODIGO());
-            ps.setString(2, clientes.getCODCOB());
-            ps.setString(3, clientes.getNOMBRE());
-            ps.setString(4, clientes.getCONTACTO());
-            ps.setString(5, clientes.getDIRECCION());
-            ps.setString(6, clientes.getEMAIL());
-            ps.setString(7, clientes.getTELEFONO());
-            ps.setString(8, clientes.getNIT());
-            ps.setString(9, clientes.getCAMPO1());
-            ps.setString(10, clientes.getCAMPO2());
-            ps.setString(11, clientes.getCAMPO3());
-            ps.setString(12, clientes.getCAMPO4());
-            ps.setString(13, clientes.getRECOGEOFICINA());
-            ps.setString(14, clientes.getPADRE());
-            ps.setString(15, clientes.getMUNICIPIO());
-            ps.setString(16, clientes.getPUNTO());
-            //System.out.println("lo que llevo en MUNICIPIO: [" + clientes.getMUNICIPIO() + "] [" + clientes.getPUNTO() + "]");
-            rowsAffected = ps.executeUpdate();
-
-        } catch (Exception ex) {
-            System.out.println("Error al intentar insertar cliente");
-            ex.printStackTrace();
-
-        } finally {
-            try {
-                if (ps != null) {
-                    ps.close();
-
-                }
-                if (con != null) {
-                    con.close();
-
-                }
-            } catch (Exception ex) {
-                System.out.println("Error al intentar cerrar la BD");
-                ex.printStackTrace();
-            }
-        }
-        return rowsAffected;
-
-    }
-
     public int insertarClientesMasivo(EReporteClientes clientes) {
 
         int rowsAffected = 0;
@@ -486,63 +426,7 @@ public class DReporteClientes {
 
     }
 
-    public int actualizarCliente(EReporteClientes clientes) {
-
-        int rowsAffected = 0;
-        Connection con = null;
-        PreparedStatement ps = null;
-        String Query = "";
-
-        try {
-
-            Query = "UPDATE FACCLICLIENTES SET C_NOMBRE = ?, C_CONTACTO = ?, C_DIRECC = ?, C_EMAIL = ?, "
-                    + "C_TEL = ?, C_NIT = ?, CAMPO1 = ?, CAMPO2 = ?, CAMPO3 = ?, CAMPO4 = ?, "
-                    + "RECOGEOFICINA = ?, C_MNCP = ?, C_PTO = ? "
-                    + "WHERE PADRE = ? AND CODIGO = ?";
-
-            con = new Conexion().AbrirConexion();
-            ps = con.prepareStatement(Query);
-
-            ps.setString(1, clientes.getNOMBRE());
-            ps.setString(2, clientes.getCONTACTO());
-            ps.setString(3, clientes.getDIRECCION());
-            ps.setString(4, clientes.getEMAIL());
-            ps.setString(5, clientes.getTELEFONO());
-            ps.setString(6, clientes.getNIT());
-            ps.setString(7, clientes.getCAMPO1());
-            ps.setString(8, clientes.getCAMPO2());
-            ps.setString(9, clientes.getCAMPO3());
-            ps.setString(10, clientes.getCAMPO4());
-            ps.setString(11, clientes.getRECOGEOFICINA());
-            ps.setString(12, clientes.getMUNICIPIO());
-            ps.setString(13, clientes.getPUNTO());
-            ps.setString(14, clientes.getPADRE());
-//            ps.setString(15, clientes.getCODCOB());
-            ps.setString(15, clientes.getCODIGO());
-
-            rowsAffected = ps.executeUpdate();
-
-        } catch (Exception ex) {
-            System.out.println("Error al intentar ACTUALIZAR cliente");
-            ex.printStackTrace();
-
-        } finally {
-            try {
-                if (ps != null) {
-                    ps.close();
-                }
-                if (con != null) {
-                    con.close();
-                }
-            } catch (Exception ex) {
-                System.out.println("Error al intentar cerrar la BD");
-                ex.printStackTrace();
-            }
-        }
-        return rowsAffected;
-    }
-
-    public int eliminarCliente(String padre, String codCob, String codigo) {
+    public int eliminarCliente(String padre, String codigo) {
         Connection con = null;
         PreparedStatement ps = null;
         int filasAfectados = 0;
@@ -682,48 +566,6 @@ public class DReporteClientes {
         return existeCliente;
     }
 
-    public EReporteClientes obtengoPuntosCobertura(EReporteClientes cliente) {
-
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        String Query = " SELECT PUNTODECOBERTURA, NOMBRE "
-                + " FROM TRFMUNICIPIOS "
-                + " WHERE CODIGO = ?  ";
-
-        try {
-            con = new Conexion().AbrirConexion();
-            ps = con.prepareStatement(Query);
-            ps.setString(1, cliente.getPUNTO());
-
-            rs = ps.executeQuery();
-
-            if (rs.next()) {
-                cliente.setPUNTO(rs.getString("PUNTODECOBERTURA"));
-                cliente.setMUNICIPIO(rs.getString("NOMBRE"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (ps != null) {
-                    ps.close();
-                }
-                if (con != null) {
-                    con.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return cliente;
-    }
-
     private String quitaNulo(String dato) {
         if (dato != null) {
             dato = dato.trim();
@@ -737,33 +579,26 @@ public class DReporteClientes {
         List<E_Cliente> datosCliente = new LinkedList<>();
         String Query = "";
 
-        if (cliente.getCODIGO().isEmpty()) {
-            Query = "SELECT  CODIGO, CODCOB, PADRE, C_NOMBRE AS NOMBRE, C_CONTACTO AS CONTACTO, C_DIRECC AS DIRECCION, "
-                    + "C_MNCP AS UBICACION, C_PTO AS PUNTO, C_EMAIL AS CORREO, C_TEL AS TELEFONO, C_NIT AS NIT, RECOGEOFICINA, "
-                    + "CAMPO1, CAMPO2, CAMPO3, CAMPO4 FROM FACCLICLIENTES "
-                    + "WHERE PADRE = ? ";
-        } else {
-            if (cliente.getUNIFICACLI().equalsIgnoreCase("S")) {
-                if (cliente.getCODCOB().equalsIgnoreCase(cliente.getPADRE())) {
-                    Query = "SELECT  CODIGO, CODCOB, PADRE, C_NOMBRE AS NOMBRE, C_CONTACTO AS CONTACTO, C_DIRECC AS DIRECCION, "
-                            + "C_MNCP AS UBICACION, C_PTO AS PUNTO, C_EMAIL AS CORREO, C_TEL AS TELEFONO, C_NIT AS NIT, RECOGEOFICINA, "
-                            + "CAMPO1, CAMPO2, CAMPO3, CAMPO4 FROM FACCLICLIENTES "
-                            + "WHERE ISNULL(CODIGO,'') = ? "
-                            + "AND PADRE = ? ";
-                } else {
-                    Query = "SELECT  CODIGO, CODCOB, PADRE, C_NOMBRE AS NOMBRE, C_CONTACTO AS CONTACTO, C_DIRECC AS DIRECCION, "
-                            + "C_MNCP AS UBICACION, C_PTO AS PUNTO, C_EMAIL AS CORREO, C_TEL AS TELEFONO, C_NIT AS NIT, RECOGEOFICINA,"
-                            + "CAMPO1, CAMPO2, CAMPO3, CAMPO4 FROM FACCLICLIENTES "
-                            + "WHERE ISNULL(CODIGO,'') = ? "
-                            + "AND PADRE = ? AND CODCOB = ? ";
-                }
+        if (cliente.getUNIFICACLI().equalsIgnoreCase("S")) {
+            if (cliente.getCODCOB().equalsIgnoreCase(cliente.getPADRE())) {
+                Query = "SELECT  CODIGO, CODCOB, PADRE, C_NOMBRE AS NOMBRE, C_CONTACTO AS CONTACTO, C_DIRECC AS DIRECCION, "
+                        + "C_MNCP AS UBICACION, C_PTO AS PUNTO, C_EMAIL AS CORREO, C_TEL AS TELEFONO, C_NIT AS NIT, RECOGEOFICINA, "
+                        + "CAMPO1, CAMPO2, CAMPO3, CAMPO4 FROM FACCLICLIENTES "
+                        + "WHERE ISNULL(CODIGO,'') = ? "
+                        + "AND PADRE = ? ";
             } else {
                 Query = "SELECT  CODIGO, CODCOB, PADRE, C_NOMBRE AS NOMBRE, C_CONTACTO AS CONTACTO, C_DIRECC AS DIRECCION, "
                         + "C_MNCP AS UBICACION, C_PTO AS PUNTO, C_EMAIL AS CORREO, C_TEL AS TELEFONO, C_NIT AS NIT, RECOGEOFICINA,"
                         + "CAMPO1, CAMPO2, CAMPO3, CAMPO4 FROM FACCLICLIENTES "
-                        + "WHERE ISNULL(CODIGO,'') = ?  "
-                        + "AND CODCOB = ? ";
+                        + "WHERE ISNULL(CODIGO,'') = ? "
+                        + "AND PADRE = ? AND CODCOB = ? ";
             }
+        } else {
+            Query = "SELECT  CODIGO, CODCOB, PADRE, C_NOMBRE AS NOMBRE, C_CONTACTO AS CONTACTO, C_DIRECC AS DIRECCION, "
+                    + "C_MNCP AS UBICACION, C_PTO AS PUNTO, C_EMAIL AS CORREO, C_TEL AS TELEFONO, C_NIT AS NIT, RECOGEOFICINA,"
+                    + "CAMPO1, CAMPO2, CAMPO3, CAMPO4 FROM FACCLICLIENTES "
+                    + "WHERE ISNULL(CODIGO,'') = ?  "
+                    + "AND CODCOB = ? ";
         }
 
         try (Connection con = new Conexion().AbrirConexion();

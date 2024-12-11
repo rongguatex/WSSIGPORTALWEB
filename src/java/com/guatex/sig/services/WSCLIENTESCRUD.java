@@ -6,10 +6,17 @@
 package com.guatex.sig.services;
 
 import com.guatex.sig.datos.DReporteClientes;
+import com.guatex.sig.datos.D_Clientes;
+import com.guatex.sig.datos.D_FacCliente;
+import com.guatex.sig.datos.D_PuntoCobertura;
 import com.guatex.sig.entidades.EReporteClientes;
+import com.guatex.sig.entidades.EWSSIGCLIENTES;
 import com.guatex.sig.entidades.E_Cliente;
+import com.guatex.sig.entidades.E_Credenciales;
+import com.guatex.sig.entidades.E_FacCliente;
 import com.guatex.sig.entidades.E_respuestaClientes;
 import com.guatex.sig.utils.ConvertidorXML;
+import com.guatex.sig.utils.ParseadorXML;
 import java.util.LinkedList;
 import java.util.List;
 import javax.jws.WebService;
@@ -24,105 +31,64 @@ import javax.jws.WebParam;
 public class WSCLIENTESCRUD {
 
     @WebMethod(operationName = "insertarClientes")
-    public String insertarClientes(@WebParam(name = "datos") String datos) {
-        String respXML = "";
-
-        DReporteClientes reporte = new DReporteClientes();
-
-        EReporteClientes cliente = new EReporteClientes();
-        ConvertidorXML c = new ConvertidorXML();
-
-        cliente.setCODCOB(c.getTag("CODCOB", datos));
-        cliente.setCODIGO(c.getTag("CODIGOCLIENTE", datos));
-        cliente.setNOMBRE(c.getTag("NOMBRECLIENTE", datos));
-        cliente.setCONTACTO(c.getTag("CONTACTOCLIENTE", datos));
-        cliente.setNIT(c.getTag("NIT", datos));
-        cliente.setEMAIL(c.getTag("CORREOCLIENTE", datos));
-        cliente.setTELEFONO(c.getTag("TELEFONOCLIENTE", datos));
-        cliente.setDIRECCION(c.getTag("DIRECCIONCLIENTE", datos));
-        cliente.setCAMPO1(c.getTag("CAMPO1", datos));
-        cliente.setCAMPO2(c.getTag("CAMPO2", datos));
-        cliente.setCAMPO3(c.getTag("CAMPO3", datos));
-        cliente.setCAMPO4(c.getTag("CAMPO4", datos));
-        cliente.setDEPTODES(c.getTag("DEPTODES", datos));
-        cliente.setMUNICIPIO(c.getTag("MNCPDES", datos));
-        cliente.setPUNTO(c.getTag("PTODES", datos));
-        cliente.setPADRE(c.getTag("PADRE", datos));
-        cliente.setRECOGEOFICINA(c.getTag("RECOGEOFICINA", datos));
-
-        System.out.println("traigo punto " + cliente.getPUNTO());
-
-        if (reporte.verificoClienteExistente(cliente)) {
-            respXML = "<RESPUESTA>"
-                    + "<CODIGO>003</CODIGO>"
-                    + "<MENSAJE>El codigo de cliente ya existe</MENSAJE>"
-                    + "</RESPUESTA>";
-        } else {
-            cliente = reporte.obtengoPuntosCobertura(cliente);
-            int filasAfectados = reporte.insertarClientes(cliente);
-
-            respXML = "<RESPUESTA>"
-                    + "<CODIGO>" + (filasAfectados > 0 ? "001" : "0002") + "</CODIGO>"
-                    + "<MENSAJE>" + (filasAfectados > 0 ? "Cliente creado exitosamente" : "Ocurrio un error al intentar crear el cliente") + "</MENSAJE>"
-                    + "</RESPUESTA>";
-
+    public String insertarClientes(@WebParam(name = "datos") String xml) {
+        EWSSIGCLIENTES<E_Cliente> datos = (EWSSIGCLIENTES<E_Cliente>) new ParseadorXML().parseoXML(xml, EWSSIGCLIENTES.class, E_Cliente.class);
+        if (datos.getCredenciales() == null || datos.getDatosEntrada() == null) {
+            return new ConvertidorXML().RespuestaGeneralSIG("500", "Error en el envío de datos, por favor, intente de nuevo.");
         }
 
-        return respXML;
+        E_Credenciales credenciales = datos.getCredenciales();
+        E_Cliente cliente = (E_Cliente) datos.getDatosEntrada();
 
+        E_FacCliente paramsUsuario = new D_FacCliente().obtenerParamsUsuario(credenciales);
+        if (paramsUsuario == null) {
+            return new ConvertidorXML().RespuestaGeneralSIG("500", "Usuario inválido, por favor, intente de nuevo.");
+        }
+
+        boolean existeCliente = new D_Clientes().ValidaExistenciaCliente(paramsUsuario, credenciales, cliente.getCODIGO());
+        if (existeCliente) {
+            return new ConvertidorXML().RespuestaGeneralSIG("204", "El codigo de cliente ya existe.");
+        }
+
+        cliente = new D_PuntoCobertura().obtengoPuntosCobertura(cliente);
+        boolean creacionExitosa = new D_Clientes().insertarClientes(credenciales, paramsUsuario, cliente);
+        String codigo = creacionExitosa ?  "200" : "500";
+        String mensaje = creacionExitosa ? "Cliente creado exitosamente" : "Ocurrio un error al intentar crear el cliente";
+        return new ConvertidorXML().RespuestaGeneralSIG(codigo, mensaje);
     }
 
     @WebMethod(operationName = "actualizarCliente")
-    public String actualizaCliente(@WebParam(name = "datos") String datos) {
-        String respXML = "";
-        DReporteClientes reporte = new DReporteClientes();
-
-        EReporteClientes cliente = new EReporteClientes();
-        ConvertidorXML c = new ConvertidorXML();
-
-        cliente.setCODCOB(c.getTag("CODCOB", datos));
-        cliente.setCODIGO(c.getTag("CODIGOCLIENTE", datos));
-        cliente.setNOMBRE(c.getTag("NOMBRECLIENTE", datos));
-        cliente.setCONTACTO(c.getTag("CONTACTOCLIENTE", datos));
-        cliente.setNIT(c.getTag("NIT", datos));
-        cliente.setEMAIL(c.getTag("CORREOCLIENTE", datos));
-        cliente.setTELEFONO(c.getTag("TELEFONOCLIENTE", datos));
-        cliente.setDIRECCION(c.getTag("DIRECCIONCLIENTE", datos));
-        cliente.setCAMPO1(c.getTag("CAMPO1", datos));
-        cliente.setCAMPO2(c.getTag("CAMPO2", datos));
-        cliente.setCAMPO3(c.getTag("CAMPO3", datos));
-        cliente.setCAMPO4(c.getTag("CAMPO4", datos));
-        cliente.setDEPTODES(c.getTag("DEPTODES", datos));
-        cliente.setMUNICIPIO(c.getTag("MNCPDES", datos));
-        cliente.setPUNTO(c.getTag("PTODES", datos));
-        cliente.setPADRE(c.getTag("PADRE", datos));
-        cliente.setRECOGEOFICINA(c.getTag("RECOGEOFICINA", datos));
-
-        cliente = reporte.obtengoPuntosCobertura(cliente);
-        int filasAfectados = reporte.actualizarCliente(cliente);
-
-        respXML = "<RESPUESTA>"
-                + "<CODIGO>" + (filasAfectados > 0 ? "001" : "0002") + "</CODIGO>"
-                + "<MENSAJE>" + (filasAfectados > 0 ? "Cliente editado exitosamente" : "Ocurrio un error al intentar editar el cliente") + "</MENSAJE>"
-                + "</RESPUESTA>";
-        return respXML;
+    public String actualizaCliente(@WebParam(name = "datos") String xml) {
+         EWSSIGCLIENTES<E_Cliente> datos = (EWSSIGCLIENTES<E_Cliente>) new ParseadorXML().parseoXML(xml, EWSSIGCLIENTES.class, E_Cliente.class);
+        if (datos.getCredenciales() == null || datos.getDatosEntrada() == null) {
+            return new ConvertidorXML().RespuestaGeneralSIG("500", "Error en el envío de datos, por favor, intente de nuevo.");
+        }
+        
+        E_Credenciales credenciales = datos.getCredenciales();
+        E_Cliente cliente = (E_Cliente) datos.getDatosEntrada();
+        cliente = new D_PuntoCobertura().obtengoPuntosCobertura(cliente);
+        
+        boolean actualizacionExitosa = new D_Clientes().actualizarCliente(credenciales.getPadre(), cliente);
+        String codigo = actualizacionExitosa ?  "200" : "500";
+        String mensaje = actualizacionExitosa ? "Cliente actualizado exitosamente" : "Ocurrio un error al intentar actualizar al cliente";
+        
+        return new ConvertidorXML().RespuestaGeneralSIG(codigo, mensaje);
     }
 
     @WebMethod(operationName = "eliminarCliente")
-    public String eliminarCliente(@WebParam(name = "datos") String datos) {
+    public String eliminarCliente(@WebParam(name = "datos") String xml) {
+        EWSSIGCLIENTES<?> datos = (EWSSIGCLIENTES<?>) new ParseadorXML().parseoXML(xml, EWSSIGCLIENTES.class);
+        if (datos.getCredenciales() == null) {
+            return new ConvertidorXML().RespuestaGeneralSIG("500", "Error al obtener datos.");
+        }
+
         String respXML = "";
         int filasAfectados = 0;
 
         DReporteClientes reporte = new DReporteClientes();
-        EReporteClientes cliente = new EReporteClientes();
-        ConvertidorXML c = new ConvertidorXML();
-
-        cliente.setCODCOB(c.getTag("CODCOB", datos));
-        cliente.setCODIGO(c.getTag("CODIGOCLIENTE", datos));
-        cliente.setPADRE(c.getTag("PADRE", datos));
-
+        E_Credenciales credenciales = datos.getCredenciales();
         try {
-            filasAfectados = reporte.eliminarCliente(cliente.getPADRE(), cliente.getCODCOB(), cliente.getCODIGO());
+            filasAfectados = reporte.eliminarCliente(credenciales.getPadre(), credenciales.getCodigo());
         } catch (Exception ex) {
             ex.printStackTrace();
             respXML = "<RESPUESTA>"
@@ -144,6 +110,8 @@ public class WSCLIENTESCRUD {
     public String mostrarCliente(@WebParam(name = "datos") String XML) {
 //        System.out.println("entre y tengo de peticion [" + XML + "]");
         E_Cliente cliente = new ConvertidorXML().extraerCliente(XML);
+
+//        new D_Clientes().ObtenerCliente(params, credenciales);
         E_respuestaClientes respuesta = new DReporteClientes().ObtenerCliente(cliente);
         return new ConvertidorXML().respuestaXMLDatosCliente(respuesta).replaceAll("&", "&amp;");
     }

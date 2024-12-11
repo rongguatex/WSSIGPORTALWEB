@@ -1,12 +1,28 @@
 package com.guatex.sig.entidades;
 
 import java.util.List;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement(name = "RESPUESTA")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class E_respuestaClientes {
 
+    @XmlElement(name = "CODIGO")
     private String _CODIGO = "";
+
+    @XmlElement(name = "MENSAJE")
     private String _MENSAJE = "";
+
+    @XmlElementWrapper(name = "LISTADO_CLIENTES")
+    @XmlElement(name = "CLIENTE")
     private List<E_Cliente> _DATOS_CLIENTES;
+
+    public E_respuestaClientes() {
+    }
 
     public E_respuestaClientes(String pCodigo, List<E_Cliente> pListaClientes) {
         this._CODIGO = pCodigo;
@@ -17,7 +33,7 @@ public class E_respuestaClientes {
         } else if (pCodigo.equalsIgnoreCase("500")) {
             this._MENSAJE = "Error en el servidor";
         } else if (pCodigo.equalsIgnoreCase("204")) {
-            this._MENSAJE = "No se obtuvo información de la base de datos";
+            this._MENSAJE = "No existen coincidencias en la base de datos.";
         }
     }
 

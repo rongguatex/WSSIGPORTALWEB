@@ -36,17 +36,17 @@ public class D_Depto_Municipios {
                         }
                     }
                     if (!encontrado) {
-                        CodigosExistentes.add(util.quitaNulo(rs.getString("COD_DEPTO")));
+                        CodigosExistentes.add(Utils.quitaNulo(rs.getString("COD_DEPTO")));
                         E_Departamento NuevoDepartamento = new E_Departamento();
-                        NuevoDepartamento.setCODIGO(util.quitaNulo(rs.getString("COD_DEPTO")));
-                        NuevoDepartamento.setNOMBRE(util.quitaNulo(rs.getString("NOM_DEPTO")));
-                        NuevoDepartamento.setPAIS(util.quitaNulo(rs.getString("COD_PAIS")));
+                        NuevoDepartamento.setCODIGO(Utils.quitaNulo(rs.getString("COD_DEPTO")));
+                        NuevoDepartamento.setNOMBRE(Utils.quitaNulo(rs.getString("NOM_DEPTO")));
+                        NuevoDepartamento.setPAIS(Utils.quitaNulo(rs.getString("COD_PAIS")));
                         Departamentos.add(NuevoDepartamento);
                         for (E_Departamento departamento : Departamentos) {
-                            if (departamento.getCODIGO().equals(util.quitaNulo(rs.getString("COD_DEPTO")))) {
+                            if (departamento.getCODIGO().equals(Utils.quitaNulo(rs.getString("COD_DEPTO")))) {
                                 E_Municipio NuevoMunicipio = new E_Municipio();
-                                NuevoMunicipio.setCODIGO(util.quitaNulo(rs.getString("COD_MUN")));
-                                NuevoMunicipio.setNOMBRE(util.quitaNulo(rs.getString("NOM_MUN")));
+                                NuevoMunicipio.setCODIGO(Utils.quitaNulo(rs.getString("COD_MUN")));
+                                NuevoMunicipio.setNOMBRE(Utils.quitaNulo(rs.getString("NOM_MUN")));
                                 departamento.getMUNICIPIOS().add(NuevoMunicipio);
 
                             }
@@ -55,8 +55,8 @@ public class D_Depto_Municipios {
                         for (E_Departamento departamento : Departamentos) {
                             if (departamento.getCODIGO() == rs.getString("COD_DEPTO")) {
                                 E_Municipio NuevoMunicipio = new E_Municipio();
-                                NuevoMunicipio.setCODIGO(util.quitaNulo(rs.getString("COD_MUN")));
-                                NuevoMunicipio.setNOMBRE(util.quitaNulo(rs.getString("NOM_MUN")));
+                                NuevoMunicipio.setCODIGO(Utils.quitaNulo(rs.getString("COD_MUN")));
+                                NuevoMunicipio.setNOMBRE(Utils.quitaNulo(rs.getString("NOM_MUN")));
                                 departamento.getMUNICIPIOS().add(NuevoMunicipio);
                             }
                         }
@@ -71,7 +71,7 @@ public class D_Depto_Municipios {
     }
 
     public boolean validaExistenciaCodigoMunicipio(String ptoCobertura, String municipioCobertura) {
-        if (util.quitaNulo(ptoCobertura).isEmpty() && util.quitaNulo(municipioCobertura).isEmpty()) {
+        if (Utils.quitaNulo(ptoCobertura).isEmpty() && Utils.quitaNulo(municipioCobertura).isEmpty()) {
             return false;
         }
 

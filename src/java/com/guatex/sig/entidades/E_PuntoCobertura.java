@@ -1,20 +1,60 @@
 package com.guatex.sig.entidades;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement(name = "COBERTURA")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class E_PuntoCobertura {
 
+    @XmlElement(name = "FRECUENCIA")
     private String FRECUENCIA;
+
+    @XmlElement(name = "DEPARTAMENTO")
     private String DEPARTAMENTO;
+
+    @XmlElement(name = "MUNICIPIO")
     private String MUNICIPIO;
+
+    @XmlElement(name = "UBICACION")
     private String UBICACION;
+
+    @XmlElement(name = "PUNTO")
     private String PUNTO;
+
+    @XmlElement(name = "CODIGOPUNTO")
     private String CODIGOPUNTO;
+
+    @XmlElement(name = "RECOGEOFICINA")
     private boolean RECOGEOFICINA = false;
+
+    @XmlElement(name = "LUNES")
     private char LUNES = ' ';
+
+    @XmlElement(name = "MARTES")
     private char MARTES = ' ';
+
+    @XmlElement(name = "MIERCOLES")
     private char MIERCOLES = ' ';
+
+    @XmlElement(name = "JUEVES")
     private char JUEVES = ' ';
+
+    @XmlElement(name = "VIERNES")
     private char VIERNES = ' ';
+
+    @XmlElement(name = "SABADO")
     private char SABADO = ' ';
+
+    public E_PuntoCobertura() {
+    }
+
+    public E_PuntoCobertura(String MUNICIPIO, String PUNTO) {
+        this.MUNICIPIO = MUNICIPIO;
+        this.PUNTO = PUNTO;
+    }
 
     public String getFRECUENCIA() {
         return FRECUENCIA;
@@ -122,8 +162,6 @@ public class E_PuntoCobertura {
 
     @Override
     public String toString() {
-        return "E_PuntoCobertura{" + "FRECUENCIA=" + FRECUENCIA + ", DEPARTAMENTO=" + DEPARTAMENTO + ", MUNICIPIO=" + MUNICIPIO + ", \n"
-                + "UBICACION=" + UBICACION + ", PUNTO=" + PUNTO + ", CODIGOPUNTO=" + CODIGOPUNTO + ", \n"
-                + "RECOGEOFICINA=" + RECOGEOFICINA + ", LUNES=" + LUNES + ", MARTES=" + MARTES + ", MIERCOLES=" + MIERCOLES + ", JUEVES=" + JUEVES + ", VIERNES=" + VIERNES + ", SABADO=" + SABADO + '}';
+        return "E_PuntoCobertura{" + " UBICACION=" + UBICACION + ", PUNTO=" + PUNTO + ", CODIGOPUNTO=" + CODIGOPUNTO + ", RECOGEOFICINA=" + RECOGEOFICINA + '}';
     }
 }

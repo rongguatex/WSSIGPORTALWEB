@@ -1,29 +1,75 @@
 package com.guatex.sig.entidades;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement(name = "CLIENTE")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class E_Cliente {
 
     private boolean _SELECCIONADO = false;
+    
+    @XmlElement(name = "CODCOB")
     private String _CODCOB = "";
+    
+    @XmlElement(name = "CODIGO")
     private String _CODIGO = "";
+    
+    @XmlElement(name = "NIT")
     private String _NIT = "";
+    
+    @XmlElement(name = "TELEFONO")
     private String _TELEFONO = "";
+    
+    @XmlElement(name = "NOMBRE")
     private String _NOMBRE = "";
+    
+    @XmlElement(name = "DIRECCION")
     private String _DIRECCION = "";
+    
+    @XmlElement(name = "CONTACTO")
     private String _CONTACTO = "";
+    
+    @XmlElement(name = "UBICACION")
     private String _UBICACION = "";
+    
+    @XmlElement(name = "PUNTO")
     private String _PUNTO = "";
+    
+    @XmlElement(name = "CORREO")
     private String _CORREO = "";
+    
+    @XmlElement(name = "CAMPO1")
     private String _CAMPO1 = "";
+    
+    @XmlElement(name = "CAMPO2")
     private String _CAMPO2 = "";
+    
+    @XmlElement(name = "CAMPO3")
     private String _CAMPO3 = "";
+    
+    @XmlElement(name = "CAMPO4")
     private String _CAMPO4 = "";
+    
+    @XmlElement(name = "PADRE")
     private String _PADRE = "";
+    
+    @XmlElement(name = "UNIFICACLI")
     private String _UNIFICACLI = "";
+    
+    @XmlElement(name = "RECOGEOFICINA")
     private String _RECOGEOFICINA = "";
 
-    private E_PuntoCobertura __COBERTURA = new E_PuntoCobertura();
+    @XmlElement(name = "DEPARTAMENTO")
     private E_Departamento _DEPARTAMENTO = new E_Departamento();
+    
+    @XmlElement(name = "MUNICIPIO")
     private E_Municipio _MUNICIPIO = new E_Municipio();
+    
+    @XmlElement(name = "COBERTURA")
+    private E_PuntoCobertura __COBERTURA = new E_PuntoCobertura();
 
     public E_Cliente(String punto, String ubicacion) {
         this._PUNTO = punto;
@@ -44,7 +90,7 @@ public class E_Cliente {
         this._CODCOB = codcob;
         this._CODIGO = codigo;
     }
-
+    
     public boolean isSELECCIONADO() {
         return _SELECCIONADO;
     }

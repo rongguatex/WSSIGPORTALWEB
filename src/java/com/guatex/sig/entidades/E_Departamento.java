@@ -2,14 +2,29 @@ package com.guatex.sig.entidades;
 
 import java.util.LinkedList;
 import java.util.List;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement(name = "DEPARTAMENTO")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class E_Departamento {
+    
+    @XmlElement(name = "CODIGO")
      private String _CODIGO;
+    
+    @XmlElement(name = "NOMBRE")
     private String _NOMBRE;
+    
+    @XmlElement(name = "PAIS")
     private String _PAIS;
-    private List<E_Municipio> _MUNICIPIOS = new LinkedList<E_Municipio>();
+    
+    @XmlElement(name = "TIPO")
     private String _TIPO;
-
+    
+    private List<E_Municipio> _MUNICIPIOS = new LinkedList<E_Municipio>();
+    
     public String getCODIGO() {
         return _CODIGO;
     }
@@ -52,6 +67,6 @@ public class E_Departamento {
 
     @Override
     public String toString() {
-        return "E_Departamento { \n" + "_CODIGO=" + _CODIGO + ", _NOMBRE=" + _NOMBRE + ", _PAIS=" + _PAIS + ", \n_MUNICIPIOS=" + _MUNICIPIOS + ", \n_TIPO=" + _TIPO + '\''+ '}';
+        return "E_Departamento { " + "_CODIGO=" + _CODIGO + ", _NOMBRE=" + _NOMBRE + ", _PAIS=" + _PAIS + ", _MUNICIPIOS=" + _MUNICIPIOS + ", _TIPO=" + _TIPO + '}';
     }
 }

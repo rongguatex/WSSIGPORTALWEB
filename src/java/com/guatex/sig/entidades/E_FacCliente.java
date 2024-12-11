@@ -20,7 +20,7 @@ public class E_FacCliente {
     private String _LOCALIDAD;
     private String _NIT;
     private String _PUNTO;
-    private String _PADRE;
+    private String _CODPADRE;
     private String _DIRECCION;
     private String _LXCOBRAR;
     private String _LCREDITO;
@@ -198,16 +198,12 @@ public class E_FacCliente {
         }
     }
 
-    public String getPADRE() {
-        return _PADRE;
+    public String getCODPADRE() {
+        return _CODPADRE;
     }
 
-    public void setPADRE(String _PADRE) {
-        if (_PADRE != null) {
-            this._PADRE = _PADRE.trim();
-        } else {
-            this._PADRE = _PADRE;
-        }
+    public void setCODPADRE(String _CODPADRE) {
+        this._CODPADRE = _CODPADRE;
     }
 
     public String getLOCALIDAD() {
@@ -290,7 +286,7 @@ public class E_FacCliente {
 
     @Override
     public String toString() {
-        return "E_FacCliente{" + "_CODIGO=" + _CODIGO + ", _NOMBRE=" + _NOMBRE + ", _CLIENTE=" + _CLIENTE + ", _TELEFONO=" + _TELEFONO + ", _MUNICIPIO=" + _MUNICIPIO + ", _PUNTO=" + _PUNTO + ", _PADRE=" + _PADRE + ", _LCOD=" + _LCOD + ", _TARIFANORMAL=" + _TARIFANORMAL + ", _TARIFAEXTRA=" + _TARIFAEXTRA + ", _TARIFAUNICA=" + _TARIFAUNICA + ", _UNIFICACLI=" + _UNIFICACLI + ", _COD_MINMONTO=" + _COD_MINMONTO + ", _COD_MAXMONTO=" + _COD_MAXMONTO + '}';
+        return "E_FacCliente{" + "_CODIGO=" + _CODIGO + ", _NOMBRE=" + _NOMBRE + ", _CLIENTE=" + _CLIENTE + ", _TELEFONO=" + _TELEFONO + ", _CORREO=" + _CORREO + ", _MUNICIPIO=" + _MUNICIPIO + ", _LOCALIDAD=" + _LOCALIDAD + ", _NIT=" + _NIT + ", _PUNTO=" + _PUNTO + ", _CODPADRE=" + _CODPADRE + ", _DIRECCION=" + _DIRECCION + ", _LXCOBRAR=" + _LXCOBRAR + ", _LCREDITO=" + _LCREDITO + ", _LCONTADO=" + _LCONTADO + ", _LCOD=" + _LCOD + ", _LPREPAGO=" + _LPREPAGO + ", _SEABREPAQUETE=" + _SEABREPAQUETE + ", _TARIFANORMAL=" + _TARIFANORMAL + ", _TARIFAEXTRA=" + _TARIFAEXTRA + ", _TARIFAUNICA=" + _TARIFAUNICA + ", _TARIFAESPECIAL=" + _TARIFAESPECIAL + ", _UNIFICACLI=" + _UNIFICACLI + ", _MAXPESO=" + _MAXPESO + ", _COD_MINMONTO=" + _COD_MINMONTO + ", _COD_MAXMONTO=" + _COD_MAXMONTO + '}';
     }
 
 }

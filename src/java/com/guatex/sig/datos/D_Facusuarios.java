@@ -22,8 +22,6 @@ import java.util.logging.Logger;
  */
 public class D_Facusuarios {
 
-    Utils util = new Utils();
-
     public boolean validaUsuario(Connection con, E_Credenciales credenciales, E_ImpresionSIG dato) {
 
         String ueguia = dato.getNOGUIA().substring(0, 3);
@@ -42,7 +40,7 @@ public class D_Facusuarios {
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return util.quitaNulo(rs.getString("USUARIO")).equalsIgnoreCase(credenciales.getUsuarioCompuesto());
+                    return Utils.quitaNulo(rs.getString("USUARIO")).equalsIgnoreCase(credenciales.getUsuarioCompuesto());
                 }
             }
         } catch (SQLException e) {
@@ -62,7 +60,7 @@ public class D_Facusuarios {
                 ps.setString(1, usuario);
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
-                        return new E_Facusuario(util.quitaNulo(rs.getString("UEGUIAS")), util.quitaNulo(rs.getString("PADRE")));
+                        return new E_Facusuario(Utils.quitaNulo(rs.getString("UEGUIAS")), Utils.quitaNulo(rs.getString("PADRE")));
                     }
                 }
             } catch (SQLException e) {

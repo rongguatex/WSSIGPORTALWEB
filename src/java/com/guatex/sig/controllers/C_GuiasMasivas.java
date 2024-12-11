@@ -5,7 +5,9 @@
  */
 package com.guatex.sig.controllers;
 
+import com.guatex.sig.datos.Conexion;
 import com.guatex.sig.datos.D_Clientes;
+import com.guatex.sig.datos.D_Depto_Municipios;
 import com.guatex.sig.datos.D_FacCliente;
 import com.guatex.sig.datos.D_PuntoCobertura;
 import com.guatex.sig.datos.D_TarifaEnvio;
@@ -13,6 +15,7 @@ import com.guatex.sig.entidades.ETomaServicio;
 import com.guatex.sig.entidades.E_Cliente;
 import com.guatex.sig.entidades.E_Credenciales;
 import com.guatex.sig.entidades.E_DatosGuiaMasiva;
+import com.guatex.sig.entidades.E_Departamento;
 import com.guatex.sig.entidades.E_DetalleLinea;
 import com.guatex.sig.entidades.E_FacCliente;
 import com.guatex.sig.entidades.E_GuiasMasivas;
@@ -28,6 +31,7 @@ import com.guatex.sig.utils.Utils;
 import com.guatex.sig.utils.ValidacionCredenciales;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -54,29 +58,33 @@ public class C_GuiasMasivas {
      */
     public String creacionGuiasMasivas(String xml) {
         E_GuiasMasivas datos = parseoXML(xml);
-        if (datos.getCredenciales() != null) {
+        if (datos.getCredenciales() != null || datos.getListaDatosGuia() != null || !datos.getListaDatosGuia().isEmpty()) {
             boolean existenErrores = false;
 
             RespuestaGeneral respuestaValidaCredenciales = new ValidacionCredenciales().validar(datos.getCredenciales());
             if ("0000".equals(respuestaValidaCredenciales.getCodigo())) {
 
                 E_Credenciales credenciales = datos.getCredenciales();
+                List<E_DatosGuiaMasiva> guias = datos.getListaDatosGuia();
 
-                //obtiene los datos del REMITENTE
-                E_Cliente remitente = new E_Cliente(credenciales);
-                E_FacCliente parametrosRemitente = new D_FacCliente().obtenerFacCliente(remitente.getPADRE(), remitente.getCODCOB());
+                E_FacCliente parametrosRemitente = new D_FacCliente().obtenerFacCliente(credenciales);
+                List<Pair<String, String>> codigosTipoPieza = new D_TarifaEnvio().obtenerTiposEnvio(parametrosRemitente);
 
                 //asigna datos adicionales del remitente
-                remitente = asignarDatosRemitente(remitente);
-
-                List<Pair<String, String>> codigosTipoPieza = new D_TarifaEnvio().obtenerTiposEnvio(parametrosRemitente);
+                E_Cliente remitente = new E_Cliente();
+                try {
+                    asignarDatosRemitente(credenciales, parametrosRemitente, remitente);
+                } catch (IllegalStateException ex) {
+                    ex.printStackTrace();
+                    return "<WSSIGCLIENTES>" + new ParseadorXML().parseoObj(new RespuestaGeneral("500", "Existe un problema con los datos obtenidos, código de remitente no existe o es inválido."), RespuestaGeneral.class) + "</WSSIGCLIENTES>";
+                }
 
                 /**
                  * valida los datos del cliente por el código [código, nombre,
                  * teléfono, dirección, coddes, mncpdes] si código es válido
                  * reemplaza la información con la que existe en la bd.
                  */
-                datos.setListaDatosGuia(validarClientexCodigo(datos.getListaDatosGuia(), credenciales.getCodcob(), credenciales.getPadre()));
+                datos.setListaDatosGuia(validarClientexCodigo(guias, credenciales, parametrosRemitente));
 
                 for (E_DatosGuiaMasiva dato : datos.getListaDatosGuia()) {
                     /**
@@ -155,7 +163,13 @@ public class C_GuiasMasivas {
                  * guías, code 202 = Existen errores en el archivo excel.
                  */
                 if (!existenErrores) {
-                    RespuestaGeneral resTomaServicio = tomadeServicio(credenciales, parametrosRemitente, remitente, datos.getListaDatosGuia());
+                    RespuestaGeneral resTomaServicio = new RespuestaGeneral();
+                    try {
+                        resTomaServicio = tomadeServicio(credenciales, parametrosRemitente, remitente, datos.getListaDatosGuia());
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        return "<WSSIGCLIENTES>" + new ParseadorXML().parseoObj(new RespuestaGeneral("500", "Error de comunicación en generación de guías."), RespuestaGeneral.class) + "</WSSIGCLIENTES>";
+                    }
                     String respuestaFinal = "<WSSIGCLIENTES>" + new ParseadorXML().parseoObj(resTomaServicio, RespuestaGeneral.class) + "</WSSIGCLIENTES>";
                     return respuestaFinal;
                 } else {
@@ -168,30 +182,36 @@ public class C_GuiasMasivas {
         return "<WSSIGCLIENTES>" + new ParseadorXML().parseoObj(new RespuestaGeneral("500", "Existe un problema con los datos obtenidos, por favor verifique que la información esté correcta."), RespuestaGeneral.class) + "</WSSIGCLIENTES>";
     }
 
-    private E_Cliente asignarDatosRemitente(E_Cliente remitente) {
-        E_respuestaClientes obtieneDatosRemitente = new D_Clientes().ObtenerCliente(remitente);
+    private void asignarDatosRemitente(E_Credenciales credenciales, E_FacCliente params, E_Cliente remitente) {
+        E_respuestaClientes datosRemitente = new D_Clientes().ObtenerCliente(params, credenciales);
 
-        if (obtieneDatosRemitente.getCODIGO().equals("200")) {
-            E_Cliente c = obtieneDatosRemitente.getDATOS_CLIENTES().get(0);
-            remitente.setNOMBRE(c.getNOMBRE());
-            remitente.setTELEFONO(c.getTELEFONO());
-            remitente.setDIRECCION(c.getDIRECCION());
-            remitente.setCONTACTO(c.getCONTACTO());
-            remitente.setNIT(c.getNIT());
-            remitente.setCORREO(c.getCORREO());
-            remitente.setCAMPO1(c.getCAMPO1());
-            remitente.setCAMPO2(c.getCAMPO2());
-            remitente.setCAMPO3(c.getCAMPO3());
-            remitente.setCAMPO4(c.getCAMPO4());
-            remitente.setUBICACION(c.getUBICACION());
-            remitente.setPUNTO(c.getPUNTO());
-            remitente.setDEPARTAMENTO(c.getDEPARTAMENTO());
-            remitente.setMUNICIPIO(c.getMUNICIPIO());
-            remitente.setCOBERTURA(c.getCOBERTURA());
-
-            return remitente;
+        if (!"200".equals(datosRemitente.getCODIGO())) {
+            throw new IllegalStateException("Código de respuesta inválido: " + datosRemitente.getCODIGO());
         }
-        return null;
+
+        E_Cliente datosCliente = datosRemitente.getDATOS_CLIENTES().stream().findFirst().orElse(null);
+        if (datosCliente != null) {
+            copiarDatosCliente(datosCliente, remitente);
+        }
+    }
+
+    // Método auxiliar para copiar datos entre clientes
+    private void copiarDatosCliente(E_Cliente origen, E_Cliente destino) {
+        destino.setNOMBRE(origen.getNOMBRE());
+        destino.setTELEFONO(origen.getTELEFONO());
+        destino.setDIRECCION(origen.getDIRECCION());
+        destino.setCONTACTO(origen.getCONTACTO());
+        destino.setNIT(origen.getNIT());
+        destino.setCORREO(origen.getCORREO());
+        destino.setCAMPO1(origen.getCAMPO1());
+        destino.setCAMPO2(origen.getCAMPO2());
+        destino.setCAMPO3(origen.getCAMPO3());
+        destino.setCAMPO4(origen.getCAMPO4());
+        destino.setUBICACION(origen.getUBICACION());
+        destino.setPUNTO(origen.getPUNTO());
+        destino.setDEPARTAMENTO(origen.getDEPARTAMENTO());
+        destino.setMUNICIPIO(origen.getMUNICIPIO());
+        destino.setCOBERTURA(origen.getCOBERTURA());
     }
 
     public RespuestaGeneral tomadeServicio(E_Credenciales credenciales, E_FacCliente paramsrem, E_Cliente remitente, List<E_DatosGuiaMasiva> datos) {
@@ -364,62 +384,73 @@ public class C_GuiasMasivas {
      * en listado de estados.
      *
      * @param datos
+     * @param credenciales
+     * @param params
      * @param codcob
      * @param padre
      * @return - Listado de E_DatosGuiaMasiva con cada uno de sus errores si es
      * que encuentra.
      */
-    public List<E_DatosGuiaMasiva> validarClientexCodigo(List<E_DatosGuiaMasiva> datos, String codcob, String padre) {
-        for (E_DatosGuiaMasiva datoFila : datos) {
-            datoFila.getESTADO().clear();
-            if (!quitaNulo(datoFila.getCODIGO()).isEmpty()) {
-                E_Cliente cliente = new E_Cliente(padre, codcob, datoFila.getCODIGO());
-                E_respuestaClientes respuestaCliente = new D_Clientes().ObtenerCliente(cliente);
-                if (respuestaCliente.getCODIGO().equalsIgnoreCase("200")) {
-                    for (E_Cliente cliCliente : respuestaCliente.getDATOS_CLIENTES()) {
+    public List<E_DatosGuiaMasiva> validarClientexCodigo(List<E_DatosGuiaMasiva> datos, E_Credenciales credenciales, E_FacCliente params) {
+        List<E_Departamento> departamentos = new D_Depto_Municipios().ObtenerDeptosMunicipios();
+        try (Connection con = new Conexion().AbrirConexion()) {
 
-                        //reemplaza datos de archivo excel con los provenientes de la db.
-                        datoFila.setNOMBRE(quitaNulo(cliCliente.getNOMBRE()));
-                        datoFila.setTELEFONO(quitaNulo(cliCliente.getTELEFONO()));
-                        datoFila.setDIRECCION(quitaNulo(cliCliente.getDIRECCION()));
-                        datoFila.setCODIGO_DESTINATARIO(quitaNulo(cliCliente.getCOBERTURA().getPUNTO()));
-                        datoFila.setMUNICIPIO_DESTINATARIO(quitaNulo(cliCliente.getCOBERTURA().getUBICACION()));
-                        datoFila.setCODIGODESTINO(quitaNulo(cliCliente.getCOBERTURA().getCODIGOPUNTO()));
-                        datoFila.setCAMPO1(quitaNulo(cliCliente.getCAMPO1()));
-                        datoFila.setCAMPO2(quitaNulo(cliCliente.getCAMPO2()));
-                        datoFila.setCAMPO3(quitaNulo(cliCliente.getCAMPO3()));
-                        datoFila.setCAMPO4(quitaNulo(cliCliente.getCAMPO4()));
+            for (E_DatosGuiaMasiva datoFila : datos) {
+                datoFila.getESTADO().clear();
 
-                        validaDatosCliente(datoFila);
+                if (!quitaNulo(datoFila.getCODIGO()).isEmpty()) {
 
-                        E_PuntoCobertura puntoCobertura = new D_PuntoCobertura().BuscarUbicacionEspecifica(datoFila.getCODIGO_DESTINATARIO(), datoFila.getMUNICIPIO_DESTINATARIO().trim());
-                        if (puntoCobertura == null) {
-                            datoFila.AddStateLastPosition("Campos CÓDIGO Y MUNICIPIO DESTINATARIO inválidos.");
-                        } else {
-                            datoFila.setCODIGODESTINO(puntoCobertura.getCODIGOPUNTO());
+                    E_respuestaClientes respuestaCliente = new D_Clientes().ObtenerClientesCargaMasiva(con, params, credenciales, departamentos, datoFila.getCODIGO());
+
+                    if (respuestaCliente.getCODIGO().equalsIgnoreCase("200")) {
+                        for (E_Cliente cliCliente : respuestaCliente.getDATOS_CLIENTES()) {
+                            //reemplaza datos de archivo excel con los provenientes de la db.
+                            datoFila.setNOMBRE(quitaNulo(cliCliente.getNOMBRE()));
+                            datoFila.setTELEFONO(quitaNulo(cliCliente.getTELEFONO()));
+                            datoFila.setDIRECCION(quitaNulo(cliCliente.getDIRECCION()));
+                            datoFila.setCODIGO_DESTINATARIO(quitaNulo(cliCliente.getCOBERTURA().getPUNTO()));
+                            datoFila.setMUNICIPIO_DESTINATARIO(quitaNulo(cliCliente.getCOBERTURA().getUBICACION()));
+                            datoFila.setCODIGODESTINO(quitaNulo(cliCliente.getCOBERTURA().getCODIGOPUNTO()));
+                            datoFila.setCAMPO1(quitaNulo(cliCliente.getCAMPO1()));
+                            datoFila.setCAMPO2(quitaNulo(cliCliente.getCAMPO2()));
+                            datoFila.setCAMPO3(quitaNulo(cliCliente.getCAMPO3()));
+                            datoFila.setCAMPO4(quitaNulo(cliCliente.getCAMPO4()));
+
+                            validaDatosCliente(datoFila);
+
+                            E_PuntoCobertura puntoCobertura = new D_PuntoCobertura().BuscarUbicacionEspecifica(con, datoFila.getCODIGO_DESTINATARIO(), datoFila.getMUNICIPIO_DESTINATARIO().trim());
+                            if (puntoCobertura == null) {
+                                datoFila.AddStateLastPosition("Campos CÓDIGO Y MUNICIPIO DESTINATARIO inválidos.");
+                            } else {
+                                datoFila.setCODIGODESTINO(puntoCobertura.getCODIGOPUNTO());
+                            }
                         }
+                    } else {
+                        datoFila.AddStateFirstPosition("Campo CÓDIGO: Código de cliente no existe o es inválido");
                     }
                 } else {
-                    datoFila.AddStateFirstPosition("Campo CÓDIGO: Código de cliente no existe o es inválido");
-                }
-            } else {
-                if (datoFila.getNOMBRE().isEmpty()) {
-                    datoFila.AddStateLastPosition("Campo NOMBRE vacío.");
-                }
-                if (datoFila.getTELEFONO().isEmpty()) {
-                    datoFila.AddStateLastPosition("Campo TELÉFONO vacío.");
-                }
-                if (datoFila.getDIRECCION().isEmpty()) {
-                    datoFila.AddStateLastPosition("Campo DIRECCIÓN vacío.");
-                }
-                if (datoFila.getCODIGO_DESTINATARIO().isEmpty()) {
-                    datoFila.AddStateLastPosition("Campo CÓDIGO DESTINATARIO vacío.");
-                }
-                if (datoFila.getMUNICIPIO_DESTINATARIO().isEmpty()) {
-                    datoFila.AddStateLastPosition("Campo MUNICIPIO DESTINATARIO vacío. ");
+                    if (datoFila.getNOMBRE().isEmpty()) {
+                        datoFila.AddStateLastPosition("Campo NOMBRE vacío.");
+                    }
+                    if (datoFila.getTELEFONO().isEmpty()) {
+                        datoFila.AddStateLastPosition("Campo TELÉFONO vacío.");
+                    }
+                    if (datoFila.getDIRECCION().isEmpty()) {
+                        datoFila.AddStateLastPosition("Campo DIRECCIÓN vacío.");
+                    }
+                    if (datoFila.getCODIGO_DESTINATARIO().isEmpty()) {
+                        datoFila.AddStateLastPosition("Campo CÓDIGO DESTINATARIO vacío.");
+                    }
+                    if (datoFila.getMUNICIPIO_DESTINATARIO().isEmpty()) {
+                        datoFila.AddStateLastPosition("Campo MUNICIPIO DESTINATARIO vacío. ");
+                    }
                 }
             }
+        } catch (Exception ex) {
+            ex.printStackTrace(System.err);
+            return null;
         }
+
         return datos;
     }
 
@@ -572,30 +603,6 @@ public class C_GuiasMasivas {
         return null;
     }
 
-    /**
-     * Serializa el objeto E_GuiasMasivas y lo convierte en una cadena con un
-     * formato tipo XML. Este formato se realiza en base a la calse
-     * E_RespuestaGuiasMasivas para así devolver código, mensaje y los dato
-     * obtenidos.
-     *
-     * @param respuesta
-     * @param datos
-     * @return - Cadena XML en formato de la clase E_RespuestaGuiasMasivas.
-     */
-//    public String parseoRespuestaXML(RespuestaGeneral respuesta, List<E_DatosGuiaMasiva> datos, List<RespuestaTomaServicio> respuestaTomaServicio) {
-//        try {
-//            JAXBContext contexto = JAXBContext.newInstance(E_RespuestaGuiasMasivas.class);
-//            Marshaller marshaller = contexto.createMarshaller();
-//            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-//            marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
-//            StringWriter stringWriter = new StringWriter();
-//            marshaller.marshal(new E_RespuestaGuiasMasivas(respuesta, datos, respuestaTomaServicio), stringWriter);
-//            return stringWriter.toString();
-//        } catch (JAXBException e) {
-//            System.err.println("Ocurrio un error " + e.getMessage());
-//        }
-//        return null;
-//    }
     public String parseoRespuestaXML(RespuestaGeneral respuesta, List<E_DatosGuiaMasiva> datos) {
         try {
             JAXBContext contexto = JAXBContext.newInstance(E_RespuestaGuiasMasivas.class);

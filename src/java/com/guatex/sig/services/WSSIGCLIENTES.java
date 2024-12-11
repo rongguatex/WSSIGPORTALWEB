@@ -5,6 +5,7 @@ import com.guatex.sig.controllers.EliminacionControler;
 import com.guatex.sig.controllers.ModificarGuiaController;
 import com.guatex.sig.datos.D_Clientes;
 import com.guatex.sig.datos.D_Detalle;
+import com.guatex.sig.datos.D_FacCliente;
 import com.guatex.sig.datos.D_Facusuarios;
 import com.guatex.sig.datos.D_Guia;
 import com.guatex.sig.datos.D_ImpresionSIG;
@@ -13,6 +14,7 @@ import com.guatex.sig.entidades.EWSSIGCLIENTES;
 import com.guatex.sig.entidades.E_Cliente;
 import com.guatex.sig.entidades.E_Credenciales;
 import com.guatex.sig.entidades.E_Departamento;
+import com.guatex.sig.entidades.E_FacCliente;
 import com.guatex.sig.entidades.E_Facusuario;
 import com.guatex.sig.entidades.E_Guia;
 import com.guatex.sig.entidades.E_ImpresionSIG;
@@ -40,18 +42,58 @@ import javax.jws.WebParam;
 public class WSSIGCLIENTES {
 
     @WebMethod(operationName = "busquedaCliente")
-    public String busquedaCliente(@WebParam(name = "datos") String datos) {
-        E_Credenciales credenciales = (E_Credenciales) new ParseadorXML().parseoXML(datos, E_Credenciales.class);
-        E_Cliente cliente = new E_Cliente(credenciales);
-        E_respuestaClientes respuesta = new D_Clientes().ObtenerCliente(cliente);
+    public String busquedaCliente(@WebParam(name = "datos") String xml) {
+        EWSSIGCLIENTES datos = (EWSSIGCLIENTES) new ParseadorXML().parseoXML(xml, EWSSIGCLIENTES.class);
+        if (datos.getCredenciales() == null) {
+            return new ConvertidorXML().RespuestaGeneralSIG("500", "Error en el envío de datos, por favor, intente de nuevo.");
+        }
+
+        E_FacCliente paramsUsuario = new D_FacCliente().obtenerParamsUsuario(datos.getCredenciales());
+        if (paramsUsuario == null) {
+            return new ConvertidorXML().RespuestaGeneralSIG("500", "Usuario inválido, por favor, intente de nuevo.");
+        }
+
+        E_respuestaClientes respuesta = new D_Clientes().ObtenerCliente(paramsUsuario, datos.getCredenciales());
         return new ConvertidorXML().respuestaXMLDatosCliente(respuesta).replaceAll("&", "&amp;");
     }
 
     @WebMethod(operationName = "busquedaClientes")
-    public String busquedaClientes(@WebParam(name = "datos") String datos) {
-        E_Cliente cliente = new ConvertidorXML().extraerCliente(datos);
-        E_respuestaClientes respuesta = new D_Clientes().ObtenerListadoClientes(cliente);
+    public String busquedaClientes(@WebParam(name = "datos") String xml) {
+        EWSSIGCLIENTES<E_Cliente> datos = (EWSSIGCLIENTES<E_Cliente>) new ParseadorXML().parseoXML(xml, EWSSIGCLIENTES.class, E_Cliente.class);
+        if (datos.getCredenciales() == null || datos.getDatosEntrada() == null) {
+            return new ConvertidorXML().RespuestaGeneralSIG("500", "Error en el envío de datos, por favor, intente de nuevo.");
+        }
+
+        E_FacCliente paramsUsuario = new D_FacCliente().obtenerParamsUsuario(datos.getCredenciales());
+        if (paramsUsuario == null) {
+            return new ConvertidorXML().RespuestaGeneralSIG("500", "Usuario inválido, por favor, intente de nuevo.");
+        }
+
+        E_respuestaClientes respuesta = new D_Clientes().ObtenerListadoClientes(paramsUsuario, datos);
         return new ConvertidorXML().respuestaXMLDatosCliente(respuesta).replaceAll("&", "&amp;");
+    }
+
+    @WebMethod(operationName = "busquedaTodosClientes")
+    public String busquedaTodosClientes(@WebParam(name = "datos") String xml) {
+        EWSSIGCLIENTES<E_Cliente> datos = (EWSSIGCLIENTES<E_Cliente>) new ParseadorXML().parseoXML(xml, EWSSIGCLIENTES.class, E_Cliente.class);
+        if (datos.getCredenciales() == null) {
+            return new ConvertidorXML().RespuestaGeneralSIG("500", "Error en el envío de datos, por favor, intente de nuevo.");
+        }
+
+        E_FacCliente paramsUsuario = new D_FacCliente().obtenerParamsUsuario(datos.getCredenciales());
+        if (paramsUsuario == null) {
+            return new ConvertidorXML().RespuestaGeneralSIG("500", "Usuario inválido, por favor, intente de nuevo.");
+        }
+
+        E_respuestaClientes resp = new D_Clientes().ObtenerTodosClientes(paramsUsuario, datos.getCredenciales());
+
+        if (resp == null) {
+            return new ConvertidorXML().RespuestaGeneralSIG("500", "Error en la consulta de datos.");
+        }
+
+        return "<WSSIGCLIENTES>"
+                + new ParseadorXML().parseoObj(resp, E_respuestaClientes.class).replaceAll("&", "&amp;")
+                + "</WSSIGCLIENTES>";
     }
 
     /**
