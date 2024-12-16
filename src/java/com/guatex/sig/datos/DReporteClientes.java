@@ -395,12 +395,12 @@ public class DReporteClientes {
             ps.setString(5, clientes.getEMAIL());
             ps.setString(6, clientes.getTELEFONO());
             ps.setString(7, clientes.getNIT());
-            ps.setString(8, clientes.getCAMPO1());
-            ps.setString(9, clientes.getCAMPO2());
-            ps.setString(10, clientes.getCAMPO3());
-            ps.setString(11, clientes.getCAMPO4());
+            ps.setString(8, clientes.getPADRE() + "/" + clientes.getCAMPO1());
+            ps.setString(9, clientes.getPADRE() + "/" + clientes.getCAMPO2());
+            ps.setString(10, clientes.getPADRE() + "/" + clientes.getCAMPO3());
+            ps.setString(11, clientes.getPADRE() + "/" + clientes.getCAMPO4());
             ps.setString(12, clientes.getPADRE()); //          
-            ps.setString(13, clientes.getCODCOB());
+            ps.setString(13, clientes.getPADRE());
             rowsAffected = ps.executeUpdate();
 
         } catch (Exception ex) {

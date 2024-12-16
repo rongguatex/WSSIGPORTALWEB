@@ -106,28 +106,28 @@ public class WSCLIENTESCRUD {
         return respXML;
     }
 
-    @WebMethod(operationName = "mostrarCliente")
-    public String mostrarCliente(@WebParam(name = "datos") String XML) {
-//        System.out.println("entre y tengo de peticion [" + XML + "]");
-        E_Cliente cliente = new ConvertidorXML().extraerCliente(XML);
+//    @WebMethod(operationName = "mostrarCliente")
+//    public String mostrarCliente(@WebParam(name = "datos") String XML) {
+////        System.out.println("entre y tengo de peticion [" + XML + "]");
+//        E_Cliente cliente = new ConvertidorXML().extraerCliente(XML);
+//
+////        new D_Clientes().ObtenerCliente(params, credenciales);
+//        E_respuestaClientes respuesta = new DReporteClientes().ObtenerCliente(cliente);
+//        return new ConvertidorXML().respuestaXMLDatosCliente(respuesta).replaceAll("&", "&amp;");
+//    }
 
-//        new D_Clientes().ObtenerCliente(params, credenciales);
-        E_respuestaClientes respuesta = new DReporteClientes().ObtenerCliente(cliente);
-        return new ConvertidorXML().respuestaXMLDatosCliente(respuesta).replaceAll("&", "&amp;");
-    }
-
-    @WebMethod(operationName = "listadoClientes")
-    public String listadoClientes(@WebParam(name = "XML") String XML) {
-        //System.out.println("entre y tengo de peticion [" + XML + "]");
-        ConvertidorXML c = new ConvertidorXML();
-        String PADRE = c.getTag("PADRE", XML);
-        String CODCOB = c.getTag("CODCOB", XML);
-
-        List<EReporteClientes> listadoClientes = new DReporteClientes().obtengoListadoClientes(PADRE, CODCOB);
-        System.out.println("PESO LISTA " + listadoClientes.size());
-        String RespXML = c.respuestaXMLListadoClientes(listadoClientes).replaceAll("&", "&amp;");
-        return RespXML;
-    }
+//    @WebMethod(operationName = "listadoClientes")
+//    public String listadoClientes(@WebParam(name = "XML") String XML) {
+//        //System.out.println("entre y tengo de peticion [" + XML + "]");
+//        ConvertidorXML c = new ConvertidorXML();
+//        String PADRE = c.getTag("PADRE", XML);
+//        String CODCOB = c.getTag("CODCOB", XML);
+//
+//        List<EReporteClientes> listadoClientes = new DReporteClientes().obtengoListadoClientes(PADRE, CODCOB);
+//        System.out.println("PESO LISTA " + listadoClientes.size());
+//        String RespXML = c.respuestaXMLListadoClientes(listadoClientes).replaceAll("&", "&amp;");
+//        return RespXML;
+//    }
 
     @WebMethod(operationName = "datosExcelCliente")
     public String datosExcelCliente(@WebParam(name = "datos") String XML) {
@@ -172,34 +172,34 @@ public class WSCLIENTESCRUD {
                 //System.out.println("CODCOB[" + c.getCODCOB() + "]");
                 if (!validoDatosVacios(c.getCODIGO())) {
                     // validar que codigo no exista
-                    estado += " --> El codigo de cliente no puede ser vacio.";
+                    estado += " El codigo de cliente no puede ser vacio.";
                     clienteValido = false;
                 } else if (d.validarClienteExiste(c)) {
-                    estado += " --> El codigo de cliente ya existe.";
+                    estado += " El codigo de cliente ya existe.";
                     clienteValido = false;
                 }
                 if (!validoDatosVacios(c.getNOMBRE())) {
-                    estado += " --> El nombre de cliente no puede ser vacio.";
+                    estado += " El nombre de cliente no puede ser vacio.";
                     clienteValido = false;
                 }
                 if (!validoDatosVacios(c.getCONTACTO())) {
-                    estado += " --> El contacto de cliente no puede ser vacio.";
+                    estado += " El contacto de cliente no puede ser vacio.";
                     clienteValido = false;
                 }
                 if (!validoDatosVacios(c.getNIT())) {
-                    estado += " --> El nit de cliente no puede ser vacio.";
+                    estado += " El nit de cliente no puede ser vacio.";
                     clienteValido = false;
                 }
                 if (!validoDatosVacios(c.getEMAIL())) {
-                    estado += " --> El email de cliente no puede ser vacio.";
+                    estado += " El email de cliente no puede ser vacio.";
                     clienteValido = false;
                 }
                 if (!validoDatosVacios(c.getTELEFONO())) {
-                    estado += " --> El telefono de cliente no puede ser vacio.";
+                    estado += " El telefono de cliente no puede ser vacio.";
                     clienteValido = false;
                 }
                 if (!validoDatosVacios(c.getDIRECCION())) {
-                    estado += " --> El direción de cliente no puede ser vacio.";
+                    estado += " El direción de cliente no puede ser vacio.";
                     clienteValido = false;
                 }
 
@@ -229,37 +229,37 @@ public class WSCLIENTESCRUD {
         }
     }
 
-    @WebMethod(operationName = "verificoPunto")
-    public String verificoPunto(@WebParam(name = "datos") String datos
-    ) {
-        String respXML = "";
-
-        DReporteClientes reporte = new DReporteClientes();
-        EReporteClientes cliente = new EReporteClientes();
-        ConvertidorXML c = new ConvertidorXML();
-
-        String nombreMunicipio = c.getTag("NOMBRE", datos).trim();
-        String puntoCobertura = c.getTag("PUNTO", datos).trim();
-
-        cliente.setMUNICIPIO(nombreMunicipio);
-        cliente.setPUNTO(puntoCobertura);
-
-        if (reporte.verificoClienteExistente(cliente)) {
-            respXML = "<RESPUESTA>"
-                    + "<CODIGO>003</CODIGO>"
-                    + "<MENSAJE>El nombre y punto de cobertura existe</MENSAJE>"
-                    + "</RESPUESTA>";
-        } else {
-            boolean puntoExiste = new DReporteClientes().verificoPuntoExistente(cliente);
-
-            respXML = "<RESPUESTA>"
-                    + "<CODIGO>" + (puntoExiste ? "001" : "002") + "</CODIGO>"
-                    + "<MENSAJE>" + (puntoExiste ? "Nombre o punto de cobertura no existe" : "Ocurrió un error al buscar el punto de cobertura") + "</MENSAJE>"
-                    + "</RESPUESTA>";
-        }
-
-        return respXML;
-    }
+//    @WebMethod(operationName = "verificoPunto")
+//    public String verificoPunto(@WebParam(name = "datos") String datos
+//    ) {
+//        String respXML = "";
+//
+//        DReporteClientes reporte = new DReporteClientes();
+//        EReporteClientes cliente = new EReporteClientes();
+//        ConvertidorXML c = new ConvertidorXML();
+//
+//        String nombreMunicipio = c.getTag("NOMBRE", datos).trim();
+//        String puntoCobertura = c.getTag("PUNTO", datos).trim();
+//
+//        cliente.setMUNICIPIO(nombreMunicipio);
+//        cliente.setPUNTO(puntoCobertura);
+//
+//        if (reporte.verificoClienteExistente(cliente)) {
+//            respXML = "<RESPUESTA>"
+//                    + "<CODIGO>003</CODIGO>"
+//                    + "<MENSAJE>El nombre y punto de cobertura existe</MENSAJE>"
+//                    + "</RESPUESTA>";
+//        } else {
+//            boolean puntoExiste = new DReporteClientes().verificoPuntoExistente(cliente);
+//
+//            respXML = "<RESPUESTA>"
+//                    + "<CODIGO>" + (puntoExiste ? "001" : "002") + "</CODIGO>"
+//                    + "<MENSAJE>" + (puntoExiste ? "Nombre o punto de cobertura no existe" : "Ocurrió un error al buscar el punto de cobertura") + "</MENSAJE>"
+//                    + "</RESPUESTA>";
+//        }
+//
+//        return respXML;
+//    }
 
     private String quitaNulo(String dato) {
         return dato == null ? "" : dato.trim();

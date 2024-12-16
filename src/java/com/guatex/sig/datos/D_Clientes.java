@@ -525,10 +525,10 @@ public class D_Clientes {
             ps.setString(4, clientes.getCORREO());
             ps.setString(5, clientes.getTELEFONO());
             ps.setString(6, clientes.getNIT());
-            ps.setString(7, clientes.getCAMPO1());
-            ps.setString(8, clientes.getCAMPO2());
-            ps.setString(9, clientes.getCAMPO3());
-            ps.setString(10, clientes.getCAMPO4());
+            ps.setString(7, padre + "/" + clientes.getCAMPO1());
+            ps.setString(8, padre + "/" + clientes.getCAMPO2());
+            ps.setString(9, padre + "/" + clientes.getCAMPO3());
+            ps.setString(10, padre + "/" + clientes.getCAMPO4());
             ps.setString(11, clientes.getRECOGEOFICINA());
             ps.setString(12, clientes.getCOBERTURA().getMUNICIPIO());
             ps.setString(13, clientes.getCOBERTURA().getPUNTO());
@@ -541,7 +541,7 @@ public class D_Clientes {
         }
         return false;
     }
-    
+
     public E_respuestaClientes ObtenerClientesCargaMasiva(Connection con, E_FacCliente params, E_Credenciales credenciales, List<E_Departamento> departamentos, String codigo) {
         String Query;
 
