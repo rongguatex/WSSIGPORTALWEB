@@ -41,7 +41,7 @@ public class D_FacCliente {
 
         try (Connection con = new Conexion().AbrirConexion();
                 PreparedStatement ps = con.prepareStatement(query)) {
-            ps.setString(1, Utils.quitaNulo(credenciales.getPadre()));
+            ps.setString(1, Utils.quitaNulo(credenciales.getCodigo()));
             ps.setString(2, Utils.quitaNulo(cliente.getCODPADRE()));
 
             try (ResultSet rs = ps.executeQuery()) {
