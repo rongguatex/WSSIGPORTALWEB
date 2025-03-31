@@ -41,6 +41,12 @@ import javax.jws.WebParam;
 @WebService(serviceName = "WSSIGCLIENTES")
 public class WSSIGCLIENTES {
 
+    /**
+     * Método para búsqueda de cliente por código.
+     *
+     * @param xml
+     * @return
+     */
     @WebMethod(operationName = "busquedaCliente")
     public String busquedaCliente(@WebParam(name = "datos") String xml) {
         EWSSIGCLIENTES datos = (EWSSIGCLIENTES) new ParseadorXML().parseoXML(xml, EWSSIGCLIENTES.class);
@@ -57,6 +63,13 @@ public class WSSIGCLIENTES {
         return new ConvertidorXML().respuestaXMLDatosCliente(respuesta).replaceAll("&", "&amp;");
     }
 
+    /**
+     * Método para búsqueda de cliente por algún parámetro (nombre, telefono,
+     * códgio, ect..).
+     *
+     * @param xml
+     * @return
+     */
     @WebMethod(operationName = "busquedaClientes")
     public String busquedaClientes(@WebParam(name = "datos") String xml) {
         EWSSIGCLIENTES<E_Cliente> datos = (EWSSIGCLIENTES<E_Cliente>) new ParseadorXML().parseoXML(xml, EWSSIGCLIENTES.class, E_Cliente.class);
@@ -73,6 +86,12 @@ public class WSSIGCLIENTES {
         return new ConvertidorXML().respuestaXMLDatosCliente(respuesta).replaceAll("&", "&amp;");
     }
 
+    /**
+     * Método para listar todos los clientes.
+     *
+     * @param xml
+     * @return
+     */
     @WebMethod(operationName = "busquedaTodosClientes")
     public String busquedaTodosClientes(@WebParam(name = "datos") String xml) {
         EWSSIGCLIENTES<E_Cliente> datos = (EWSSIGCLIENTES<E_Cliente>) new ParseadorXML().parseoXML(xml, EWSSIGCLIENTES.class, E_Cliente.class);
@@ -100,6 +119,8 @@ public class WSSIGCLIENTES {
      * busqueda de listado de guias por rango de fechas, tipo de impresión que
      * no hayan sido recolectadas.
      *
+     * Tipos de impresión: S = impresa, G = guardada.
+     *
      * @param datos
      * @return
      */
@@ -119,6 +140,13 @@ public class WSSIGCLIENTES {
         }
     }
 
+    /**
+     * Método para obtener el detalle de guías y mostrarlo en la tabla de datos
+     * de guía.
+     *
+     * @param noguia
+     * @return
+     */
     @WebMethod(operationName = "obtenerDetalleGuia")
     public String obtenerDetalleGuia(@WebParam(name = "datos") String noguia) {
         noguia = noguia == null ? "" : noguia.trim();
@@ -130,12 +158,26 @@ public class WSSIGCLIENTES {
         }
     }
 
+    /**
+     * Método para realizar el insert en la tabla SIG_IMPRESION en la pantalla
+     * de guias sin imprimir.
+     *
+     * @param XML
+     * @return
+     */
     @WebMethod(operationName = "insertarImpresionData")
     public String insertarImpresionData(@WebParam(name = "datos") String XML) {
         List<E_ImpresionSIG> impresiones = new ConvertidorXML().getObjectImpresion(XML);
         return new D_ImpresionSIG().insertaImpresionSIG(impresiones).replaceAll("&", "&amp;");
     }
 
+    /**
+     * Método para realizar el insert en la tabla SIG_IMPRESION en la pantalla
+     * de reimpresión de guías.
+     *
+     * @param XML
+     * @return
+     */
     @WebMethod(operationName = "insertaReimpresion")
     public String insertaReimpresion(@WebParam(name = "datos") String XML) {
         List<E_ImpresionSIG> impresiones = new ConvertidorXML().getObjectImpresion(XML);
@@ -157,6 +199,11 @@ public class WSSIGCLIENTES {
         return new ConvertidorXML().BadRequest();
     }
 
+    /**
+     * Método para validar y generar guías masivas.
+     * @param XML
+     * @return 
+     */
     @WebMethod(operationName = "creacionGuiasMasivas")
     public String creacionGuiasMasivas(@WebParam(name = "datos") String XML) {
         if (!(XML == null ? "" : XML.trim()).isEmpty()) {
@@ -165,6 +212,12 @@ public class WSSIGCLIENTES {
         return new ConvertidorXML().BadRequest();
     }
 
+    /**
+     * Método no implementado.
+     *
+     * @param XML
+     * @return
+     */
     @WebMethod(operationName = "modificaGuia")
     public String modificaGuia(@WebParam(name = "datos") String XML) {
         if (!(XML == null ? "" : XML.trim()).isEmpty()) {
@@ -173,6 +226,13 @@ public class WSSIGCLIENTES {
         return new ConvertidorXML().BadRequest();
     }
 
+    /**
+     * Método para obtener las opciones del usuario que se han configurado en el
+     * portal corporativo.
+     *
+     * @param XML
+     * @return
+     */
     @WebMethod(operationName = "obtenerOpciones")
     public String obtenerOpciones(@WebParam(name = "datos") String XML) {
         if (!(XML == null ? "" : XML.trim()).isEmpty()) {
@@ -207,6 +267,13 @@ public class WSSIGCLIENTES {
         return new ConvertidorXML().BadRequest();
     }
 
+    /**
+     * Método para obtener la URL de descarga de rotulador a través del id de
+     * servicio.
+     *
+     * @param XML
+     * @return
+     */
     @WebMethod(operationName = "descargaRotulador")
     public String descargaRotulador(@WebParam(name = "datos") String XML) {
         if (!(XML == null ? "" : XML.trim()).isEmpty()) {
@@ -261,6 +328,13 @@ public class WSSIGCLIENTES {
         return new ConvertidorXML().BadRequest();
     }
 
+    /**
+     * Método para obtener el listado de guías a eliminar por el usuario según
+     * su UEGUIAS.
+     *
+     * @param XML
+     * @return
+     */
     @WebMethod(operationName = "obtenerGuiasAEliminar")
     public String obtenerGuiasAEliminar(@WebParam(name = "datos") String XML) {
         if (!(XML == null ? "" : XML.trim()).isEmpty()) {
@@ -306,6 +380,12 @@ public class WSSIGCLIENTES {
                 + "</WSSIGCLIENTES>";
     }
 
+    /**
+     * Método que realiza la eliminación de guías multiples.
+     *
+     * @param XML
+     * @return
+     */
     @WebMethod(operationName = "eliminacionMultiple")
     public String eliminacionMultiple(@WebParam(name = "datos") String XML) {
         if (Utils.quitaNulo(XML).isEmpty()) {
