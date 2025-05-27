@@ -384,10 +384,6 @@ public class D_Clientes {
                     cliente.setCORREO(Utils.quitaNulo(rs.getString("CORREO")));
                     cliente.setTELEFONO(Utils.quitaNulo(rs.getString("TELEFONO")));
                     cliente.setNIT(Utils.quitaNulo(rs.getString("NIT")));
-//                    cliente.setCAMPO1(Utils.quitaNulo(rs.getString("CAMPO1")));
-//                    cliente.setCAMPO2(Utils.quitaNulo(rs.getString("CAMPO2")));
-//                    cliente.setCAMPO3(Utils.quitaNulo(rs.getString("CAMPO3")));
-//                    cliente.setCAMPO4(Utils.quitaNulo(rs.getString("CAMPO4")));
                     cliente.setRECOGEOFICINA(Utils.quitaNulo(rs.getString("RECOGEOFICINA")));
 
                     if (rs.getString("CAMPO1") != null) {

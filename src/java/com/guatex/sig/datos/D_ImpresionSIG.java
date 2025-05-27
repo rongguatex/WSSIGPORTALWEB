@@ -98,20 +98,20 @@ public class D_ImpresionSIG {
                     return new ConvertidorXML().OK();
 
                 } catch (SQLException sqlException) {
-                    System.out.println("ocurrio un error e ingreso al sqlException");
+                    System.out.println("Error e ingreso al sqlException");
                     sqlException.printStackTrace(System.err);
                     if (con != null) {
                         try {
                             System.out.println("Se realiza el rollback");
                             con.rollback();
                         } catch (SQLException rollbackException) {
-                            System.out.println("ocurrio un error e ingreso al rollbackException");
+                            System.out.println("Error e ingreso al rollbackException");
                             rollbackException.printStackTrace(System.err);
                         }
                     }
                 }
             } catch (SQLException e) {
-                System.out.println("ocurrio un error e ingresa al exception");
+                System.out.println("Error e ingresa al exception");
                 e.printStackTrace(System.err);
             }
         }
@@ -119,20 +119,26 @@ public class D_ImpresionSIG {
     }
 
     public String insertaReimpresion(List<E_ImpresionSIG> datos) {
-        if (datos != null && datos.size() > 0) {
+        if (datos != null && !datos.isEmpty()) {
+            String unusuario = datos.get(0).getCODCOB() + "/" + datos.get(0).getUSUARIO();
             try (Connection con = new Conexion().AbrirConexion()) {
                 con.setAutoCommit(false);
-
+                con.setReadOnly(false);
+		con.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
+                
                 boolean isDelivered = false;
-
+                
+                String query = "SELECT J.NOGUIA AS GUIA, SUM(GD.PIEZAS) AS PIEZAS FROM JGUIAS J INNER JOIN JGUIASDETALLE GD ON J.NOGUIA = GD.NOGUIA  WHERE J.NOGUIA = ? AND NOT EXISTS(SELECT G.NOGUIA FROM GUIAS G WHERE G.NOGUIA = ? ) GROUP BY J.NOGUIA;";
+                
                 for (E_ImpresionSIG dato : datos) {
-                    try (PreparedStatement st = con.prepareStatement(" SELECT J.NOGUIA FROM JGUIAS J WHERE J.NOGUIA = ? AND NOT EXISTS(SELECT G.NOGUIA FROM GUIAS G WHERE G.NOGUIA = ? ) ")) {
+                    try (PreparedStatement st = con.prepareStatement(query)) {
                         st.setString(1, dato.getNOGUIA());
                         st.setString(2, dato.getNOGUIA());
 
                         try (ResultSet rs = st.executeQuery()) {
-                            if (!rs.isBeforeFirst()) {
-                                System.out.println(rs.isBeforeFirst());
+                            if (rs.next()) {
+                                dato.setPIEZAS(rs.getInt("PIEZAS"));
+                            } else {
                                 isDelivered = true;
                             }
                         }
@@ -147,22 +153,27 @@ public class D_ImpresionSIG {
                 if (isDelivered) {
                     return new ConvertidorXML().IsDerivered();
                 }
+                String estadoImpreso = "N";
+                estadoImpreso = habilitaImpresionWeb(unusuario);
 
-                try (PreparedStatement insertPS
-                        = con.prepareStatement("INSERT INTO SIG_IMPRESION (NOGUIA,  ESTADO,  CODIGO, USUARIO) VALUES (?,'N',?,?) ")) {
+                String queryInsert = "INSERT INTO SIG_IMPRESION (NOGUIA,  ESTADO,  CODIGO, USUARIO, TGUIAS) VALUES (?,?,?,?,?) ";
+
+                try (PreparedStatement insertPS = con.prepareStatement(queryInsert)) {
 
                     //ciclo para prepatar batch para inserts
                     for (E_ImpresionSIG dato : datos) {
                         insertPS.setString(1, dato.getNOGUIA());
-                        insertPS.setString(2, dato.getCODCOB());
-                        insertPS.setString(3, dato.getUSUARIO());
+                        insertPS.setString(2, estadoImpreso);
+                        insertPS.setString(3, dato.getCODCOB());
+                        insertPS.setString(4, dato.getUSUARIO());
+                        insertPS.setInt(5, dato.getPIEZAS());
                         insertPS.addBatch();
                     }
 
                     int[] insertResults = insertPS.executeBatch();
 
                     for (int arr : insertResults) {
-                        if (insertResults[arr - 1] == PreparedStatement.EXECUTE_FAILED || insertResults[arr - 1] <= 0) {
+                        if (arr == PreparedStatement.EXECUTE_FAILED || arr <= 0) {
                             con.rollback();
                             System.out.println("Error en batch de INSERT, se realiza rollback");
                             return new ConvertidorXML().BadRequest();
@@ -191,5 +202,32 @@ public class D_ImpresionSIG {
             }
         }
         return new ConvertidorXML().InternalServerError();
+    }
+
+    public String habilitaImpresionWeb(String usuario) {
+        String def = "N";
+        if (usuario == null || usuario.trim().isEmpty()) {
+            return def;
+        }
+
+        try (Connection con = new Conexion().AbrirConexion();) {
+            con.setReadOnly(true);
+            con.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
+
+            String sql = "SELECT 1 FROM JUSUARIOSOPCION WHERE USUARIO = ? AND CODIGOOPCION = ? ";
+
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setString(1, usuario.trim());
+                ps.setString(2, "HABILITAIMPRESIONWEB");
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        def = "W";
+                    }
+                }
+            }
+        } catch (Exception e) {
+        }
+        return def;
     }
 }

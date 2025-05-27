@@ -30,6 +30,17 @@ public class E_ImpresionSIG implements Serializable {
 
     @XmlElement(name = "USUARIO")
     private String _USUARIO;
+    
+    @XmlElement(name = "PIEZAS")
+    private int _PIEZAS;
+
+    public int getPIEZAS() {
+        return _PIEZAS;
+    }
+
+    public void setPIEZAS(int _PIEZAS) {
+        this._PIEZAS = _PIEZAS;
+    }
 
     public String getNOGUIA() {
         return _NOGUIA;

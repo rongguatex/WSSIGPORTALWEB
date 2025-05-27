@@ -52,13 +52,6 @@ public class D_Eliminacion {
                         Logger.getLogger(D_Eliminacion.class.getName()).log(Level.INFO, "Eliminaci\u00f3n exitosa gu\u00eda: {0}", dato.getNOGUIA());
                     } catch (Exception e) {
                         Logger.getLogger(D_Eliminacion.class.getName()).log(Level.SEVERE, "Error al eliminar guias ", e);
-//                        if (con != null) {
-//                            try {
-//                                con.rollback();
-//                            } catch (SQLException exrollback) {
-//                                Logger.getLogger(D_Eliminacion.class.getName()).log(Level.SEVERE, "Error al realizar rollback.", exrollback);
-//                            }
-//                        }
                     }
                 }
             }
@@ -104,6 +97,59 @@ public class D_Eliminacion {
             }
         }
         return false;
+    }
+
+    public boolean cambiarEstado(List<E_ImpresionSIG> datos, E_Credenciales credenciales) {
+        boolean respuesta = false;
+
+        if (datos != null && !datos.isEmpty()) {
+            try (Connection con = new Conexion().AbrirConexion()) {
+                con.setAutoCommit(false);
+
+                String query = "UPDATE SIG_IMPRESION SET ESTADO = 'E' WHERE NOGUIA = ? AND CODIGO = ? AND USUARIO = ?";
+
+                try (PreparedStatement ps = con.prepareStatement(query)) {
+
+                    for (E_ImpresionSIG dato : datos) {
+                        ps.setString(1, dato.getNOGUIA());
+                        ps.setString(2, credenciales.getPadre());
+                        ps.setString(3, credenciales.getUsuario());
+                        ps.addBatch();
+                    }
+
+                    int[] updateResults = ps.executeBatch();
+
+                    for (int arr : updateResults) {
+                        if (arr == PreparedStatement.EXECUTE_FAILED || arr <= 0) {
+                            con.rollback();
+                            respuesta = false;
+                            System.out.println("Error en batch de Update SIG_IMPRESION, se realiza rollback");
+                        }
+                    }
+                    con.commit();
+                    respuesta = true;
+                }catch (SQLException sqlException) {
+                    System.out.println("Error e ingreso al sqlException");
+                    sqlException.printStackTrace(System.err);
+                    if (con != null) {
+                        try {
+                            System.out.println("Se realiza el rollback");
+                            con.rollback();
+                        } catch (SQLException rollbackException) {
+                            System.out.println("Error e ingreso al rollbackException");
+                            rollbackException.printStackTrace(System.err);
+                        }
+                    }
+                }
+
+            } catch (SQLException e) {
+                System.out.println("Error al cambiar de estado SIG_IMPRESION al exception");
+                e.printStackTrace(System.err);
+            }
+
+        }
+
+        return respuesta;
     }
 
     public boolean habilitaRotulador(String usuario) {

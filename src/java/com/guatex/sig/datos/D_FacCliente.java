@@ -74,11 +74,8 @@ public class D_FacCliente {
                 + "                             WHERE J.NOGUIA = ? )")) {
             ps.setString(1, padre);
             ps.setString(2, noguia);
-            System.out.println("padre: " + padre);
-            System.out.println("noguia: " + noguia);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    System.out.println("ingresa " + Utils.quitaNulo(rs.getString("CODIGO")));
                     return Utils.quitaNulo(rs.getString("CODIGO"));
                 }
             }

@@ -113,6 +113,8 @@ public class EliminacionControler {
                 }
 
                 new D_Eliminacion().insertaBitacoraEliminacion(con, credenciales, datos);
+                
+                new D_Eliminacion().cambiarEstado(datos, credenciales);    
 
                 Logger.getLogger(WSSIGCLIENTES.class.getName()).log(Level.INFO, "Eliminación exitosa.");
                 return new ConvertidorXML().RespuestaGeneralSIG("200", message);

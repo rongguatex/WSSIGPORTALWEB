@@ -106,29 +106,6 @@ public class WSCLIENTESCRUD {
         return respXML;
     }
 
-//    @WebMethod(operationName = "mostrarCliente")
-//    public String mostrarCliente(@WebParam(name = "datos") String XML) {
-////        System.out.println("entre y tengo de peticion [" + XML + "]");
-//        E_Cliente cliente = new ConvertidorXML().extraerCliente(XML);
-//
-////        new D_Clientes().ObtenerCliente(params, credenciales);
-//        E_respuestaClientes respuesta = new DReporteClientes().ObtenerCliente(cliente);
-//        return new ConvertidorXML().respuestaXMLDatosCliente(respuesta).replaceAll("&", "&amp;");
-//    }
-
-//    @WebMethod(operationName = "listadoClientes")
-//    public String listadoClientes(@WebParam(name = "XML") String XML) {
-//        //System.out.println("entre y tengo de peticion [" + XML + "]");
-//        ConvertidorXML c = new ConvertidorXML();
-//        String PADRE = c.getTag("PADRE", XML);
-//        String CODCOB = c.getTag("CODCOB", XML);
-//
-//        List<EReporteClientes> listadoClientes = new DReporteClientes().obtengoListadoClientes(PADRE, CODCOB);
-//        System.out.println("PESO LISTA " + listadoClientes.size());
-//        String RespXML = c.respuestaXMLListadoClientes(listadoClientes).replaceAll("&", "&amp;");
-//        return RespXML;
-//    }
-
     @WebMethod(operationName = "datosExcelCliente")
     public String datosExcelCliente(@WebParam(name = "datos") String XML) {
         List<EReporteClientes> listadoClientes = new LinkedList<>();
@@ -228,38 +205,6 @@ public class WSCLIENTESCRUD {
             return "<RespuestaClientes><codigo>002</codigo><mensaje>Error al procesar los datos: " + e.getMessage() + "</mensaje></RespuestaClientes>";
         }
     }
-
-//    @WebMethod(operationName = "verificoPunto")
-//    public String verificoPunto(@WebParam(name = "datos") String datos
-//    ) {
-//        String respXML = "";
-//
-//        DReporteClientes reporte = new DReporteClientes();
-//        EReporteClientes cliente = new EReporteClientes();
-//        ConvertidorXML c = new ConvertidorXML();
-//
-//        String nombreMunicipio = c.getTag("NOMBRE", datos).trim();
-//        String puntoCobertura = c.getTag("PUNTO", datos).trim();
-//
-//        cliente.setMUNICIPIO(nombreMunicipio);
-//        cliente.setPUNTO(puntoCobertura);
-//
-//        if (reporte.verificoClienteExistente(cliente)) {
-//            respXML = "<RESPUESTA>"
-//                    + "<CODIGO>003</CODIGO>"
-//                    + "<MENSAJE>El nombre y punto de cobertura existe</MENSAJE>"
-//                    + "</RESPUESTA>";
-//        } else {
-//            boolean puntoExiste = new DReporteClientes().verificoPuntoExistente(cliente);
-//
-//            respXML = "<RESPUESTA>"
-//                    + "<CODIGO>" + (puntoExiste ? "001" : "002") + "</CODIGO>"
-//                    + "<MENSAJE>" + (puntoExiste ? "Nombre o punto de cobertura no existe" : "Ocurrió un error al buscar el punto de cobertura") + "</MENSAJE>"
-//                    + "</RESPUESTA>";
-//        }
-//
-//        return respXML;
-//    }
 
     private String quitaNulo(String dato) {
         return dato == null ? "" : dato.trim();

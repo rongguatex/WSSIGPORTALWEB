@@ -94,6 +94,7 @@ public class WSSIGCLIENTES {
      */
     @WebMethod(operationName = "busquedaTodosClientes")
     public String busquedaTodosClientes(@WebParam(name = "datos") String xml) {
+
         EWSSIGCLIENTES<E_Cliente> datos = (EWSSIGCLIENTES<E_Cliente>) new ParseadorXML().parseoXML(xml, EWSSIGCLIENTES.class, E_Cliente.class);
         if (datos.getCredenciales() == null) {
             return new ConvertidorXML().RespuestaGeneralSIG("500", "Error en el envío de datos, por favor, intente de nuevo.");
@@ -180,6 +181,8 @@ public class WSSIGCLIENTES {
      */
     @WebMethod(operationName = "insertaReimpresion")
     public String insertaReimpresion(@WebParam(name = "datos") String XML) {
+        System.out.println("Inserta reimpresión xml: ");
+        System.out.println(XML);
         List<E_ImpresionSIG> impresiones = new ConvertidorXML().getObjectImpresion(XML);
         return new D_ImpresionSIG().insertaReimpresion(impresiones).replaceAll("&", "&amp;");
     }
@@ -388,6 +391,8 @@ public class WSSIGCLIENTES {
      */
     @WebMethod(operationName = "eliminacionMultiple")
     public String eliminacionMultiple(@WebParam(name = "datos") String XML) {
+        System.out.println("eliminacionMultiple xml:");
+        System.out.println(XML);
         if (Utils.quitaNulo(XML).isEmpty()) {
             Logger.getLogger(WSSIGCLIENTES.class.getName()).log(Level.SEVERE, "Error en el envío de datos al ws.");
             return new ConvertidorXML().RespuestaGeneralSIG("500", "Error en el envío de datos, por favor, intente de nuevo");
