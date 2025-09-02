@@ -342,6 +342,7 @@ public class ConvertidorXML {
                         + addTag("CODDESTINO", guia.getCODDESTINO())
                         + addTag("OBSERVACIONES", guia.getOBSERVACIONES())
                         + addTag("OBSERVACIONESENTRE", guia.getOBSERVACIONESENTRE())
+                        + addTag("IMPRESO", guia.getIMPRESO())
                         + "<ORIGEN>"
                         + "<DEPARTAMENTO>"
                         + addTag("CODIGO", ubicacionOrigen.getDEPARTAMENTO().getCODIGO())

@@ -119,7 +119,7 @@ public class D_Guia {
         datos.setNoguia(util.quitaNulo(datos.getNoguia()));
         if (!datos.getNoguia().isEmpty()) {
             List<E_Guia> datosGuia = new LinkedList<>();
-            String query = " SELECT   "
+            String query = " SELECT "
                     + "    J.IDGUIA, J.NOGUIA, J.CODCOB, J.IDSERVICIO,  "
                     + "    CONVERT(VARCHAR(10), J.FECHA, 103) AS FECHA,  "
                     + "    J.CODREM, J.NOMREM, J.TELREM, J.DIRREM,  J.COMPLEMENTODIRREM, "
@@ -132,12 +132,13 @@ public class D_Guia {
                     + "    J.CONTSEG, J.FECOPE, J.HORAOPE,  J.RECOGEOFICINA,  "
                     + "    J.CAMPO1, J.CAMPO2, J.CAMPO3, J.CAMPO4,  "
                     + "    J.CODORIGEN, J.CODDESTINO,   "
-                    + "    J.OBSERVACIONES, J.OBSERVACIONESENTRE  "
+                    + "    J.OBSERVACIONES, J.OBSERVACIONESENTRE, J.IMPRESO "
                     + "FROM JGUIAS J   "
                     + "INNER JOIN FACCLIENTES FC ON J.CODCOB = FC.CODIGO  "
                     + "WHERE NOGUIA = ? "
                     + "AND FC.PADRE = ? "
-                    + "AND ISNULL(J.IMPRESO, 'N') != 'S' "
+//                    + "AND ISNULL(J.IMPRESO, 'N') != 'S' "
+                    + "AND ISNULL(J.IMPRESO, 'N') NOT IN ('S', 'R') "
                     + "AND NOT EXISTS ( "
                     + "    SELECT "
                     + "        NOGUIA "
@@ -159,6 +160,7 @@ public class D_Guia {
                         guia.setCODCOB(util.quitaNulo(rs.getString("CODCOB")));
                         guia.setIDSERVICIO(util.quitaNulo(rs.getString("IDSERVICIO")));
                         guia.setFECHA(util.quitaNulo(rs.getString("FECHA")));
+                        guia.setIMPRESO(util.quitaNulo(rs.getString("IMPRESO"))); System.out.println("---> Impreso: "+guia.getIMPRESO());
                         //datos de remitente
                         guia.setCODREM(util.quitaNulo(rs.getString("CODREM")));
                         guia.setNOMREM(util.quitaNulo(rs.getString("NOMREM")));
@@ -245,22 +247,32 @@ public class D_Guia {
 
         try (Connection con = new Conexion().AbrirConexion()) {
             con.setAutoCommit(false);
+            String impreso = "";
+            String upQuery = "";
             for (E_ImpresionSIG dato : datos) {
                 if (dato.getNOGUIA() != null || !dato.getNOGUIA().isEmpty()) {
-                    try (PreparedStatement ps = con.prepareStatement("SELECT IDSERVICIO FROM JGUIAS WHERE NOGUIA = ? ")) {
+                    try (PreparedStatement ps = con.prepareStatement("SELECT IDSERVICIO, IMPRESO FROM JGUIAS WHERE NOGUIA = ? ")) {
                         ps.setString(1, dato.getNOGUIA());
                         try (ResultSet rs = ps.executeQuery()) {
                             while (rs.next()) {
                                 E_Servicio servicio = new E_Servicio();
                                 servicio.setIDSERVICIO(util.quitaNulo(rs.getString("IDSERVICIO")));
+                                impreso = util.quitaNulo(rs.getString("IMPRESO"));
                                 resultado.add(servicio);
                             }
                         }
                     }
                 }
             }
-
-            try (PreparedStatement psUpdate = con.prepareStatement("UPDATE JGUIAS SET IMPRESO = 'S' WHERE NOGUIA = ?")) {
+            
+            if(impreso.equalsIgnoreCase("D") || impreso.equalsIgnoreCase("R")){
+                upQuery = "UPDATE JGUIAS SET IMPRESO = 'R' WHERE NOGUIA = ?";
+            }else if(impreso.equalsIgnoreCase("S")){
+                upQuery = "UPDATE JGUIAS SET IMPRESO = 'S' WHERE NOGUIA = ?";
+            }
+            System.out.println(">>>>>>> Impreso: "+impreso+" - upQuery: "+upQuery);
+            
+            try (PreparedStatement psUpdate = con.prepareStatement(upQuery)) {
                 for (E_ImpresionSIG dato : datos) {
                     psUpdate.setString(1, dato.getNOGUIA());
                     psUpdate.addBatch();
@@ -298,15 +310,16 @@ public class D_Guia {
 
     public String validaImpresion(List<E_ImpresionSIG> datos) {
         boolean isPrinted = false;
-
+        String impreso = "";
         try (Connection con = new Conexion().AbrirConexion();
                 PreparedStatement st = con.prepareStatement(" SELECT ISNULL(IMPRESO, 'N') IMPRESO FROM JGUIAS WHERE NOGUIA = ? ")) {
             for (E_ImpresionSIG dato : datos) {
                 st.setString(1, dato.getNOGUIA());
-
+                
                 try (ResultSet rs = st.executeQuery()) {
                     while (rs.next()) {
-                        if (util.quitaNulo(rs.getString("IMPRESO")).equalsIgnoreCase("S")) {
+                        impreso = util.quitaNulo(rs.getString("IMPRESO"));
+                        if (impreso.equalsIgnoreCase("S") || impreso.equalsIgnoreCase("R")) {
                             isPrinted = true;
                         }
                     }

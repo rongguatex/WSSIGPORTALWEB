@@ -8,10 +8,12 @@ package com.guatex.sig.datos;
 import com.guatex.sig.entidades.E_Credenciales;
 import com.guatex.sig.entidades.E_ImpresionSIG;
 import com.guatex.sig.utils.Utils;
+import java.sql.BatchUpdateException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -111,24 +113,37 @@ public class D_Eliminacion {
                 try (PreparedStatement ps = con.prepareStatement(query)) {
 
                     for (E_ImpresionSIG dato : datos) {
-                        ps.setString(1, dato.getNOGUIA());
-                        ps.setString(2, credenciales.getPadre());
-                        ps.setString(3, credenciales.getUsuario());
+                        System.out.println("-> A actualizar guía: [" + dato.getNOGUIA() + "] - Código: [" + credenciales.getPadre() + "] - Usuario: [" + credenciales.getUsuario() + "] ");
+                        ps.setString(1, dato.getNOGUIA().trim());
+                        ps.setString(2, credenciales.getPadre().trim());
+                        ps.setString(3, credenciales.getUsuario().trim());
                         ps.addBatch();
                     }
 
-                    int[] updateResults = ps.executeBatch();
+                    ps.executeBatch();
 
-                    for (int arr : updateResults) {
-                        if (arr == PreparedStatement.EXECUTE_FAILED || arr <= 0) {
-                            con.rollback();
-                            respuesta = false;
-                            System.out.println("Error en batch de Update SIG_IMPRESION, se realiza rollback");
-                        }
-                    }
+//                    int[] updateResults = ps.executeBatch();
+//                    for (int arr : updateResults) {
+//                        if (arr == PreparedStatement.EXECUTE_FAILED || arr <= 0) {
+//                            con.rollback();
+//                            respuesta = false;
+//                            System.out.println("Error en batch de Update SIG_IMPRESION, se realiza rollback");
+//                        }
+//                    }
                     con.commit();
                     respuesta = true;
-                }catch (SQLException sqlException) {
+
+                } catch (BatchUpdateException bue) {
+                    System.out.println("BatchUpdateException: " + bue.getMessage());
+                    System.out.println("SQLState: " + bue.getSQLState());
+                    System.out.println("ErrorCode: " + bue.getErrorCode());
+                    System.out.println("UpdateCounts: " + Arrays.toString(bue.getUpdateCounts()));
+                    bue.printStackTrace();
+                    
+                    con.rollback();
+                    respuesta = false;
+
+                } catch (SQLException sqlException) {
                     System.out.println("Error e ingreso al sqlException");
                     sqlException.printStackTrace(System.err);
                     if (con != null) {

@@ -168,6 +168,8 @@ public class WSSIGCLIENTES {
      */
     @WebMethod(operationName = "insertarImpresionData")
     public String insertarImpresionData(@WebParam(name = "datos") String XML) {
+        System.out.println("insertarImpresionData xml: ");
+        System.out.println(XML);
         List<E_ImpresionSIG> impresiones = new ConvertidorXML().getObjectImpresion(XML);
         return new D_ImpresionSIG().insertaImpresionSIG(impresiones).replaceAll("&", "&amp;");
     }
@@ -318,6 +320,7 @@ public class WSSIGCLIENTES {
 
                     for (E_Servicio servicio : serviciosId) {
                         servicio.setURLSERVICIO("https://sig.guatex.gt/WSPGimpresion/GeneraPDF?idservicio=" + servicio.getIDSERVICIO());
+                        //servicio.setURLSERVICIO("http://192.168.11.178:8080/WSPGimpresion/GeneraPDF?idservicio=" + servicio.getIDSERVICIO());
                         servicioXML.append(new ParseadorXML().parseoObj(servicio, E_Servicio.class));
                     }
 

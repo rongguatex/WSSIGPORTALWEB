@@ -32,17 +32,23 @@ public class D_ImpresionSIG {
      */
     public String insertaImpresionSIG(List<E_ImpresionSIG> datos) {
         if (datos != null && datos.size() > 0) {
+            String unusuario = datos.get(0).getCODCOB() + "/" + datos.get(0).getUSUARIO();
             try (Connection con = new Conexion().AbrirConexion()) {
                 con.setAutoCommit(false);
+                con.setReadOnly(false);
+                con.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
 
                 boolean isPrinted = false;
 
-                try (PreparedStatement st = con.prepareStatement(" SELECT ISNULL(IMPRESO, 'N') IMPRESO FROM JGUIAS WHERE NOGUIA = ? ")) {
+                String query = "SELECT J.NOGUIA AS GUIA, ISNULL(J.IMPRESO, 'N') AS IMPRESO, SUM(GD.PIEZAS) AS PIEZAS FROM JGUIAS J INNER JOIN JGUIASDETALLE GD ON J.NOGUIA = GD.NOGUIA  WHERE J.NOGUIA = ? AND NOT EXISTS(SELECT G.NOGUIA FROM GUIAS G WHERE G.NOGUIA = ? ) GROUP BY J.NOGUIA, J.IMPRESO;";
+
+                try (PreparedStatement st = con.prepareStatement(query)) {
                     for (E_ImpresionSIG dato : datos) {
                         st.setString(1, dato.getNOGUIA());
-
+                        st.setString(2, dato.getNOGUIA());
                         try (ResultSet rs = st.executeQuery()) {
-                            while (rs.next()) {
+                            if (rs.next()) {
+                                dato.setPIEZAS(rs.getInt("PIEZAS"));
                                 if (util.quitaNulo(rs.getString("IMPRESO")).equalsIgnoreCase("S")) {
                                     isPrinted = true;
                                 }
@@ -58,14 +64,19 @@ public class D_ImpresionSIG {
                     return new ConvertidorXML().isPrinted();//Se devuelve respuesta IsDelivered solo para obtener el código 
                 }
 
-                try (PreparedStatement insertPS = con.prepareStatement("INSERT INTO SIG_IMPRESION (NOGUIA,  ESTADO,  CODIGO, USUARIO) VALUES (?,'N',?,?) ");
+                String estadoImpreso = "N";
+                estadoImpreso = habilitaImpresionWeb(unusuario);
+
+                try (PreparedStatement insertPS = con.prepareStatement("INSERT INTO SIG_IMPRESION (NOGUIA,  ESTADO,  CODIGO, USUARIO, TGUIAS) VALUES (?,?,?,?,?) ");
                         PreparedStatement updatePS = con.prepareStatement("UPDATE JGUIAS SET IMPRESO = 'S' WHERE NOGUIA = ?")) {
 
                     //ciclo para prepatar batch para inserts
                     for (E_ImpresionSIG dato : datos) {
                         insertPS.setString(1, dato.getNOGUIA());
-                        insertPS.setString(2, dato.getCODCOB());
-                        insertPS.setString(3, dato.getUSUARIO());
+                        insertPS.setString(2, estadoImpreso);
+                        insertPS.setString(3, dato.getCODCOB());
+                        insertPS.setString(4, dato.getUSUARIO());
+                        insertPS.setInt(5, dato.getPIEZAS());
                         insertPS.addBatch();
                     }
 
@@ -79,7 +90,7 @@ public class D_ImpresionSIG {
                     int[] updateResults = updatePS.executeBatch();
 
                     for (int arr : insertResults) {
-                        if (insertResults[arr - 1] == PreparedStatement.EXECUTE_FAILED || insertResults[arr - 1] <= 0) {
+                        if (arr == PreparedStatement.EXECUTE_FAILED || arr <= 0) {
                             con.rollback();
                             System.out.println("Error en batch de INSERT, se realiza rollback");
                             return new ConvertidorXML().BadRequest();
@@ -124,12 +135,12 @@ public class D_ImpresionSIG {
             try (Connection con = new Conexion().AbrirConexion()) {
                 con.setAutoCommit(false);
                 con.setReadOnly(false);
-		con.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
-                
+                con.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
+
                 boolean isDelivered = false;
-                
+
                 String query = "SELECT J.NOGUIA AS GUIA, SUM(GD.PIEZAS) AS PIEZAS FROM JGUIAS J INNER JOIN JGUIASDETALLE GD ON J.NOGUIA = GD.NOGUIA  WHERE J.NOGUIA = ? AND NOT EXISTS(SELECT G.NOGUIA FROM GUIAS G WHERE G.NOGUIA = ? ) GROUP BY J.NOGUIA;";
-                
+
                 for (E_ImpresionSIG dato : datos) {
                     try (PreparedStatement st = con.prepareStatement(query)) {
                         st.setString(1, dato.getNOGUIA());
