@@ -137,7 +137,7 @@ public class D_Guia {
                     + "INNER JOIN FACCLIENTES FC ON J.CODCOB = FC.CODIGO  "
                     + "WHERE NOGUIA = ? "
                     + "AND FC.PADRE = ? "
-//                    + "AND ISNULL(J.IMPRESO, 'N') != 'S' "
+                    //                    + "AND ISNULL(J.IMPRESO, 'N') != 'S' "
                     + "AND ISNULL(J.IMPRESO, 'N') NOT IN ('S', 'R') "
                     + "AND NOT EXISTS ( "
                     + "    SELECT "
@@ -160,7 +160,8 @@ public class D_Guia {
                         guia.setCODCOB(util.quitaNulo(rs.getString("CODCOB")));
                         guia.setIDSERVICIO(util.quitaNulo(rs.getString("IDSERVICIO")));
                         guia.setFECHA(util.quitaNulo(rs.getString("FECHA")));
-                        guia.setIMPRESO(util.quitaNulo(rs.getString("IMPRESO"))); System.out.println("---> Impreso: "+guia.getIMPRESO());
+                        guia.setIMPRESO(util.quitaNulo(rs.getString("IMPRESO")));
+                        System.out.println("---> Impreso: " + guia.getIMPRESO());
                         //datos de remitente
                         guia.setCODREM(util.quitaNulo(rs.getString("CODREM")));
                         guia.setNOMREM(util.quitaNulo(rs.getString("NOMREM")));
@@ -249,8 +250,10 @@ public class D_Guia {
             con.setAutoCommit(false);
             String impreso = "";
             String upQuery = "";
+            boolean ejecutarUpdate = true;
+
             for (E_ImpresionSIG dato : datos) {
-                if (dato.getNOGUIA() != null || !dato.getNOGUIA().isEmpty()) {
+                if (dato.getNOGUIA() != null && !dato.getNOGUIA().isEmpty()) {
                     try (PreparedStatement ps = con.prepareStatement("SELECT IDSERVICIO, IMPRESO FROM JGUIAS WHERE NOGUIA = ? ")) {
                         ps.setString(1, dato.getNOGUIA());
                         try (ResultSet rs = ps.executeQuery()) {
@@ -264,44 +267,60 @@ public class D_Guia {
                     }
                 }
             }
-            
-            if(impreso.equalsIgnoreCase("D") || impreso.equalsIgnoreCase("R")){
+
+            if (impreso.isEmpty()) {
+                System.out.println("No hay estado IMPRESO válido, no se ejecuta UPDATE");
+                con.rollback();
+                return null;
+            }
+
+            if (impreso.equalsIgnoreCase("D")) {
                 upQuery = "UPDATE JGUIAS SET IMPRESO = 'R' WHERE NOGUIA = ?";
-            }else if(impreso.equalsIgnoreCase("S")){
+            } else if (impreso.equalsIgnoreCase("G")) {
                 upQuery = "UPDATE JGUIAS SET IMPRESO = 'S' WHERE NOGUIA = ?";
+            } else if (impreso.equalsIgnoreCase("R") || impreso.equalsIgnoreCase("S")) {
+                ejecutarUpdate = false;
+            } else {
+                con.rollback();
+                return null;
             }
-            System.out.println(">>>>>>> Impreso: "+impreso+" - upQuery: "+upQuery);
-            
-            try (PreparedStatement psUpdate = con.prepareStatement(upQuery)) {
-                for (E_ImpresionSIG dato : datos) {
-                    psUpdate.setString(1, dato.getNOGUIA());
-                    psUpdate.addBatch();
-                }
 
-                int[] updateResults = psUpdate.executeBatch();
+            if (ejecutarUpdate) {
+                System.out.println("Impreso - " + impreso + " - descargaRotulador");
+                try (PreparedStatement psUpdate = con.prepareStatement(upQuery)) {
+                    for (E_ImpresionSIG dato : datos) {
+                        psUpdate.setString(1, dato.getNOGUIA());
+                        psUpdate.addBatch();
+                    }
 
-                for (int arr : updateResults) {
-                    if (updateResults[arr - 1] == PreparedStatement.EXECUTE_FAILED || updateResults[arr - 1] <= 0) {
-                        con.rollback();
-                        System.out.println("Error en batch de UPDATE, se realiza rollback");
-                        return null;
+                    int[] updateResults = psUpdate.executeBatch();
+
+                    for (int arr : updateResults) {
+                        if (updateResults[arr - 1] == PreparedStatement.EXECUTE_FAILED || updateResults[arr - 1] <= 0) {
+                            con.rollback();
+                            System.out.println("Error en batch de UPDATE, se realiza rollback");
+                            return null;
+                        }
+                    }
+
+                } catch (SQLException sqlException) {
+                    System.out.println("ocurrio un error e ingreso al sqlException");
+                    sqlException.printStackTrace(System.err);
+                    if (con != null) {
+                        try {
+                            System.out.println("Se realiza el rollback");
+                            con.rollback();
+                        } catch (SQLException rollbackException) {
+                            System.out.println("ocurrio un error e ingreso al rollbackException");
+                            rollbackException.printStackTrace(System.err);
+                        }
                     }
                 }
-                con.commit();
-                return resultado;
-            } catch (SQLException sqlException) {
-                System.out.println("ocurrio un error e ingreso al sqlException");
-                sqlException.printStackTrace(System.err);
-                if (con != null) {
-                    try {
-                        System.out.println("Se realiza el rollback");
-                        con.rollback();
-                    } catch (SQLException rollbackException) {
-                        System.out.println("ocurrio un error e ingreso al rollbackException");
-                        rollbackException.printStackTrace(System.err);
-                    }
-                }
+            } else {
+                System.out.println("Impreso [" + impreso + "] se omite UPDATE descargaRotulador");
             }
+            con.commit();
+            return resultado;
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -315,7 +334,7 @@ public class D_Guia {
                 PreparedStatement st = con.prepareStatement(" SELECT ISNULL(IMPRESO, 'N') IMPRESO FROM JGUIAS WHERE NOGUIA = ? ")) {
             for (E_ImpresionSIG dato : datos) {
                 st.setString(1, dato.getNOGUIA());
-                
+
                 try (ResultSet rs = st.executeQuery()) {
                     while (rs.next()) {
                         impreso = util.quitaNulo(rs.getString("IMPRESO"));
