@@ -25,7 +25,7 @@ public class E_DetalleLinea {
     private String _NOGUIA;
 
     @XmlElement(name = "LINEA")
-    private String _LINEA;
+    private String _LINEA = "";
 
     @XmlElement(name = "PIEZAS")
     private int _PIEZAS;
@@ -40,7 +40,7 @@ public class E_DetalleLinea {
     private String _DESCRIPCIONENVIO;
 
     @XmlElement(name = "PESO")
-    private String _PESO;
+    private String _PESO = "";
 
     @XmlElement(name = "PESOTOTAL")
     private String _PESOTOTAL;
@@ -49,7 +49,7 @@ public class E_DetalleLinea {
     private String _COSTOTARIFA;
 
     @XmlElement(name = "TARIFA")
-    private String _TARIFA;
+    private String _TARIFA = "";
 
     @XmlElement(name = "MANUAL")
     private String _MANUAL;
@@ -65,6 +65,15 @@ public class E_DetalleLinea {
 
     @XmlElement(name = "ESTADO")
     private boolean _ESTADO;
+
+    @XmlElement(name = "IDBOLSON")
+    private String IDBOLSON;
+
+    @XmlElement(name = "PIEZASRESERVADO")
+    private String PIEZASRESERVADO;
+
+    @XmlElement(name = "IDBOLSONDETALLE")
+    private String IDBOLSONDETALLE;
 
     public void setNOGUIA(String _NOGUIA) {
         this._NOGUIA = _NOGUIA;
@@ -208,9 +217,33 @@ public class E_DetalleLinea {
         }
     }
 
+    public String getIDBOLSON() {
+        return IDBOLSON;
+    }
+
+    public void setIDBOLSON(String IDBOLSON) {
+        this.IDBOLSON = IDBOLSON;
+    }
+
+    public String getPIEZASRESERVADO() {
+        return PIEZASRESERVADO;
+    }
+
+    public void setPIEZASRESERVADO(String PIEZASRESERVADO) {
+        this.PIEZASRESERVADO = PIEZASRESERVADO;
+    }
+
+    public String getIDBOLSONDETALLE() {
+        return IDBOLSONDETALLE;
+    }
+
+    public void setIDBOLSONDETALLE(String IDBOLSONDETALLE) {
+        this.IDBOLSONDETALLE = IDBOLSONDETALLE;
+    }
+
     @Override
     public String toString() {
-        return "E_DetalleLinea{" + "_LINEA=" + _LINEA + ", _PIEZAS=" + _PIEZAS + ", _TIPOENVIO=" + _TIPOENVIO + ", _PESO=" + _PESO + ", _TARIFA=" + _TARIFA + '}';
+        return "E_DetalleLinea{" + "_IDGUIA=" + _IDGUIA + ", _NOGUIA=" + _NOGUIA + ", _LINEA=" + _LINEA + ", _PIEZAS=" + _PIEZAS + ", _TIPOENVIO=" + _TIPOENVIO + ", _ABVENVIO=" + _ABVENVIO + ", _DESCRIPCIONENVIO=" + _DESCRIPCIONENVIO + ", _PESO=" + _PESO + ", _PESOTOTAL=" + _PESOTOTAL + ", _COSTOTARIFA=" + _COSTOTARIFA + ", _TARIFA=" + _TARIFA + ", _MANUAL=" + _MANUAL + ", _PBULTOS=" + _PBULTOS + ", _TABLAZONA=" + _TABLAZONA + ", _CODTARIFA=" + _CODTARIFA + ", _ESTADO=" + _ESTADO + ", IDBOLSON=" + IDBOLSON + ", PIEZASRESERVADO=" + PIEZASRESERVADO + ", IDBOLSONDETALLE=" + IDBOLSONDETALLE + '}';
     }
 
 }

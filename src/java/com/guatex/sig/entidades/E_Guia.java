@@ -5,6 +5,7 @@
  */
 package com.guatex.sig.entidades;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -131,70 +132,81 @@ public class E_Guia {
 
     @XmlElement(name = "COBEX")
     private String _COBEX;
-    
+
     @XmlElement(name = "TIPTAR")
     private String _TIPTAR;
-    
+
     @XmlElement(name = "RUTAZONA")
     private String _RUTAZONA;
-    
+
     @XmlElement(name = "EMAILENVIADO")
     private String _EMAILENVIADO;
-    
+
     @XmlElement(name = "IMPOPER")
     private String _IMPOPER;
-    
+
     @XmlElement(name = "TIPOENVIOS")
     private String _TIPOENVIOS;
-    
+
     @XmlElement(name = "PIEZAS")
     private int _PIEZAS;
-    
+
     @XmlElement(name = "NUMERO_PIEZA")
     private int _NUMERO_PIEZA;
-    
+
     @XmlElement(name = "PESO")
     private String _PESO;
-    
+
     @XmlElementWrapper(name = "LISTADODETALLEGUIA")
     @XmlElement(name = "LINEADETALLE")
-    private List<E_DetalleLinea> _DETALLE = new LinkedList<>();
-    
+    private List<E_DetalleLinea> _DETALLE = new ArrayList<>();
+
     @XmlElement(name = "SELECCIONADO")
     private boolean _SELECCIONADO;
-    
+
     @XmlElement(name = "IMPRIMECOD")
     private String _IMPRIMECOD;
-    
+
     @XmlElement(name = "PRECIOCOD")
     private String _PRECIOCOD;
-    
+
     @XmlElement(name = "SEABREPAQUETE")
     private String _SEABREPAQUETE = "";
-    
+
     @XmlElement(name = "FECHA_INICIAL")
     private String _FECHA_INICIAL = "";
-    
+
     @XmlElement(name = "FECHA_FINAL")
     private String _FECHA_FINAL = "";
-    
+
     @XmlElement(name = "TABLA")
     private String _TABLA = "";
-    
+
     @XmlElement(name = "COD_VALORACOBRAR")
     private String _COD_VALORACOBRAR = "";
-    
+
     @XmlElement(name = "OBSERVACIONES")
     private String _OBSERVACIONES = "";
-    
+
     @XmlElement(name = "OBSERVACIONESENTRE")
     private String _OBSERVACIONESENTRE = "";
-    
+
     @XmlElement(name = "CODORIGEN")
     private String _CODORIGEN = "";
-    
+
     @XmlElement(name = "CODDESTINO")
     private String _CODDESTINO = "";
+
+    @XmlElement(name = "PREPAGO")
+    private String _PREPAGO = "";
+
+    public String getGUIAPREPAGO() {
+        return _PREPAGO;
+    }
+
+    public void setGUIAPREPAGO(String _GUIAPREPAGO) {
+        this._PREPAGO = _GUIAPREPAGO;
+    }
 
     public String getCOD_VALORACOBRAR() {
         return _COD_VALORACOBRAR;

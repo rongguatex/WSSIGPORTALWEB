@@ -357,7 +357,7 @@ public class WSSIGCLIENTES {
                     Logger.getLogger(WSSIGCLIENTES.class.getName()).log(Level.SEVERE, "Error al obtener datos del usuario.");
                     return "<WSSIGCLIENTES>"
                             + new ParseadorXML().parseoObj(
-                                    new RespuestaGeneral("9999", "Ocurrió un error al obtener datos del usuario,"),
+                                    new RespuestaGeneral("9999", "Ocurrió un error al obtener datos del usuario."),
                                     RespuestaGeneral.class)
                             + "</WSSIGCLIENTES>";
                 }
@@ -404,4 +404,17 @@ public class WSSIGCLIENTES {
         XML = Utils.codificaCaracteres(XML);
         return new EliminacionControler().EliminacionDeGuias(XML);
     }
+    
+//    @WebMethod(operationName = "eliminacionMultiple")
+//    public String eliminacionMultiple(@WebParam(name = "datos") String XML) {
+//        System.out.println("eliminacionMultiple xml:");
+//        System.out.println(XML);
+//        if (Utils.quitaNulo(XML).isEmpty()) {
+//            Logger.getLogger(WSSIGCLIENTES.class.getName()).log(Level.SEVERE, "Error en el envío de datos al ws.");
+//            return new ConvertidorXML().RespuestaGeneralSIG("500", "Error en el envío de datos, por favor, intente de nuevo");
+//        }
+//
+//        XML = Utils.codificaCaracteres(XML);
+//        return new EliminacionControler().EliminacionDeGuias(XML);
+//    }
 }

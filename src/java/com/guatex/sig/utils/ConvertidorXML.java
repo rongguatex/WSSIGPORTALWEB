@@ -26,9 +26,9 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
 public class ConvertidorXML {
-
+    
     Utils util = new Utils();
-
+    
     public E_Cliente extraerCliente(String xml) {
         E_Cliente cliente = new E_Cliente();
         cliente.setCODIGO(getTag("CODIGO", xml));
@@ -40,9 +40,9 @@ public class ConvertidorXML {
         cliente.setPADRE(getTag("PADRE", xml));
         return cliente;
     }
-
+    
     public String respuestaXMLDatosCliente(E_respuestaClientes data) {
-
+        
         String XML = "<RESPUESTA>"
                 + addTag("CODIGO", data.getCODIGO())
                 + addTag("MENSAJE", data.getMENSAJE())
@@ -102,9 +102,9 @@ public class ConvertidorXML {
                 + "</RESPUESTA>";
         return XML;
     }
-
+    
     public String respuestaXMLListadoClientes(List<EReporteClientes> listadoClientes) {
-
+        
         String XML = "<RESPUESTA>"
                 + "<CLIENTES>";
         for (EReporteClientes cliente : listadoClientes) {
@@ -130,7 +130,7 @@ public class ConvertidorXML {
                 + "</RESPUESTA>";
         return XML;
     }
-
+    
     private String municipios(E_Cliente cliente) {
         String xml = "";
         for (E_Municipio m : cliente.getDEPARTAMENTO().getMUNICIPIOS()) {
@@ -141,16 +141,16 @@ public class ConvertidorXML {
         }
         return xml;
     }
-
+    
     public String respXMLListadoClientes(List<EReporteClienteXML> clientes) {
         try {
             JAXBContext jaxbContext = JAXBContext.newInstance(ClientesWrapper.class);
             Marshaller marshaller = jaxbContext.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-
+            
             ClientesWrapper wrapper = new ClientesWrapper();
             wrapper.setClientes(clientes);
-
+            
             StringWriter writer = new StringWriter();
             marshaller.marshal(wrapper, writer);
             return writer.toString();
@@ -166,10 +166,10 @@ public class ConvertidorXML {
             JAXBContext jaxbContext = JAXBContext.newInstance(ClientesWrapper.class);
             Marshaller marshaller = jaxbContext.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-
+            
             ClientesWrapper wrapper = new ClientesWrapper();
             wrapper.setClientes(clientes);
-
+            
             StringWriter writer = new StringWriter();
             marshaller.marshal(wrapper, writer);
             return writer.toString();
@@ -286,7 +286,7 @@ public class ConvertidorXML {
                 + "</RESPUESTA>";
         return XML;
     }
-
+    
     public String respuestaXMLGuia(E_RespuestaGuia data, E_Ubicacion ubicacionOrigen, E_Ubicacion ubicacionDestino) {
         String XML = "<RESPUESTA>"
                 + addTag("CODIGO", data.getCODIGO())
@@ -343,6 +343,24 @@ public class ConvertidorXML {
                         + addTag("OBSERVACIONES", guia.getOBSERVACIONES())
                         + addTag("OBSERVACIONESENTRE", guia.getOBSERVACIONESENTRE())
                         + addTag("IMPRESO", guia.getIMPRESO())
+                        + addTag("PREPAGO", guia.getGUIAPREPAGO())
+                        + "<LISTADODETALLEGUIA>";
+                if(guia.getDETALLE().size()>0){
+                    for (E_DetalleLinea eD : guia.getDETALLE()) {
+                            XML += "<LINEADETALLE>"
+                                + addTag("LINEA", eD.getLINEA())
+                                + addTag("PIEZAS", String.valueOf(eD.getPIEZAS()))
+                                + addTag("TIPOENVIO", eD.getTIPOENVIO())
+                                + addTag("DESCRIPCIONENVIO", eD.getDESCRIPCIONENVIO())
+                                + addTag("PESO", eD.getPESO())
+                                + addTag("TARIFA", eD.getTARIFA())
+                                + addTag("IDBOLSON", eD.getIDBOLSON())
+                                + addTag("PIEZASRESERVADO", eD.getPIEZASRESERVADO())
+                                + addTag("IDBOLSONDETALLE", eD.getIDBOLSONDETALLE())
+                                + "</LINEADETALLE>";
+                        }
+                }
+                XML += "</LISTADODETALLEGUIA>"
                         + "<ORIGEN>"
                         + "<DEPARTAMENTO>"
                         + addTag("CODIGO", ubicacionOrigen.getDEPARTAMENTO().getCODIGO())
@@ -398,6 +416,7 @@ public class ConvertidorXML {
         }
         XML += "</LISTADO_GUIAS>"
                 + "</RESPUESTA>";
+        System.out.println("XML de respuesta: \n"+XML);
         return XML;
     }
 
@@ -451,12 +470,12 @@ public class ConvertidorXML {
             throw new IllegalArgumentException("El parámetro xml no puede ser nulo o vacío.");
         }
     }
-
+    
     public E_Tarificador parseoTarificador(String xml) {
         E_Tarificador tarificador = new E_Tarificador();
         tarificador.setCODIGO(getTag("CODIGO", xml));
         tarificador.setDESCIPCION(getTag("DESCRIPCION", xml));
-
+        
         if (tarificador.getCODIGO().equalsIgnoreCase("S")) {
             tarificador.setCODIGOENVIO(getTag("CODIGOENVIO", xml));
             tarificador.setCANTPIEZAS(getTag("CANTPIEZAS", xml));
@@ -491,42 +510,42 @@ public class ConvertidorXML {
                 + addTag("MENSAJE", "BAD REQUEST")
                 + "</RESPUESTA>";
     }
-
+    
     public String NoContent() {
         return "<RESPUESTA>"
                 + addTag("CODIGO", "204")
                 + addTag("MENSAJE", "NO CONTENT")
                 + "</RESPUESTA>";
     }
-
+    
     public String InternalServerError() {
         return "<RESPUESTA>"
                 + addTag("CODIGO", "500")
                 + addTag("MENSAJE", "INTERNAL SERVER ERROR")
                 + "</RESPUESTA>";
     }
-
+    
     public String IsDerivered() {
         return "<RESPUESTA>"
                 + addTag("CODIGO", "999")
                 + addTag("MENSAJE", "GUÍA YA HA SIDO ENTREGADA.")
                 + "</RESPUESTA>";
     }
-
+    
     public String isPrinted() {
         return "<RESPUESTA>"
                 + addTag("CODIGO", "998")
                 + addTag("MENSAJE", "GUÍA YA HA SIDO IMPRESA.")
                 + "</RESPUESTA>";
     }
-
+    
     public String Unauthorized() {
         return "<RESPUESTA>"
                 + addTag("CODIGO", "401")
                 + addTag("MENSAJE", "NO AUTORIZADO.")
                 + "</RESPUESTA>";
     }
-
+    
     public String RespuestaGeneralSIG(String codigo, String mensaje) {
         return "<WSSIGCLIENTES>"
                 + new ParseadorXML().parseoObj(
@@ -558,5 +577,5 @@ public class ConvertidorXML {
     public String addTag(String tag, String dato) {
         return "<" + tag + ">" + dato + "</" + tag + ">";
     }
-
+    
 }

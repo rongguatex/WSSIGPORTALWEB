@@ -6,6 +6,7 @@
 package com.guatex.sig.datos;
 
 import com.guatex.sig.entidades.E_Credenciales;
+import com.guatex.sig.entidades.E_DetalleLinea;
 import com.guatex.sig.entidades.E_Facusuario;
 import com.guatex.sig.entidades.E_Guia;
 import com.guatex.sig.entidades.E_ImpresionSIG;
@@ -16,8 +17,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -132,12 +137,12 @@ public class D_Guia {
                     + "    J.CONTSEG, J.FECOPE, J.HORAOPE,  J.RECOGEOFICINA,  "
                     + "    J.CAMPO1, J.CAMPO2, J.CAMPO3, J.CAMPO4,  "
                     + "    J.CODORIGEN, J.CODDESTINO,   "
-                    + "    J.OBSERVACIONES, J.OBSERVACIONESENTRE, J.IMPRESO "
-                    + "FROM JGUIAS J   "
+                    + "    J.OBSERVACIONES, J.OBSERVACIONESENTRE, J.IMPRESO, "
+                    + "    ISNULL(NULLIF(FC.LPREPAGADA, ''), 'N') AS LPREPAGADA "
+                    + "FROM JGUIAS J  "
                     + "INNER JOIN FACCLIENTES FC ON J.CODCOB = FC.CODIGO  "
                     + "WHERE NOGUIA = ? "
                     + "AND FC.PADRE = ? "
-                    //                    + "AND ISNULL(J.IMPRESO, 'N') != 'S' "
                     + "AND ISNULL(J.IMPRESO, 'N') NOT IN ('S', 'R') "
                     + "AND NOT EXISTS ( "
                     + "    SELECT "
@@ -145,6 +150,13 @@ public class D_Guia {
                     + "    FROM GUIAS G "
                     + "    WHERE G.NOGUIA = J.NOGUIA  "
                     + ") ";
+
+            String sqlDetalle = "SELECT jd.LINEA, jd.PIEZAS, jd.TIPENV, jd.PESO, jd.TARIFA, te.NOMBRE AS DESCRIPCIONENVIO FROM JGUIASDETALLE jd "
+                    + " INNER JOIN TRFENVIOS te "
+                    + " ON te.CODIGO = jd.TIPENV "
+                    + " WHERE NOGUIA = ? ";
+
+            String operacion = "RESERVADO";
 
             try (Connection con = new Conexion().AbrirConexion();
                     PreparedStatement ps = con.prepareStatement(query)) {
@@ -162,6 +174,7 @@ public class D_Guia {
                         guia.setFECHA(util.quitaNulo(rs.getString("FECHA")));
                         guia.setIMPRESO(util.quitaNulo(rs.getString("IMPRESO")));
                         System.out.println("---> Impreso: " + guia.getIMPRESO());
+                        guia.setGUIAPREPAGO(util.quitaNulo(rs.getString("LPREPAGADA")));
                         //datos de remitente
                         guia.setCODREM(util.quitaNulo(rs.getString("CODREM")));
                         guia.setNOMREM(util.quitaNulo(rs.getString("NOMREM")));
@@ -203,6 +216,52 @@ public class D_Guia {
                         guia.setCAMPO4(util.obtenerCodigo(util.quitaNulo(rs.getString("CAMPO4"))));
                         guia.setCODORIGEN(util.quitaNulo(rs.getString("CODORIGEN")));
                         guia.setCODDESTINO(util.quitaNulo(rs.getString("CODDESTINO")));
+
+                        boolean prepago = guia.getGUIAPREPAGO().equals("S");
+
+                        if (prepago) {
+                            sqlDetalle = "SELECT jd.LINEA, jd.PIEZAS, jd.TIPENV, jd.PESO, jd.TARIFA, "
+                                    + " bpcd.ID AS IDBOLSONDETALLE, "
+                                    + " ccp.ID_BOLSON, ccp.HABER_PIEZAS AS PIEZASRESERVADO, "
+                                    + " te.NOMBRE AS DESCRIPCIONENVIO "
+                                    + " FROM CUENTA_CORRIENTE_PREPAGO ccp "
+                                    + " INNER JOIN JGUIASDETALLE jd "
+                                    + " ON jd.NOGUIA = ccp.NOGUIA "
+                                    + " INNER JOIN BOLSON_PREPAGO_CONTRATOS_DETALLE bpcd "
+                                    + " ON bpcd.ID_BOLSON = ccp.ID_BOLSON "
+                                    + " AND bpcd.TIPO_PIEZA = jd.TIPENV "
+                                    + " INNER JOIN TRFENVIOS te "
+                                    + " ON te.CODIGO = jd.TIPENV "
+                                    + " WHERE ccp.NOGUIA = ? "
+                                    + " AND ccp.OPERACION = ? ";
+                        }
+                        System.out.println("query a ejecutar: " + sqlDetalle);
+                        try (PreparedStatement psDet = con.prepareStatement(sqlDetalle)) {
+                            psDet.setString(1, datos.getNoguia());
+                            if (prepago) {
+                                psDet.setString(2, operacion);
+                            }
+                            List<E_DetalleLinea> detalles = new ArrayList<E_DetalleLinea>();
+
+                            try (ResultSet rsDet = psDet.executeQuery()) {
+                                while (rsDet.next()) {
+                                    E_DetalleLinea det = new E_DetalleLinea();
+                                    det.setLINEA(util.quitaNulo(rsDet.getString("LINEA")));
+                                    det.setPIEZAS(rsDet.getInt("PIEZAS"));
+                                    det.setTIPOENVIO(util.quitaNulo(rsDet.getString("TIPENV")));
+                                    det.setPESO(util.quitaNulo(rsDet.getString("PESO")));
+                                    det.setTARIFA(util.quitaNulo(rsDet.getString("TARIFA")));
+                                    det.setDESCRIPCIONENVIO(util.quitaNulo(rsDet.getString("DESCRIPCIONENVIO")));
+                                    if (prepago) {
+                                        det.setIDBOLSON(util.quitaNulo(rsDet.getString("ID_BOLSON")));
+                                        det.setIDBOLSONDETALLE(util.quitaNulo(rsDet.getString("IDBOLSONDETALLE")));
+                                        det.setPIEZASRESERVADO(util.quitaNulo(rsDet.getString("PIEZASRESERVADO")));
+                                    }
+                                    detalles.add(det);
+                                }
+                            }
+                            guia.setDETALLE(detalles);
+                        }
                         datosGuia.add(guia);
                     }
                 }
@@ -436,35 +495,45 @@ public class D_Guia {
         return null;
     }
 
+    /**
+     * Mod ESTEFANIECM
+     *
+     * @param credenciales
+     * @param usuario
+     * @return
+     */
     public E_RespuestaGuia obtenerGuiasEliminar(E_Credenciales credenciales, E_Facusuario usuario) {
 
         try (Connection con = new Conexion().AbrirConexion();
                 PreparedStatement ps = con.prepareStatement(""
                         + " SELECT  J.NOGUIA, "
-                        + "                 J.FECHA, "
-                        + "                 J.NOMDES, "
-                        + "                 J.DIRDES, "
-                        + "                 J.COMPLEMENTODIRDES, "
-                        + "                 J.DESCRENV, "
-                        + "                 J.CODCOB, "
-                        + "                 J.TELDES, "
-                        + "                 J.CONTACTO, "
-                        + "                 J.MNCPDES "
+                        + " J.FECHA, "
+                        + " J.NOMDES, "
+                        + " J.DIRDES, "
+                        + " J.COMPLEMENTODIRDES, "
+                        + " J.DESCRENV, "
+                        + " J.CODCOB, "
+                        + " J.TELDES, "
+                        + " J.CONTACTO, "
+                        + " J.MNCPDES, "
+                        + " ISNULL(NULLIF(F.LPREPAGADA, ''), 'N') LPREPAGADA "
                         + " FROM JGUIAS J "
-                        + " INNER JOIN FACCLIENTES F ON J.CODCOB = F.CODIGO  "
-                        + " WHERE CAST(J.FECHA AS DATE) BETWEEN CAST(? AS DATE) AND CAST(? AS DATE)  "
+                        + " INNER JOIN FACCLIENTES F ON J.CODCOB = F.CODIGO "
+                        + " WHERE J.FECHA >= ? AND J.FECHA < DATEADD(day, 1, ?) "
                         + "	AND F.PADRE = ? "
                         + "	AND J.NOGUIA LIKE ? "
-                        + "	AND NOT EXISTS (SELECT GS.NOGUIA "
-                        + "                                      FROM GUIAS GS "
-                        + "                                      WHERE GS.NOGUIA = J.NOGUIA) "
+                        + "	AND NOT EXISTS (SELECT 1 FROM GUIAS GS WHERE GS.NOGUIA = J.NOGUIA) "
                         + " ORDER BY J.FECHA DESC ")) {
             ps.setString(1, credenciales.getFechaInicio());
             ps.setString(2, credenciales.getFechaFinal());
             ps.setString(3, usuario.getPADRE());
             ps.setString(4, usuario.getUEGUIAS() + "%");
 
-            List<E_Guia> datosGuia = new LinkedList<>();
+            List<E_Guia> datosGuia = new ArrayList<>();
+
+            Map<String, E_Guia> mapaGuias = new HashMap<>();
+            List<String> guiasPrepago = new ArrayList<>();
+
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     E_Guia guia = new E_Guia();
@@ -478,9 +547,49 @@ public class D_Guia {
                     guia.setTELDES(util.quitaNulo(rs.getString("TELDES")));
                     guia.setCONTACTO(util.quitaNulo(rs.getString("CONTACTO")));
                     guia.setMNCPDES(util.quitaNulo(rs.getString("MNCPDES")));
-                    datosGuia.add(guia);
+                    String lp = util.quitaNulo(rs.getString("LPREPAGADA"));
+                    System.out.println("lPrepagada? " + lp);
+                    guia.setGUIAPREPAGO(lp);
+
+                    if ("S".equals(lp)) {
+                        guiasPrepago.add(guia.getNOGUIA());
+                    }
+
+                    mapaGuias.put(guia.getNOGUIA(), guia);
+
                 }
+
+                if (!guiasPrepago.isEmpty()) {
+                    String inSql = String.join(",", Collections.nCopies(guiasPrepago.size(), "?"));
+
+                    String sqlDetalle
+                            = "SELECT NOGUIA, PIEZAS, TIPENV "
+                            + "FROM JGUIASDETALLE "
+                            + "WHERE NOGUIA IN (" + inSql + ") ";
+
+                    try (PreparedStatement psDet = con.prepareStatement(sqlDetalle)) {
+
+                        int i = 1;
+                        for (String guia : guiasPrepago) {
+                            psDet.setString(i++, guia);
+                        }
+
+                        try (ResultSet rsDet = psDet.executeQuery()) {
+                            while (rsDet.next()) {
+                                E_DetalleLinea det = new E_DetalleLinea();
+                                det.setPIEZAS(rsDet.getInt("PIEZAS"));
+                                det.setTIPOENVIO(util.quitaNulo(rsDet.getString("TIPENV")));
+
+                                String noguia = util.quitaNulo(rsDet.getString("NOGUIA"));
+                                mapaGuias.get(noguia).getDETALLE().add(det);
+                            }
+                        }
+                    }
+                }
+
             }
+            datosGuia.addAll(mapaGuias.values());
+
             if (datosGuia.isEmpty()) {
                 return new E_RespuestaGuia("204");
             }
